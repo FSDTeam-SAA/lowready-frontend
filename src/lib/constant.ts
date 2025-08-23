@@ -1,4 +1,5 @@
 import type { Facility } from "@/types/facility"
+import { Review } from "@/types/review"
 
 export const facilitiesData: Facility[] = [
   {
@@ -76,4 +77,55 @@ export const facilitiesData: Facility[] = [
       { id: "20", name: "Garden", type: "garden" },
     ],
   },
+]
+
+export const reveiwsData: Review[] = [
+  {
+    id:10,
+    user:{
+      name: "Connect Directly",
+      city: "Portland",
+      organization: "or",
+
+    },
+    imglink:"/images/mini.jpg",
+    rating: 4,
+    comment:"I've been ordering from TABLEFRESH for over year now, and the quality of their organic produce is consistently excellent. The convenience of having fresh, organic food delivered to my door has made healthy eating so much easier for my family."
+  },
+  {
+    id:11,
+    user:{
+      name: "Connect Directly",
+      city: "Portland",
+      organization: "or",
+
+    },
+    imglink:"/images/mini.jpg",
+    rating: 4,
+    comment:"I've been ordering from TABLEFRESH for over year now, and the quality of their organic produce is consistently excellent. The convenience of having fresh, organic food delivered to my door has made healthy eating so much easier for my family."
+  },
+  {
+    id:12,
+    user:{
+      name: "Connect Directly",
+      city: "Portland",
+      organization: "or",
+
+    },
+    imglink:"/images/mini.jpg",
+    rating: 4,
+    comment:"I've been ordering from TABLEFRESH for over year now, and the quality of their organic produce is consistently excellent. The convenience of having fresh, organic food delivered to my door has made healthy eating so much easier for my family."
+  },
+  {
+    id:13,
+    user:{
+      name: "Connect Directly",
+      city: "Portland",
+      organization: "or",
+
+    },
+    imglink:"/images/mini.jpg",
+    rating: 4,
+    comment:"I've been ordering from TABLEFRESH for over year now, and the quality of their organic produce is consistently excellent. The convenience of having fresh, organic food delivered to my door has made healthy eating so much easier for my family."
+  }
 ]
