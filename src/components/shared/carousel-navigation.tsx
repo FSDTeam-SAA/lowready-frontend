@@ -52,7 +52,7 @@ export function CarouselNavigation({
         variant="outline"
         size="icon"
         onClick={onNext}
-        className="rounded-full w-10 h-10 border-gray-300 hover:border-gray-400 bg-transparent cursor-pointer"
+        className="rounded-full w-10 h-10 bg-green-100 border-gray-300 hover:border-gray-400 cursor-pointer"
         disabled={currentSlide === totalSlides - 1}
       >
         <ChevronRight className="w-4 h-4" />

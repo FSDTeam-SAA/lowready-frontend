@@ -1,6 +1,7 @@
 import { FacilitiesCarousel } from "@/components/landing/facilities-carousel";
 import { ReviewFamilyCarousel } from "@/components/landing/FamilyReview";
 import HowWorks from "@/components/landing/HowWorks";
+import BlogsCard from "@/components/shared/blogs";
 import FindCare from "@/components/shared/FindPerfectCare";
 import Hero from "@/components/shared/Hero";
 import Navbar from "@/components/shared/Navbar";
@@ -24,6 +25,8 @@ export default function Home() {
         buttonText="Get Started"
         showButton={true}
       />
+      
+      <BlogsCard />
     </main>
   );
 }
