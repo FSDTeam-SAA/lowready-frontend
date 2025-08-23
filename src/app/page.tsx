@@ -1,9 +1,19 @@
+"use client"
+
+
+
 
 
 export default function Home() {
+
   return (
-    <div>
-    
-    </div>
+    <main role="main">
+      {/* Hero section */}
+      {/* Adjust import paths if different in your project */}
+      {/* <Hero /> */}
+      {/* Optional: additional sections */}
+      {/* <FindCare /> */}
+      {/* <FacilitiesCarousel /> */}
+    </main>
   );
 }

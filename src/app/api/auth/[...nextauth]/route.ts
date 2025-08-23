@@ -11,32 +11,29 @@ const handler = NextAuth({
       },
       async authorize(credentials) {
         try {
-          const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                email: credentials?.email,
-                password: credentials?.password,
-              }),
-            }
-          );
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: credentials?.email,
+              password: credentials?.password,
+            }),
+          });
 
           const data = await res.json();
 
-          // Explicitly check HTTP status
-          if (!res.ok || !data.success || !data.data?.user) {
+          if (!res.ok || !data.success || !data.data?.accessToken) {
             throw new Error(data.message || "Invalid credentials");
           }
 
           return {
-            id: data.data.user._id,
-            name: `${data.data.user.firstName} ${data.data.user.lastName}`,
-            email: data.data.user.email,
-            image: data.data.user.imageLink || null,
-            accessToken: data.data.accessToken, // backend JWT
-            role: data.data.user.role,
+            id: data.data._id,
+            name: data.data.name || data.data.email || "", // Provide a fallback if name is missing
+            email: data.data.email,
+            role: data.data.role,
+            accessToken: data.data.accessToken,
+            refreshToken: data.data.refreshToken,
+            image: data.data.image || undefined, // Optional, if available
           };
         } catch (error) {
           console.error("Auth Error:", error);
@@ -49,6 +46,7 @@ const handler = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        token.email = user.email;
         token.role = user.role;
         token.accessToken = user.accessToken;
       }
@@ -57,6 +55,7 @@ const handler = NextAuth({
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
+        session.user.email = token.email as string;
         session.user.role = token.role as string;
       }
       session.accessToken = token.accessToken as string;
