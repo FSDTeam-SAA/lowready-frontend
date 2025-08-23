@@ -16,9 +16,9 @@ const geistMono = Geist_Mono({
 });
 
 const playfair = Playfair_Display({
-  variable: "--font-playfair", // ✅ fixed typo
+  variable: "--font-playfair", 
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"], // ✅ better to include multiple
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {

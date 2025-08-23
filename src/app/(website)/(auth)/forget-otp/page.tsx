@@ -1,13 +1,13 @@
-import LoginForm from "@/components/auth/LoginForm";
+import ForgetOptForm from "@/components/auth/ForgetOptForm";
 import React, { Suspense } from "react";
 
 const page = () => {
   return (
-    <main>
+    <div>
       <Suspense fallback={<div>Loading...</div>}>
-        <LoginForm />
+        <ForgetOptForm />
       </Suspense>
-    </main>
+    </div>
   );
 };
 
