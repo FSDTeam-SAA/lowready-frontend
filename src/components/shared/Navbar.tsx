@@ -37,6 +37,7 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Button } from "../ui/button";
 import { Menu, X } from "lucide-react";
+import Link from "next/link";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -100,7 +101,10 @@ const Navbar = () => {
           </div>
           
           <div className="hidden md:block">
-            <Button className="bg-primary">Sign in</Button>
+            <Button className="bg-primary">
+              <Link href={'/login'} >Sign in</Link> 
+              
+            </Button>
           </div>
           
           {/* Mobile Hamburger Button */}

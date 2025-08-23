@@ -13,7 +13,7 @@ interface FacilityCardProps {
   onBookTour: (facilityId: string) => void;
 }
 
-export function FacilityCard({
+export default function FacilityCard({
   facility,
   onSeeDetails,
   onBookTour,
