@@ -9,23 +9,23 @@ export default function TopBanner() {
   if (!isVisible) return null;
 
   return (
-    <section className="bg-[#E6F9EB] relative">
+    <section className="bg-[#E6F9EB] relative h-auto w-ful font-poppins">
       <div className="container mx-auto">
-        {/* Close Button at Right Corner */}
+        {/* Close Button at Right Corner - hidden on mobile */}
         <button
           onClick={() => setIsVisible(false)}
-          className="absolute right-4 top-2 text-gray-600 hover:text-red-500 transition"
+          className=" absolute md:right-4 md:top-2 right-4 top-10  text-gray-600 flex items-center hover:text-red-500 transition"
         >
           <X size={20} />
         </button>
 
-        <div className="flex flex-row justify-between items-center py-2">
-          <div className="message">
-            Call now for a FREE Consultation with a Family Advisor about Assisted Living in your area!
+        <div className="flex flex-col md:flex-row justify-between items-center py-2 md:py-4 text-sm md:text-base gap-1 md:gap-0">
+          <div className="message text-center md:text-left px-2">
+            <p className="text-xs">Call now for a FREE Consultation with a Family Advisor about Assisted Living in your area!</p>
           </div>
-          <div className="phone-number flex flex-row items-center gap-3">
-            <PhoneForwarded className="text-[#28A745]" />
-            <p>90860-6745678</p>
+          <div className="phone-number flex flex-row items-center gap-2 md:gap-3 mt-1 md:mt-0">
+            <PhoneForwarded className="text-[#28A745] w-4 h-4 md:w-5 md:h-5" />
+            <p className="text-xs md:text-xs">90860-6745678</p>
           </div>
         </div>
       </div>

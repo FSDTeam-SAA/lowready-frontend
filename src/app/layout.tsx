@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import TanstackProvider from "@/provider/QueryProvider";
 
@@ -13,6 +13,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const playfair = Playfair_Display({
+  variable: "--font-playfair", // ✅ fixed typo
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"], // ✅ better to include multiple
+});
+
 export const metadata: Metadata = {
   title: "Alhub",
   description: "Developed by EliteStack",
@@ -20,13 +26,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} antialiased`}
       >
         <TanstackProvider>{children}</TanstackProvider>
       </body>
