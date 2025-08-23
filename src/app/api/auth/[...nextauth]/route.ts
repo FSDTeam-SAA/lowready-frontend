@@ -26,14 +26,15 @@ const handler = NextAuth({
             throw new Error(data.message || "Invalid credentials");
           }
 
+          // ✅ return user object
           return {
             id: data.data._id,
-            name: data.data.name || data.data.email || "", // Provide a fallback if name is missing
+            name: data.data.name || data.data.email || "",
             email: data.data.email,
             role: data.data.role,
             accessToken: data.data.accessToken,
             refreshToken: data.data.refreshToken,
-            image: data.data.image || undefined, // Optional, if available
+            image: data.data.image || undefined,
           };
         } catch (error) {
           console.error("Auth Error:", error);
@@ -42,6 +43,7 @@ const handler = NextAuth({
       },
     }),
   ],
+
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
@@ -49,6 +51,7 @@ const handler = NextAuth({
         token.email = user.email;
         token.role = user.role;
         token.accessToken = user.accessToken;
+        token.refreshToken = user.refreshToken;
       }
       return token;
     },
@@ -59,9 +62,11 @@ const handler = NextAuth({
         session.user.role = token.role as string;
       }
       session.accessToken = token.accessToken as string;
+      session.refreshToken = token.refreshToken as string | undefined;
       return session;
     },
   },
+
   pages: {
     signIn: "/login",
   },

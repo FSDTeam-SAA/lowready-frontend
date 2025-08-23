@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import type { Facility } from "@/types/facility";
 import { facilitiesData } from "@/lib/constant";
-import { FacilityCard } from "../shared/facility-card";
+import FacilityCard from "../shared/facility-card";
 import { CarouselNavigation } from "../shared/carousel-navigation";
 
 interface FacilitiesCarouselProps {

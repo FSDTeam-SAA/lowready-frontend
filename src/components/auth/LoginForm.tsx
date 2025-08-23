@@ -8,7 +8,8 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { toast } from "sonner";
-import { getSession, signIn } from "next-auth/react"; // ✅ NextAuth import
+import { getSession, signIn } from "next-auth/react";
+import { Eye, EyeOff } from "lucide-react"; // 👈 added icons
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -56,13 +57,21 @@ const LoginForm = () => {
     } else {
       console.log("res: ", res);
       toast.success("Login successful!");
-      const session = await getSession();
+      type SessionUserWithRole = {
+        name?: string | null;
+        email?: string | null;
+        image?: string | null;
+        role?: string | null;
+      };
 
+      const session = await getSession();
       console.log("session: ", session);
 
-      if (session?.user?.role === "admin") {
+      const user = session?.user as SessionUserWithRole | undefined;
+
+      if (user?.role === "admin") {
         router.push("/dashboard");
-      } else if (session?.user?.role === "organization") {
+      } else if (user?.role === "organization") {
         router.push("/organization/dashboard");
       } else {
         router.push("/");
@@ -71,12 +80,20 @@ const LoginForm = () => {
   };
 
   return (
-    <section className="min-h-screen grid md:grid-cols-2">
+    <section className="min-h-screen grid lg:grid-cols-2">
+      {/* back to home  */}
+      <button
+        onClick={() => router.push("/")}
+        className="absolute top-24 right-28 md:right-48 text-green-600 hover:underline cursor-pointer"
+      >
+        Back to Home
+      </button>
+
       {/* Left side image */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="relative hidden md:block"
+        className="relative hidden lg:block"
       >
         <Image
           src="/signup.png"
@@ -95,9 +112,9 @@ const LoginForm = () => {
         initial={{ x: 50, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="flex items-center justify-center p-6"
+        className="flex items-center justify-center p-6 px-3 md:px-4 lg:px-0"
       >
-        <div className="w-full max-w-md">
+        <div className="w-full max-w-lg">
           <h2 className="text-3xl font-bold text-green-600 mb-2">Welcome</h2>
           <p className="text-gray-500 mb-6">
             Access your account to manage tours, leads, and listings
@@ -105,6 +122,7 @@ const LoginForm = () => {
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              {/* Email */}
               <FormField
                 control={form.control}
                 name="email"
@@ -123,6 +141,7 @@ const LoginForm = () => {
                 )}
               />
 
+              {/* Password with toggle */}
               <FormField
                 control={form.control}
                 name="password"
@@ -130,17 +149,31 @@ const LoginForm = () => {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input
-                        type={showPassword ? "text" : "password"}
-                        placeholder="********"
-                        {...field}
-                      />
+                      <div className="relative">
+                        <Input
+                          type={showPassword ? "text" : "password"}
+                          placeholder="********"
+                          {...field}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword((prev) => !prev)}
+                          className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
+                        >
+                          {showPassword ? (
+                            <EyeOff className="h-5 w-5" />
+                          ) : (
+                            <Eye className="h-5 w-5" />
+                          )}
+                        </button>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
+              {/* Remember + Forgot */}
               <div className="flex justify-between items-center">
                 <FormField
                   control={form.control}
@@ -159,16 +192,17 @@ const LoginForm = () => {
                 />
 
                 <a
-                  href="/forgot-password"
-                  className="text-green-600 text-sm hover:underline"
+                  href="/forget-password"
+                  className="text-green-600 text-sm hover:underline cursor-pointer"
                 >
                   Forgot password?
                 </a>
               </div>
 
+              {/* Submit */}
               <Button
                 type="submit"
-                className="w-full bg-green-600 hover:bg-green-700"
+                className="w-full bg-green-600 hover:bg-green-700 cursor-pointer"
               >
                 Log In
               </Button>
@@ -179,7 +213,7 @@ const LoginForm = () => {
             Don&apos;t have an account?{" "}
             <a
               href="/signup?role=user"
-              className="text-green-600 font-medium hover:underline"
+              className="text-green-600 font-medium hover:underline cursor-pointer"
             >
               Sign Up
             </a>
