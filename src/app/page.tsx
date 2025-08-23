@@ -4,12 +4,16 @@
 
 
 
-
 export default function Home() {
 
   return (
-    <div className="">
-    
-    </div>
+    <main role="main">
+      {/* Hero section */}
+      {/* Adjust import paths if different in your project */}
+      {/* <Hero /> */}
+      {/* Optional: additional sections */}
+      {/* <FindCare /> */}
+      {/* <FacilitiesCarousel /> */}
+    </main>
   );
 }
