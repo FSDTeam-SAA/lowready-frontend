@@ -21,7 +21,7 @@ const blogs: Blog[] = [
     id: i + 1,
     title: `Blog Post ${i + 1}`,
     description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus, elit nibh et nisl, pellentesque scelerisque faucibus facilisis at.",
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ur adipiscing elit. Purus, elit nibh et nisl,  Purus, elit nibh et nisl, pellentesque scelerisque ur adipiscing elit. Purus, elit nibh et nisl,  faucibus facilisis at.",
     date: "14 August, 2025",
     readTime: "12 min read",
     image: "/images/blogImage.jpg",

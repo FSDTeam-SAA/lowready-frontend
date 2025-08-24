@@ -23,7 +23,7 @@ const blogs = [
     date: "14 August, 2025",
     readTime: "12 min read",
     description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus, elit nibh et nisl, Purus, adipiscing elit. Purus, elit nibh et nisl, pellentesque scelerisque faucibus facilisis at. Placerat morbi sem viverra viverra  elit nibh et nisl, pellentesque scelerisque faucibus facilisis at. Placerat morbi sem viverra viverra diam lectus odio orci  pellentesque scelerisque faucibus facilisis at. Placerat morbi sem viverra viverra diam lectus odio orci...",
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus, consectetur adipiscing elit. Purus, elit nibh et nisl, pellentesque scelerisque faucibus facilisis at. Placerat morbi sem viverra viverra diam lectus elit nibh et nisl, Purus, adipiscing elit. Purus, elit nibh et nisl, pellentesque scelerisque faucibus facilisis at. Placerat morbi sem viverra viverra  elit nibh et nisl, pellentesque scelerisque faucibus facilisis at. Placerat morbi sem viverra viverra diam lectus odio orci  pellentesque scelerisque faucibus facilisis at. Placerat morbi sem viverra viverra diam lectus odio orci...",
     image: "/images/blogImage.jpg",
     link: "#",
   },
@@ -33,7 +33,7 @@ const blogs = [
     date: "14 August, 2025",
     readTime: "12 min read",
     description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus, Purus, adipiscing elit. Purus, elit nibh et nisl, pellentesque scelerisque faucibus facilisis at. Placerat morbi sem viverra viverra  elit nibh et nisl, pellentesque scelerisque faucibus facilisis at. Placerat morbi sem viverra viverra diam lectus odio orci adipiscing elit. Purus, elit nibh et nisl, pellentesque scelerisque faucibus facilisis at. Placerat morbi sem viverra viverra  elit nibh et nisl, pellentesque scelerisque faucibus facilisis at. Placerat morbi sem viverra viverra diam lectus odio orci...",
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus, Purus, adipiscing elit. Purus, elit nibh et nisl, consectetur adipiscing elit. Purus, elit nibh et nisl, pellentesque scelerisque faucibus facilisis at. Placerat morbi sem viverra viverra diam lectus pellentesque scelerisque faucibus facilisis at. Placerat morbi sem viverra viverra  elit nibh et nisl, pellentesque scelerisque faucibus facilisis at. Placerat morbi sem viverra viverra diam lectus odio orci adipiscing elit. Purus, elit nibh et nisl, pellentesque scelerisque faucibus facilisis at. Placerat morbi sem viverra viverra  elit nibh et nisl, pellentesque scelerisque faucibus facilisis at. Placerat morbi sem viverra viverra diam lectus odio orci...",
     image: "/images/blogImage.jpg",
     link: "#",
   },
@@ -136,7 +136,7 @@ export default function RecentBlogs() {
                   </h3>
                   {/* Desc */}
                   <p className="text-sm text-gray-600">
-                    {blog.description.split(" ").slice(0, 33).join(" ")}{" "}
+                    {blog.description.split(" ").slice(0, 33).join(" ")}{"..."}
                     <a
                       href={blog.link}
                       className="text-green-600 font-medium hover:underline"

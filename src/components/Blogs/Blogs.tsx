@@ -3,6 +3,7 @@ import FindCare from "../shared/FindPerfectCare";
 import RecentBlogs from "./RecentBlogs";
 import StayUpdated from "./StayUpdated";
 import AllBlogs from "./AllBlogs";
+import Footer from "../shared/Footer";
 
 export default function Blogs() {
   return (
@@ -18,6 +19,8 @@ export default function Blogs() {
       <RecentBlogs />
       <StayUpdated />
       <AllBlogs />
+
+      <Footer />
     </div>
   );
 }
