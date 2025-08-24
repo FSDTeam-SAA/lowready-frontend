@@ -40,7 +40,5 @@ export async function getAllBlogsPagination(page: number, limit: number) {
 // Get Single Blog or Blog details
 export async function getSingleBlog(id: string) {
   const res = await api.get(`/blog/${id}`);
-
-  console.log(res)
   return res.data;
 }
