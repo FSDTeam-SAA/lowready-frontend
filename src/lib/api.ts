@@ -4,7 +4,7 @@ import axios from "axios";
 import { getSession } from "next-auth/react";
 
 // import { config } from "process";
-export const API_BASE_URL = "https://mohab0104-backend.onrender.com/api/v1";
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
 
 //create axios instance
 const api = axios.create({
