@@ -1,6 +1,7 @@
 import React from "react";
 import FindCare from "../shared/FindPerfectCare";
 import RecentBlogs from "./RecentBlogs";
+import StayUpdated from "./StayUpdated";
 
 export default function Blogs() {
   return (
@@ -14,6 +15,7 @@ export default function Blogs() {
       />
 
       <RecentBlogs />
+      <StayUpdated />
     </div>
   );
 }

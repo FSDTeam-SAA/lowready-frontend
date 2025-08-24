@@ -47,7 +47,7 @@ export default function RecentBlogs() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left Big Blog */}
-          <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+          <div className="bg-white rounded-lg shadow-sm hover:shadow-xl transition-shadow overflow-hidden">
             <Image
               src={blogs[0].image}
               alt={blogs[0].title}
