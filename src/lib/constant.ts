@@ -9,7 +9,7 @@ export const facilitiesData: Facility[] = [
     reviewCount: 32,
     description: "Handicapped for comfort, care, and community",
     price: 2200,
-    image: "/images/facility-interior.jpg",
+    image: "/facilitescard.png",
     categories: [
       { id: "1", name: "Available", type: "available" },
       { id: "2", name: "Private", type: "private" },
@@ -24,7 +24,7 @@ export const facilitiesData: Facility[] = [
     reviewCount: 28,
     description: "Handicapped for comfort, care, and community",
     price: 2200,
-    image: "/images/facility-interior.jpg",
+    image: "/facilitescard.png",
     categories: [
       { id: "5", name: "Available", type: "available" },
       { id: "6", name: "Private", type: "private" },
@@ -39,7 +39,7 @@ export const facilitiesData: Facility[] = [
     reviewCount: 45,
     description: "Handicapped for comfort, care, and community",
     price: 2200,
-    image: "/images/facility-interior.jpg",
+    image: "/facilitescard.png",
     categories: [
       { id: "9", name: "Available", type: "available" },
       { id: "10", name: "Private", type: "private" },
@@ -54,7 +54,7 @@ export const facilitiesData: Facility[] = [
     reviewCount: 38,
     description: "Handicapped for comfort, care, and community",
     price: 2200,
-    image: "/images/facility-interior.jpg",
+    image: "/facilitescard.png",
     categories: [
       { id: "13", name: "Available", type: "available" },
       { id: "14", name: "Private", type: "private" },
@@ -69,7 +69,7 @@ export const facilitiesData: Facility[] = [
     reviewCount: 22,
     description: "Handicapped for comfort, care, and community",
     price: 2200,
-    image: "/images/facility-interior.jpg",
+    image: "/facilitescard.png",
     categories: [
       { id: "17", name: "Available", type: "available" },
       { id: "18", name: "Private", type: "private" },
@@ -88,7 +88,7 @@ export const reveiwsData: Review[] = [
       organization: "or",
 
     },
-    imglink:"/images/mini.jpg",
+    imglink:"/facilitescard.png",
     rating: 4,
     comment:"I've been ordering from TABLEFRESH for over year now, and the quality of their organic produce is consistently excellent. The convenience of having fresh, organic food delivered to my door has made healthy eating so much easier for my family."
   },
@@ -100,7 +100,7 @@ export const reveiwsData: Review[] = [
       organization: "or",
 
     },
-    imglink:"/images/mini.jpg",
+    imglink:"/facilitescard.png",
     rating: 4,
     comment:"I've been ordering from TABLEFRESH for over year now, and the quality of their organic produce is consistently excellent. The convenience of having fresh, organic food delivered to my door has made healthy eating so much easier for my family."
   },
@@ -112,7 +112,7 @@ export const reveiwsData: Review[] = [
       organization: "or",
 
     },
-    imglink:"/images/mini.jpg",
+    imglink:"/facilitescard.png",
     rating: 4,
     comment:"I've been ordering from TABLEFRESH for over year now, and the quality of their organic produce is consistently excellent. The convenience of having fresh, organic food delivered to my door has made healthy eating so much easier for my family."
   },
@@ -124,7 +124,7 @@ export const reveiwsData: Review[] = [
       organization: "or",
 
     },
-    imglink:"/images/mini.jpg",
+    imglink:"/facilitescard.png",
     rating: 4,
     comment:"I've been ordering from TABLEFRESH for over year now, and the quality of their organic produce is consistently excellent. The convenience of having fresh, organic food delivered to my door has made healthy eating so much easier for my family."
   }
