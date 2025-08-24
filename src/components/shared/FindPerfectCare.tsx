@@ -11,7 +11,7 @@ const FindCare = ({
    <section className="p-4 sm:p-20 bg-gray-200 bg-cover">
       <div
         className="container mx-auto h-[calc(50vh)] rounded-md bg-cover bg-center bg-black/60 bg-blend-overlay"
-        style={{ backgroundImage: `url(${imageSrc})` }} // Dynamically set background image
+        style={{ backgroundImage: `url(${imageSrc})` }}  
       >
         {/* Content */}
         <div className="flex flex-col items-center justify-center h-full text-white text-center px-4 sm:px-6 lg:px-8">
