@@ -7,7 +7,7 @@ import Footer from "../shared/Footer";
 
 export default function Blogs() {
   return (
-    <div>
+    <>
       <FindCare
         imageSrc="/blogs/blogImage.jpg"
         heading="Insights, Tips & Guidance for Families"
@@ -21,6 +21,6 @@ export default function Blogs() {
       <AllBlogs />
 
       <Footer />
-    </div>
+    </>
   );
 }

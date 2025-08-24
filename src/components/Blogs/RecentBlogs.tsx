@@ -2,154 +2,130 @@
 
 import Image from "next/image";
 import { Calendar, Clock3 } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import RecentBlogsSkeleton from "./RecentBlogsSkeleton";
+import { getAllBlogs } from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
 
-
-const blogs = [
-  {
-    id: 1,
-    title: "Choosing the Right Assisted Living",
-    date: "14 August, 2025",
-    readTime: "12 min read",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus, elit nibh et nisl, pellentesque scelerisque faucibus facilisis at. Placerat morbi sem viverra viverra diam lectus odio orci adipiscing elit. Purus, elit nibh et nisl, pellentesque scelerisque faucibus facilisis at. Placerat morbi sem viverra viverra ...",
-    image: "/images/blogImage.jpg",
-    link: "#",
-  },
-  {
-    id: 2,
-    title: "Choosing the Right Assisted Living",
-    date: "14 August, 2025",
-    readTime: "12 min read",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus, consectetur adipiscing elit. Purus, elit nibh et nisl, pellentesque scelerisque faucibus facilisis at. Placerat morbi sem viverra viverra diam lectus elit nibh et nisl, Purus, adipiscing elit. Purus, elit nibh et nisl, pellentesque scelerisque faucibus facilisis at. Placerat morbi sem viverra viverra  elit nibh et nisl, pellentesque scelerisque faucibus facilisis at. Placerat morbi sem viverra viverra diam lectus odio orci  pellentesque scelerisque faucibus facilisis at. Placerat morbi sem viverra viverra diam lectus odio orci...",
-    image: "/images/blogImage.jpg",
-    link: "#",
-  },
-  {
-    id: 3,
-    title: "Choosing the Right Assisted Living",
-    date: "14 August, 2025",
-    readTime: "12 min read",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus, Purus, adipiscing elit. Purus, elit nibh et nisl, consectetur adipiscing elit. Purus, elit nibh et nisl, pellentesque scelerisque faucibus facilisis at. Placerat morbi sem viverra viverra diam lectus pellentesque scelerisque faucibus facilisis at. Placerat morbi sem viverra viverra  elit nibh et nisl, pellentesque scelerisque faucibus facilisis at. Placerat morbi sem viverra viverra diam lectus odio orci adipiscing elit. Purus, elit nibh et nisl, pellentesque scelerisque faucibus facilisis at. Placerat morbi sem viverra viverra  elit nibh et nisl, pellentesque scelerisque faucibus facilisis at. Placerat morbi sem viverra viverra diam lectus odio orci...",
-    image: "/images/blogImage.jpg",
-    link: "#",
-  },
-];
-
-
+// Define Blog type
+interface Blog {
+  _id: string;
+  title: string;
+  description: string;
+  image?: { url: string };
+  createdAt: string;
+}
 
 export default function RecentBlogs() {
-  const [loading, setLoading] = useState(true);
+  const { data: allBlogs, isLoading } = useQuery({
+    queryKey: ["blogs"],
+    queryFn: () => getAllBlogs(),
+  });
 
- 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return <RecentBlogsSkeleton />;
   }
-  
+
+  // Use the fetched blogs data
+  const blogs: Blog[] = allBlogs?.data || [];
+
   return (
     <section className="py-10 md:py-20 lg:py-20 bg-[#F8F9FA]">
-      <div className=" mx-auto container">
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 ">
+      <div className="mx-auto container">
+        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
           Recent blog posts
         </h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left Big Blog */}
-          <div className="bg-white rounded-lg shadow-sm hover:shadow-xl transition-shadow overflow-hidden">
-            <Image
-              src={blogs[0].image}
-              alt={blogs[0].title}
-              width={600}
-              height={600}
-              className="w-full h-56 md:h-48 object-cover"
-            />
-            <div className="p-5">
-              {/* Meta */}
-              <div className="flex justify-between items-center text-sm text-gray-500 mb-2">
-                <span className="flex items-center gap-1">
-                  <Calendar size={14} />
-                  {blogs[0].date}
-                </span>
-                <span className="flex items-center gap-1">
-                  <Clock3 size={14} />
-                  {blogs[0].readTime}
-                </span>
+          {blogs[0] && (
+            <div className="bg-white rounded-lg shadow-sm hover:shadow-xl transition-shadow overflow-hidden">
+              <Image
+                src={blogs[0].image?.url || ""}
+                alt={blogs[0].title}
+                width={600}
+                height={600}
+                className="w-full h-56 md:h-48 object-cover"
+              />
+              <div className="p-5">
+                {/* Meta */}
+                <div className="flex justify-between items-center text-sm text-gray-500 mb-2">
+                  <span className="flex items-center gap-1">
+                    <Calendar size={14} />
+                    {new Date(blogs[0].createdAt).toLocaleDateString()}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Clock3 size={14} />5 min read
+                  </span>
+                </div>
+                {/* Title */}
+                <Link href={`/blogs/${blogs[0]._id}`}>
+                  <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-2 hover:underline hover:text-primary">
+                    {blogs[0].title}
+                  </h3>
+                </Link>
+
+                {/* Description */}
+                <p className="text-sm text-gray-600 mb-2">
+                  {blogs[0].description.split(" ").slice(0, 30).join(" ")}...
+                  <Link
+                    href={`/blogs/${blogs[0]._id}`}
+                    className="text-green-600 font-medium hover:underline"
+                  >
+                    Read More
+                  </Link>
+                </p>
               </div>
-              {/* Title */}
-              <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-2">
-                {blogs[0].title}
-              </h3>
-              {/* Description */}
-              <p className="text-sm text-gray-600 mb-2">
-                {blogs[0].description.split(" ").slice(0, 30).join(" ")}
-                {"... "}
-                <a
-                  href={blogs[0].link}
-                  className="text-green-600 font-medium hover:underline"
-                >
-                  Read More
-                </a>
-              </p>
             </div>
-          </div>
+          )}
 
           {/* Right Two Small Blogs */}
           <div className="flex flex-col gap-6">
-            {blogs.slice(1).map((blog) => (
+            {blogs.slice(1, 3).map((blog: Blog) => (
               <div
-                key={blog.id}
+                key={blog._id}
                 className="flex bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden"
               >
                 <Image
-                  src={blog.image}
+                  src={blog.image?.url || ""}
                   alt={blog.title}
-                  width={400}
-                  height={400}
-                  className="w-32 md:w-44 h-40 object-cover"
+                  width={176}
+                  height={150}
+                  className="object-cover"
                 />
                 <div className="p-4 flex flex-col justify-between">
                   {/* Meta */}
                   <div className="flex justify-between items-center text-sm text-gray-500 mb-2">
                     <span className="flex items-center gap-1">
                       <Calendar size={14} />
-                      {blog.date}
+                      {new Date(blog.createdAt).toLocaleDateString()}
                     </span>
                     <span className="flex items-center gap-1">
-                      <Clock3 size={14} />
-                      {blog.readTime}
+                      <Clock3 size={14} />5 min read
                     </span>
                   </div>
                   {/* Title */}
-                  <h3 className="text-md md:text-lg font-semibold text-gray-900 mb-1">
-                    {blog.title}
-                  </h3>
+                  <Link href={`/blogs/${blog._id}`}>
+                    <h3 className="text-md md:text-lg font-semibold text-gray-900 mb-1 hover:underline hover:text-primary">
+                      {blog.title}
+                    </h3>
+                  </Link>
                   {/* Desc */}
                   <p className="text-sm text-gray-600">
-                    {blog.description.split(" ").slice(0, 33).join(" ")}{"..."}
-                    <a
-                      href={blog.link}
+                    {blog.description.split(" ").slice(0, 33).join(" ")}...
+                    <Link
+                      href={`/blogs/${blog._id}`}
                       className="text-green-600 font-medium hover:underline"
                     >
                       Read More
-                    </a>
+                    </Link>
                   </p>
                 </div>
               </div>
             ))}
           </div>
         </div>
-
       </div>
     </section>
   );

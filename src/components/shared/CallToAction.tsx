@@ -16,7 +16,7 @@ interface CallToActionProps {
 const CallToAction: React.FC<CallToActionProps> = ({
   title,
   title1,
-  title2,
+  // title2,
   description,
   buttonText,
 }) => {

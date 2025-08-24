@@ -4,7 +4,7 @@ interface AllBlogsSkeletonProps {
   itemsPerPage?: number
 }
 
-export default function AllBlogsSkeleton({ itemsPerPage = 4 }: AllBlogsSkeletonProps) {
+export default function AllBlogsSkeleton({ itemsPerPage = 8 }: AllBlogsSkeletonProps) {
   return (
     <div className="px-6 py-12 mx-auto container">
       {/* Heading Skeleton */}
