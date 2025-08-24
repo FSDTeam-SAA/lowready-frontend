@@ -21,6 +21,7 @@ import Image from "next/image";
 import { useMutation } from "@tanstack/react-query";
 import { registerUser } from "@/lib/auth";
 import { toast } from "sonner";
+import { Eye, EyeOff } from "lucide-react"; // 👈 added
 
 // ✅ Zod Schema for validation
 const signupSchema = z
@@ -81,7 +82,7 @@ const SingupForm = () => {
       {
         onSuccess: (data) => {
           toast.success(data.message);
-          router.push(`/verify-otp?email=${data?.data?.email}`)
+          router.push(`/verify-otp?email=${data?.data?.email}`);
         },
         onError: (error) => {
           if (error instanceof Error) {
@@ -95,9 +96,17 @@ const SingupForm = () => {
   return (
     <section>
       <div className="">
-        <div className="grid md:grid-cols-2 items-center h-svh">
+        {/* back to home */}
+        <button
+          onClick={() => router.push("/")}
+          className="absolute top-24 right-28 md:right-48 text-green-600 hover:underline cursor-pointer"
+        >
+          Back to Home
+        </button>
+
+        <div className="grid lg:grid-cols-2 items-center h-svh">
           {/* Left side - image */}
-          <div className="bg-center">
+          <div className="bg-center hidden lg:block">
             <Image
               src={"/signup.png"}
               alt="signup"
@@ -109,7 +118,7 @@ const SingupForm = () => {
 
           {/* Right side - form */}
           <div className="flex items-center justify-center">
-            <div className="w-full max-w-md">
+            <div className="w-full max-w-lg px-2 md:px-3 lg:px-0">
               <h2 className="text-2xl font-bold text-green-600">
                 Create Your Account
               </h2>
@@ -169,6 +178,7 @@ const SingupForm = () => {
                     )}
                   />
 
+                  {/* Password field with toggle */}
                   <FormField
                     control={form.control}
                     name="password"
@@ -176,17 +186,31 @@ const SingupForm = () => {
                       <FormItem>
                         <FormLabel>Create Password</FormLabel>
                         <FormControl>
-                          <Input
-                            type={showPassword ? "text" : "password"}
-                            placeholder="********"
-                            {...field}
-                          />
+                          <div className="relative">
+                            <Input
+                              type={showPassword ? "text" : "password"}
+                              placeholder="********"
+                              {...field}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setShowPassword((prev) => !prev)}
+                              className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
+                            >
+                              {showPassword ? (
+                                <EyeOff className="w-4 h-4" />
+                              ) : (
+                                <Eye className="w-4 h-4" />
+                              )}
+                            </button>
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
 
+                  {/* Confirm password with toggle */}
                   <FormField
                     control={form.control}
                     name="confirmPassword"
@@ -194,11 +218,24 @@ const SingupForm = () => {
                       <FormItem>
                         <FormLabel>Confirm Password</FormLabel>
                         <FormControl>
-                          <Input
-                            type={showPassword ? "text" : "password"}
-                            placeholder="********"
-                            {...field}
-                          />
+                          <div className="relative">
+                            <Input
+                              type={showPassword ? "text" : "password"}
+                              placeholder="********"
+                              {...field}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setShowPassword((prev) => !prev)}
+                              className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
+                            >
+                              {showPassword ? (
+                                <EyeOff className="w-4 h-4" />
+                              ) : (
+                                <Eye className="w-4 h-4" />
+                              )}
+                            </button>
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -246,7 +283,10 @@ const SingupForm = () => {
 
               <p className="mt-4 text-center text-sm">
                 Already have an account?{" "}
-                <a href="/login" className="text-green-600 font-medium">
+                <a
+                  href="/login"
+                  className="text-green-600 font-medium cursor-pointer"
+                >
                   Log In
                 </a>
               </p>
