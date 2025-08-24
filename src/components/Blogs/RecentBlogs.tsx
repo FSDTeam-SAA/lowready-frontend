@@ -2,7 +2,9 @@
 
 import Image from "next/image";
 import { Calendar, Clock3 } from "lucide-react";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import RecentBlogsSkeleton from "./RecentBlogsSkeleton";
+
 
 const blogs = [
   {
@@ -37,7 +39,24 @@ const blogs = [
   },
 ];
 
+
+
 export default function RecentBlogs() {
+  const [loading, setLoading] = useState(true);
+
+ 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return <RecentBlogsSkeleton />;
+  }
+  
   return (
     <section className="py-10 md:py-20 lg:py-20 bg-[#F8F9FA]">
       <div className=" mx-auto container">

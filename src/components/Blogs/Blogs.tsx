@@ -2,6 +2,7 @@ import React from "react";
 import FindCare from "../shared/FindPerfectCare";
 import RecentBlogs from "./RecentBlogs";
 import StayUpdated from "./StayUpdated";
+import AllBlogs from "./AllBlogs";
 
 export default function Blogs() {
   return (
@@ -16,6 +17,7 @@ export default function Blogs() {
 
       <RecentBlogs />
       <StayUpdated />
+      <AllBlogs />
     </div>
   );
 }
