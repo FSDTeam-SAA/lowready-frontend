@@ -19,20 +19,23 @@ export default function FacilityCard({
   onBookTour,
 }: FacilityCardProps) {
   return (
-    <Card className="w-full overflow-hidden bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
-      <div className="relative h-48 w-full">
+    <Card className="w-full overflow-hidden bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 py-0 ">
+      <div className="relative ">
         <Image
           src={facility.image || "/placeholder.svg"}
           alt={facility.name}
-          fill
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          width={490}
+          height={321}
+          className="object-cover "
+          
         />
       </div>
 
       <CardContent className="p-4 space-y-4">
         {/* Header */}
         <div className="space-y-2">
+          <div className="flex justify-between">
+
           <h3 className="font-semibold text-lg text-gray-900 leading-tight">
             {facility.name}
           </h3>
@@ -47,6 +50,7 @@ export default function FacilityCard({
                 ({facility.reviewCount} reviews)
               </span>
             </div>
+          </div>
           </div>
 
           <div className="flex items-center gap-1 text-gray-600">

@@ -16,13 +16,13 @@ const FindCare = ({
         {/* Content */}
         <div className="flex flex-col items-center justify-center h-full text-white text-center px-4 sm:px-6 lg:px-8">
           <h1
-            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl mb-6 md:mb-8 font-bold leading-tight"
+            className="text-2xl  md:text-4xl lg:text-[40px]  mb-6 md:mb-8 font-bold leading-tight"
             style={{ fontFamily: "var(--font-playfair)" }}
           >
             {heading.split(" ")[0]}{" "}
             <span className="text-green-500">{heading.split(" ").slice(1).join(" ")}</span>
           </h1>
-          <p className="mt-6 md:mt-1 text-sm sm:text-lg md:text-xl lg:text-2xl leading-relaxed">
+          <p className="mt-6 md:mt-1 text-sm font-normal tracking-wide  md:text-[16px]  w-[80%] text-center  leading-[150%]">
             {subHeading}
           </p>
           {showButton && (
