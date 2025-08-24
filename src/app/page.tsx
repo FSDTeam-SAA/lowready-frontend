@@ -4,7 +4,7 @@ import FAQ from "@/components/landing/FAQ";
 import HowWorks from "@/components/landing/HowWorks";
 import BlogsCard from "@/components/shared/blogs";
 import FindCare from "@/components/shared/FindPerfectCare";
-import Footer from "@/components/shared/Footer";
+// import Footer from "@/components/shared/Footer";
 import Hero from "@/components/shared/Hero";
 // import Navbar from "@/components/shared/Navbar";
 // import TopBanner from "@/components/shared/TopBanner";
@@ -28,7 +28,7 @@ export default function Home() {
       />
       <FAQ />
       <BlogsCard />
-      <Footer />
+      {/* <Footer /> */}
     </main>
   );
 }

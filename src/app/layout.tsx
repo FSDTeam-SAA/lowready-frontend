@@ -6,6 +6,7 @@ import { Toaster } from "sonner";
 import AuthProvider from "@/provider/session-procider";
 import Navbar from "@/components/shared/Navbar";
 import TopBanner from "@/components/shared/TopBanner";
+import Footer from "@/components/shared/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,7 +19,7 @@ const geistMono = Geist_Mono({
 });
 
 const playfair = Playfair_Display({
-  variable: "--font-playfair", 
+  variable: "--font-playfair",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
@@ -40,9 +41,10 @@ export default function RootLayout({
       >
         <AuthProvider>
           <TanstackProvider>
-             <TopBanner />
+            <TopBanner />
             <Navbar />
             {children}
+            <Footer />
             <Toaster position="top-right" />
           </TanstackProvider>
         </AuthProvider>

@@ -5,28 +5,31 @@ import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { CarouselNavigation } from "@/components/shared/carousel-navigation";
 import { Clock3 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
 import { getAllBlogs } from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
 
+// Blog type based on API
 interface Blog {
   _id: string;
   title: string;
   description: string;
   createdAt: string;
-  image: {
-    url: string;
-    public_id: string;
-  };
+  readTime?: string;
+  image: { url: string; public_id: string };
 }
 
-export default function BlogPage() {
+export default function SimilarBlogs() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [slidesToShow, setSlidesToShow] = useState(1);
 
-  const { data: allBlogs, isLoading } = useQuery({
+  const { data: blogsResponse, isLoading } = useQuery({
     queryKey: ["blogs"],
     queryFn: () => getAllBlogs(),
   });
+
+  // Use API data if available, otherwise fallback to empty array
+  const blogs: Blog[] = blogsResponse?.data || [];
 
   // Responsive slides
   useEffect(() => {
@@ -46,7 +49,6 @@ export default function BlogPage() {
     return () => window.removeEventListener("resize", updateSlides);
   }, []);
 
-  const blogs = allBlogs?.data || [];
   const totalSlides = Math.max(0, blogs.length - slidesToShow + 1);
 
   const handlePrevious = () => {
@@ -70,23 +72,23 @@ export default function BlogPage() {
       {/* Header */}
       <div className="text-center mb-12">
         <h2 className="text-3xl md:text-4xl font-bold text-gray-900 font-playfair">
-          Latest <span className="text-primary">Insights & Resources</span>
+          Similar <span className="text-primary">Blogs</span>
         </h2>
-        <p className="text-[#68706A] mt-3 mx-auto max-w-2xl">
+        <p className="text-[#68706A] mt-3 mx-auto  ">
           Explore helpful articles, tips, and updates on senior care, assisted
           living, and making informed decisions for your loved ones.
         </p>
       </div>
 
       {/* Carousel */}
-      <div className="relative overflow-hidden py-6 lg:py-10">
+      <div className="relative overflow-hidden py-6 lg:py-6">
         <div
           className="flex transition-transform duration-500 ease-in-out"
           style={{
             transform: `translateX(-${currentSlide * (100 / slidesToShow)}%)`,
           }}
         >
-          {blogs.map((blog: Blog) => (
+          {blogs.map((blog) => (
             <div
               key={blog._id}
               className="flex-shrink-0 px-3"
@@ -123,7 +125,7 @@ export default function BlogPage() {
                       </svg>
                       <span className="ml-1">
                         {new Date(blog.createdAt).toLocaleDateString("en-US", {
-                          day: "numeric",
+                          day: "2-digit",
                           month: "long",
                           year: "numeric",
                         })}
@@ -131,15 +133,19 @@ export default function BlogPage() {
                     </span>
                     <span className="flex justify-center items-center text-[#8E938F]">
                       <Clock3 className="w-4 h-4" />
-                      <span className="ml-1">5 min read</span>
+                      <span className="ml-1">
+                        {blog.readTime || "5 min read"}
+                      </span>
                     </span>
                   </div>
                   {/* Title */}
-                  <h3 className="text-lg font-semibold text-[#191D23] mb-2">
-                    {/* {blog.title} */}
-                    {blog.title.split(" ").slice(0, 10).join(" ")}
-                    {blog.title.split(" ").length > 10 && " ... "}
-                  </h3>
+                  <Link href={`/blogs/${blog._id}`}>
+                    <h3 className="text-lg font-semibold text-[#191D23] mb-2 hover:underline">
+                      {/* {blog.title} */}
+                      {blog.title.split(" ").slice(0, 10).join(" ")}
+                      {blog.title.split(" ").length > 10 && " ... "}
+                    </h3>
+                  </Link>
                   {/* Description + Read More */}
                   <p className="text-[16px] text-[#68706A] mb-3">
                     {blog.description.split(" ").slice(0, 25).join(" ")}
