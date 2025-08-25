@@ -40,7 +40,7 @@ const FAQ = () => {
   const [openItem, setOpenItem] = useState<string | null>(null);
 
   return (
-    <div className=" bg-gray-200 bg-cover border-amber-300 border-2">
+    <div className=" bg-gray-200 bg-cover  ">
       <div className="container mx-auto space-y-4 lg:space-y-20 p-20">
         <div className="">
           <div className="text-center mb-12">
@@ -56,25 +56,31 @@ const FAQ = () => {
             </p>
           </div>
         </div>
-        <div className="flex flex-col items-center justify-center h-full  text-center px-4 sm:px-6 lg:px-8">
+        <div className=" ">
           <div className="flex flex-col items-center justify-center w-full px-4 sm:px-6 lg:px-8">
             <Accordion
               type="single"
               collapsible
               className="w-full max-w-3xl"
+              value={openItem || undefined}
               onValueChange={(value) => setOpenItem(value)}
             >
               {faqData.map((faq) => (
-                <AccordionItem key={faq.id} value={faq.id}>
-                  <AccordionTrigger className="flex justify-between items-center">
-                    <span>{faq.question}</span>
-                    {openItem === faq.id ? (
-                      <CircleMinus className=" text-primary" />
-                    ) : (
-                      <CirclePlus className=" text-primary" />
-                    )}
+                <AccordionItem key={faq.id} value={faq.id} className="border-b border-gray-300 relative">
+                  <AccordionTrigger className="flex justify-between items-center w-full text-left py-4 hover:no-underline group [&>svg]:hidden">
+                    <span className="font-medium text-[18px] text-shadow-gray-900 pr-6">{faq.question}</span>
                   </AccordionTrigger>
-                  <AccordionContent className="text-gray-600">
+                  
+                  {/* Custom icons positioned absolutely */}
+                  <div className="absolute right-0 top-4">
+                    {openItem === faq.id ? (
+                      <CircleMinus className="h-5 w-5 text-primary transition-transform duration-200" />
+                    ) : (
+                      <CirclePlus className="h-5 w-5 text-primary transition-transform duration-200" />
+                    )}
+                  </div>
+                  
+                  <AccordionContent className="text-gray-600 text-start pb-4 pt-2">
                     {faq.answer}
                   </AccordionContent>
                 </AccordionItem>
