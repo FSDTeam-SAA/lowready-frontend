@@ -45,7 +45,7 @@ const FAQ = () => {
         <div className="">
           <div className="text-center mb-12">
             <h1
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl mb-6 md:mb-8 font-bold leading-tight font-bold text-gray-900 mb-4"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6x md:mb-8 font-bold leading-tight   text-gray-900 mb-4"
               style={{ fontFamily: "var(--font-playfair)" }}
             >
               Frequently <span className="text-green-600">Asked Questions</span>
