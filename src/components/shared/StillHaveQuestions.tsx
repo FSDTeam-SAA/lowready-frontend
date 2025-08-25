@@ -2,19 +2,16 @@ import React from "react";
 
 export default function StillHaveQuestions() {
   return (
- 
-    <section className="bg-[#F8F9FA]">
-      <div className="container mx-auto px-4  md:px-20">
-        {/* Inner card/container background */}
-        <div className="bg-white py-16 rounded-xl relative overflow-hidden">
-          {/* Decorative circles */}
-          <div className="absolute w-80 h-96 rounded-full border-7 border-green-200 opacity-15 top-[-50px] left-[800px]"></div>
-          <div className="absolute w-80 h-96 rounded-full border-7 border-green-200 opacity-15 bottom-[-20px] right-[150px]"></div>
+    <section
+      className={`bg-[#F8F9FA] py-20`}>
 
+      <div className="container mx-auto px-4  bg-[url(/images/BG.png)] bg-no-repeat">
+        {/* Inner card/container background */}
+        <div className=" py-16 rounded-xl relative overflow-hidden">
           {/* Content */}
           <div className="relative z-10 text-center mx-auto">
             <h2
-              className="text-2xl md:text-4xl font-bold text-gray-900 mb-2" 
+              className="text-2xl md:text-4xl font-bold text-gray-900 mb-2"
               style={{ fontFamily: "var(--font-playfair)" }}
             >
               Still Have <span className="text-primary">Questions?</span>
