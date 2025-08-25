@@ -17,7 +17,7 @@
 //                         <li className="text-gray-700 hover:text-green-500 border-b-2 border-transparent hover:border-green-500 transition"><a href={"/search"}>Search</a></li>
 //                         <li className="text-gray-700 hover:text-green-500 border-b-2 border-transparent hover:border-green-500 transition"><a href={"/about-us"}>About Us</a></li>
 //                         <li className="text-gray-700 hover:text-green-500 border-b-2 border-transparent hover:border-green-500 transition"><a href={"/blogs"}>Blogs</a></li>
-//                         <li className="text-gray-700 hover:text-green-500 border-b-2 border-transparent hover:border-green-500 transition"><a href={"/contactus"}>Contact Us</a></li>
+//                         <li className="text-gray-700 hover:text-green-500 border-b-2 border-transparent hover:border-green-500 transition"><a href={"/contact-us"}>Contact Us</a></li>
 //                     </ul>
 //                 </div>
 //                 <div className="">
@@ -95,7 +95,7 @@ const Navbar = () => {
                 <a href={"/blogs"}>Blogs</a>
               </li>
               <li className="text-gray-700 hover:text-green-500 border-b-2 border-transparent hover:border-green-500 transition">
-                <a href={"/contactus"}>Contact Us</a>
+                <a href={"/contact-us"}>Contact Us</a>
               </li>
             </ul>
           </div>
@@ -145,7 +145,7 @@ const Navbar = () => {
                 <a href={"/blogs"} onClick={() => setIsOpen(false)}>Blogs</a>
               </li>
               <li className="text-gray-700 hover:text-green-500 border-b-2 border-transparent hover:border-green-500 transition py-2">
-                <a href={"/contactus"} onClick={() => setIsOpen(false)}>Contact Us</a>
+                <a href={"/contact-us"} onClick={() => setIsOpen(false)}>Contact Us</a>
               </li>
             </ul>
             

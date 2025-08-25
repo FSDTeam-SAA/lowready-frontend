@@ -1,5 +1,5 @@
 import React from "react";
-import Image from "next/image";  
+import Image from "next/image";
 
 export default function WhyWeStarted() {
   return (
@@ -7,8 +7,11 @@ export default function WhyWeStarted() {
       <div className="px-4 sm:px-8 lg:px-16 py-10 md:py-14 lg:py-16 bg-[#F8F9FA] ">
         <div className=" mx-auto container">
           {/* Heading */}
-          <div className="text-center mb-10" >
-            <h1 className="text-4xl font-semibold text-[#343A40]" style={{ fontFamily: "var(--font-playfair)" }}>
+          <div className="text-center mb-10">
+            <h1
+              className="text-4xl font-semibold text-[#343A40]"
+              style={{ fontFamily: "var(--font-playfair)" }}
+            >
               Why We <span className="text-primary">Started</span>
             </h1>
             <p className="mt-2 text-gray-500">
@@ -20,7 +23,7 @@ export default function WhyWeStarted() {
           {/* Content Grid */}
           <div className="grid md:grid-cols-2 gap-10 items-center">
             {/* Text Section */}
-            <div>
+            <div className="order-2 md:order-1">
               <p className="text-gray-700 leading-relaxed">
                 The idea for ALH Hub was born from a simple observation —
                 families searching for the right assisted living facility often
@@ -39,14 +42,14 @@ export default function WhyWeStarted() {
                 providers. By combining powerful search tools, direct
                 communication channels, and transparent information, we aim to
                 empower families to make confident decisions while helping
-                smaller facilities thrive. ALH Hub is more than a directory —
-                it’s a bridge that connects compassion, quality care, and the
-                people who need it most.
+                smaller facilities thrive. ALH Hub is more than a directory — it’s
+                a bridge that connects compassion, quality care, and the people
+                who need it most.
               </p>
             </div>
 
             {/* Image Section */}
-            <div className="rounded-lg overflow-hidden shadow-md">
+            <div className="rounded-lg overflow-hidden shadow-md order-1 md:order-2">
               <Image
                 src="/about/aboutImage4.png"
                 alt="Two women talking over tea"

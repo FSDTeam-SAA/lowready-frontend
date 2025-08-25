@@ -4,7 +4,7 @@ import React from "react";
 export default function MakingSenior() {
   return (
     <section className="bg-[#F8F9FA]">
-      <div className="mx-auto container my-10 ">
+      <div className="mx-auto container">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center px-8 py-12">
           {/* Left side - images */}
           <div className="grid grid-cols-2 gap-4">
@@ -14,7 +14,7 @@ export default function MakingSenior() {
                 alt="about image 1"
                 width={400}
                 height={400}
-                className="rounded-lg object-cover w-full h-full"
+                className="rounded-lg object-cover w-full h-full "
               />
             </div>
             <Image

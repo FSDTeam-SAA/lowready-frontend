@@ -8,7 +8,7 @@ import calenderimg from '../../../public/images/calender-icon.png'
 
 const HowWorks = () => {
   return (
-    <div className="container mx-auto"> 
+    <div className="container mx-auto my-20"> 
         {/* Header */}
         <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
