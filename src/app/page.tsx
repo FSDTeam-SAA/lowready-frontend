@@ -1,8 +1,10 @@
+import ResidentialFacility from "@/components/facilities/ResidentialFacility";
 import { FacilitiesCarousel } from "@/components/landing/facilities-carousel";
 import { ReviewFamilyCarousel } from "@/components/landing/FamilyReview";
 import FAQ from "@/components/landing/FAQ";
 import HowWorks from "@/components/landing/HowWorks";
-import BlogsCard from "@/components/shared/blogs";
+import WhyAlhHub from "@/components/landing/WhyAlhHub";
+// import BlogsCard from "@/components/shared/blogs";
 import FindCare from "@/components/shared/FindPerfectCare";
 // import Footer from "@/components/shared/Footer";
 import Hero from "@/components/shared/Hero";
@@ -16,8 +18,8 @@ export default function Home() {
       <Navbar /> */}
       <Hero />
       <FacilitiesCarousel />
-      <FindCare />
       <HowWorks />
+      <WhyAlhHub />
       <ReviewFamilyCarousel />
       <FindCare
         imageSrc="/images/findcare.jpg"
@@ -27,7 +29,8 @@ export default function Home() {
         showButton={true}
       />
       <FAQ />
-      <BlogsCard />
+      <ResidentialFacility />
+      {/* <BlogsCard /> */}
       {/* <Footer /> */}
     </main>
   );
