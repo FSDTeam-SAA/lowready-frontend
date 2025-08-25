@@ -40,7 +40,7 @@ const FAQ = () => {
   const [openItem, setOpenItem] = useState<string | null>(null);
 
   return (
-    <div className="bg-gray-200 bg-cover">
+    <div className="bg-[#F8F9FA] bg-cover">
       <div className="container mx-auto space-y-4 lg:space-y-20 py-10 px-4 sm:py-12 sm:px-6 md:py-16 md:px-8 lg:py-20 lg:px-12 xl:p-20">
         <div className="">
           <div className="text-center mb-8 sm:mb-10 md:mb-12">
