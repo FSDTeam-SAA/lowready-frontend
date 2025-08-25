@@ -4,9 +4,7 @@ import "./globals.css";
 import TanstackProvider from "@/provider/QueryProvider";
 import { Toaster } from "sonner";
 import AuthProvider from "@/provider/session-procider";
-import Navbar from "@/components/shared/Navbar";
-import TopBanner from "@/components/shared/TopBanner";
-import Footer from "@/components/shared/Footer";
+import LayoutVisibilityWrapper from "@/provider/layout-visibility-wraper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,10 +39,8 @@ export default function RootLayout({
       >
         <AuthProvider>
           <TanstackProvider>
-            <TopBanner />
-            <Navbar />
-            {children}
-            <Footer />
+            <LayoutVisibilityWrapper>{children}</LayoutVisibilityWrapper>
+
             <Toaster position="top-right" />
           </TanstackProvider>
         </AuthProvider>

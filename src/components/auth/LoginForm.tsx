@@ -69,10 +69,10 @@ const LoginForm = () => {
 
       const user = session?.user as SessionUserWithRole | undefined;
 
-      if (user?.role === "admin") {
+      if (user?.role === "organization") {
         router.push("/dashboard");
       } else if (user?.role === "organization") {
-        router.push("/organization/dashboard");
+        router.push("/dashboard");
       } else {
         router.push("/");
       }
@@ -212,7 +212,7 @@ const LoginForm = () => {
           <p className="mt-6 text-center text-sm">
             Don&apos;t have an account?{" "}
             <a
-              href="/signup?role=user"
+              href="/signinaspage"
               className="text-green-600 font-medium hover:underline cursor-pointer"
             >
               Sign Up
