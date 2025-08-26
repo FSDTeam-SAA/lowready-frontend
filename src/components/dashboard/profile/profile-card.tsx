@@ -12,7 +12,7 @@ const profileData = {
   phone: "+1 (555) 123-4567",
   location: "1234 Oak Avenue, San Francisco, CA 94102A",
   joinDate: "14 August, 2025",
-  avatar: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/profile-pic.jpg-19DPq6d0yjCH87F1Gapu3bisKDkZT6.jpeg",
+  avatar: "../../../../public/images/profile-pic.jpg",
 }
 
 export function ProfileCard() {
@@ -26,7 +26,7 @@ export function ProfileCard() {
         {/* Avatar with edit button */}
         <div className="relative -mt-12 mb-4">
           <Avatar className="h-24 w-24 border-4 border-white shadow-lg">
-            <AvatarImage src={profileData.avatar || "/placeholder.svg"} alt={profileData.name} />
+            <AvatarImage src={profileData.avatar || "/public/images/profile-pic.jpg"} alt={profileData.name} />
             <AvatarFallback className="text-lg font-semibold">
               {profileData.name
                 .split(" ")
