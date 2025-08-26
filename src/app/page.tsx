@@ -14,8 +14,7 @@ import Hero from "@/components/shared/Hero";
 export default function Home() {
   return (
     <main role="main">
-      {/* <TopBanner />
-      <Navbar /> */}
+    
       <Hero />
       <FacilitiesCarousel />
       <HowWorks />
@@ -30,8 +29,7 @@ export default function Home() {
       />
       <FAQ />
       <ResidentialFacility />
-      {/* <BlogsCard /> */}
-      {/* <Footer /> */}
+     
     </main>
   );
 }
