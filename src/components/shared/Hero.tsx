@@ -11,7 +11,7 @@ const Hero = () => {
         {/* Content */}
         <div className="flex flex-col items-center justify-center h-full text-white text-center px-4 sm:px-6 lg:px-8">
           <h1
-            className="text-3xl sm:text-5xl md:text-6xl mb-6 md:mb-8 font-bold leading-tight"
+            className="text-3xl sm:text-5xl md:text-6xl mb-6 md:mb-8 font-bold max-w-3xl leading-tight"
             style={{ fontFamily: "var(--font-playfair)" }}
           >
             Every Senior Deserves a Place That{" "}

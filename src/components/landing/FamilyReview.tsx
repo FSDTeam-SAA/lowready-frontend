@@ -63,7 +63,7 @@ export function ReviewFamilyCarousel({
     <div className="container mx-auto py-8 lg:py-20">
       {/* Header */}
       <div className="text-center mb-12">
-        <h2 className="text-4xl font-bold text-gray-900 mb-4">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4" style={{ fontFamily: "var(--font-playfair)" }}>
           What Families  <span className="text-green-600">Are Saying</span>
         </h2>
         <p className="text-gray-600 max-w-2xl mx-auto leading-relaxed">

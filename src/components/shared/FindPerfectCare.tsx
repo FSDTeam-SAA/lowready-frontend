@@ -8,7 +8,7 @@ const FindCare = ({
   showButton = true, // Flag to conditionally render the button
 }) => {
   return (
-   <section className="p-4 sm:p-20 bg-gray-200 bg-cover">
+   <section className="p-4 sm:p-20 bg-[#F8F9FA] bg-cover">
       <div
         className="container mx-auto h-[calc(50vh)] rounded-md bg-cover bg-center bg-black/60 bg-blend-overlay"
         style={{ backgroundImage: `url(${imageSrc})` }}  
