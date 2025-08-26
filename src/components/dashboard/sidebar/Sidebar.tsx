@@ -34,8 +34,8 @@ const menuItems = [
     icon: LayoutDashboard,
   },
   {
-    title: "Bookings",
-    url: "/dashboard/Bookings",
+    title: "Placements",
+    url: "/dashboard/placements",
     icon: CalendarCheck,
   },
   {
@@ -68,6 +68,7 @@ const menuItems = [
     url: "/dashboard/ReviewsRatings",
     icon: Star,
   },
+  
 ];
 
 export function DashboardSidebar({
@@ -88,11 +89,11 @@ export function DashboardSidebar({
         <SidebarContent className="p-4 bg-[#FFFFFF]">
           <Link href={"/dashboard"} className="text-white">
             <Image
-              src="/images/logo.png"
+              src="/dashboard/dashboardlogo.png"
               alt="Logo"
-              width={80}
+              width={150}
               height={80}
-              className="mx-auto h-[80px] w-[80px] object-contain mb-4"
+              className="mx-auto h-[80px] font-bold w-[150px] object-contain mb-4"
             />
           </Link>
           <SidebarMenu className="space-y-2 ">
@@ -126,16 +127,16 @@ export function DashboardSidebar({
           </SidebarMenu>
         </SidebarContent>
 
-        <div className="mt-auto p-4 bg-[#212121] border-t border-[#5c5343]">
+        <div className="absolute bottom-[100px] -left-20 w-[312px] ">
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton
                 onClick={() => setIsLogoutDialogOpen(true)}
                 className="group py-8 flex justify-center hover:bg-[#ffffff]"
               >
-                <div className="flex flex-col items-center">
-                  <LogOut className="h-5 w-5 text-[#ffffff] group-hover:text-[#212121]" />
-                  <span className="text-[12px] font-medium text-[#ffffff] group-hover:text-[#212121]">
+                <div className="flex gap-2 items-center">
+                  <LogOut className=" text-gray-400 group-hover:text-[#212121]" />
+                  <span className="text-[12px] font-medium text-gray group-hover:text-[#212121]">
                     Logout
                   </span>
                 </div>
