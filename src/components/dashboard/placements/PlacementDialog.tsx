@@ -2,7 +2,7 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { X } from "lucide-react"
+// import { X } from "lucide-react"
 import type { BookingData } from "@/lib/api"
 
 interface BookingDetailsDialogProps {
@@ -20,7 +20,7 @@ export function BookingDetailsDialog({ booking, open, onOpenChange }: BookingDet
         <DialogHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <DialogTitle className="text-xl font-semibold">Resident Information</DialogTitle>
           <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)} className="h-6 w-6">
-            <X className="h-4 w-4" />
+            {/* <X className="h-4 w-4" /> */}
           </Button>
         </DialogHeader>
 

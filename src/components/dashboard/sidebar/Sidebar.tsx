@@ -85,7 +85,7 @@ export function DashboardSidebar({
 
   return (
     <>
-      <Sidebar className="border-r-0 w-[312px] shadow-2xl text-[#68706A]" collapsible="none" {...props}>
+      <Sidebar className="border-r-0 w-[312px]  text-[#68706A]" collapsible="none" {...props}>
         <SidebarContent className="p-4 bg-[#FFFFFF]">
           <Link href={"/dashboard"} className="text-white">
             <Image
@@ -101,9 +101,9 @@ export function DashboardSidebar({
               <SidebarMenuItem key={item.title} className="">
                 <SidebarMenuButton
                   isActive={isActive(item.url)}
-                  className="group py-8 flex  hover:bg-[#28A745] data-[active=true]:bg-[#28A745]"
+                  className="group py-8 flex w-full  hover:bg-[#28A745] data-[active=true]:bg-[#28A745]"
                 >
-                  <Link href={item.url} className="flex gap-2 items-center">
+                  <Link href={item.url} className="flex w-full gap-2 items-center">
                     <item.icon
                       className={`h-5 w-5 ${
                         isActive(item.url)
