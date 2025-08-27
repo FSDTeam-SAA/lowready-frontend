@@ -1,6 +1,6 @@
 import React from "react";
-import DetailsCard from "./DetailsCard";
 import CustomersRight from "./CustomersRight";
+import DetailsCard from "./DetailsCard";
 
 interface CustomersDetailsProps {
   id: string;

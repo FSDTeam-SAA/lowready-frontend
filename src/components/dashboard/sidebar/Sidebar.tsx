@@ -46,6 +46,47 @@ import { signOut } from "next-auth/react";
 import Image from "next/image";
 
 const menuItems = [
+   {
+    title: "Dashboard",
+    url: "/dashboard",
+    icon: LayoutDashboard,
+  },
+  {
+    title: "Placements",
+    url: "/dashboard/placements",
+    icon: CalendarCheck,
+  },
+  {
+    title: "Tour Requests",
+    url: "/dashboard/tourrequest",
+    icon: PlaneTakeoff,
+  },
+  {
+    title: "Customers",
+    url: "/dashboard/customers",
+    icon: Users,
+  },
+  {
+    title: "Manage Facility",
+    url: "/dashboard/ManageFacility",
+    icon: Building2,
+  },
+  {
+    title: "Earnings Summary",
+    url: "/dashboard/earningsummary",
+    icon: Wallet,
+  },
+  {
+    title: "Commissions",
+    url: "/dashboard/Commissions",
+    icon: Percent,
+  },
+  {
+    title: "Reviews & Ratings",
+    url: "/dashboard/ReviewsRatings",
+    icon: Star,
+  },
+  
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Placements", url: "/dashboard/placements", icon: CalendarCheck },
   { title: "Tour Requests", url: "/dashboard/TourRequests", icon: PlaneTakeoff },
