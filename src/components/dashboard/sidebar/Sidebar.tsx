@@ -50,10 +50,11 @@ const menuItems = [
   { title: "Placements", url: "/dashboard/placements", icon: CalendarCheck },
   { title: "Tour Requests", url: "/dashboard/TourRequests", icon: PlaneTakeoff },
   { title: "Customers", url: "/dashboard/Customers", icon: Users },
-  { title: "Manage Facility", url: "/dashboard/ManageFacility", icon: Building2 },
+  { title: "Manage Facility", url: "/dashboard/facility", icon: Building2 },
   { title: "Earnings Summary", url: "/dashboard/EarningSummary", icon: Wallet },
   { title: "Commissions", url: "/dashboard/Commissions", icon: Percent },
   { title: "Reviews & Ratings", url: "/dashboard/ReviewsRatings", icon: Star },
+  
 ];
 
 const settingsSubItems = [
