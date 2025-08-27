@@ -27,7 +27,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Eye, Trash2, FileText, ImageIcon, File, Plus } from "lucide-react";
+import { Eye, Trash2, FileText, ImageIcon, File, Plus, UploadCloud } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 
@@ -221,7 +221,9 @@ export function DocumentManager() {
               <div className="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center hover:bg-primary/80 mb-2">
                 <Plus className="h-6 w-6" />
               </div>
-              <p className="text-sm">Click to select a file</p>
+              <p className="tex-sm">Browse and chose the files you want to upload from your computer</p>
+              <UploadCloud />
+              <p className="text-base">Click to select a file</p>
               <p className="text-xs text-muted-foreground mt-2">
                 Supported: PDF, JPG, PNG (Max 10MB)
               </p>
