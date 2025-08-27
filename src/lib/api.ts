@@ -1,11 +1,21 @@
-// lib/api.ts
-// -------------------------------
-// API configuration and types
-// -------------------------------
+import {
+  ApiResponse,
+  Booking,
+  ChangePasswordResponse,
+  PaginatedResponse,
+  RebookData,
+  RebookResponse,
+  ReviewData,
+  ReviewResponse,
+  User,
+  VisitBooking,
+} from "@/types/account";
 import axios from "axios";
+
 import { getSession } from "next-auth/react";
 
-export const API_BASE_URL = "http://localhost:5000/api/v1";
+export const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
 
 // Create axios instance
 const api = axios.create({
@@ -98,28 +108,28 @@ export interface VerificationInfo {
   verified: boolean;
 }
 
-export interface User {
-  _id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  role?: string;
+// export interface User {
+//   _id: string;
+//   firstName: string;
+//   lastName: string;
+//   email: string;
+//   role?: string;
 
-  // optional fields
-  avatar?: Avatar;
-  avatars?: string;
-  bio?: string;
-  street?: string;
-  postCode?: string | null;
-  phoneNum?: string;
-  verificationInfo?: VerificationInfo;
+//   // optional fields
+//   avatar?: Avatar;
+//   avatars?: string;
+//   bio?: string;
+//   street?: string;
+//   postCode?: string | null;
+//   phoneNum?: string;
+//   verificationInfo?: VerificationInfo;
 
-  // timestamps
-  createdAt?: string;
-  updatedAt?: string;
+//   // timestamps
+//   createdAt?: string;
+//   updatedAt?: string;
 
-  onboardingStatus?: boolean;
-}
+//   onboardingStatus?: boolean;
+// }
 
 export interface ApiBooking {
   _id: string;
@@ -134,15 +144,15 @@ export interface ApiBooking {
   phoneNumber?: string;
 }
 
-export interface PaginatedResponse<T> {
-  data: T[];
-  meta: {
-    totalPages: number;
-    totalItems: number;
-    currentPage: number;
-    itemsPerPage: number;
-  };
-}
+// export interface PaginatedResponse<T> {
+//   data: T[];
+//   meta: {
+//     totalPages: number;
+//     totalItems: number;
+//     currentPage: number;
+//     itemsPerPage: number;
+//   };
+// }
 
 // -------------------------------
 // Mapper: ApiBooking → BookingData
@@ -288,3 +298,76 @@ export async function getTourRequest(): Promise<TourRequestResponse> {
     throw error;
   }
 }
+
+//? accouunt related api
+
+// Update user profile
+export async function updateUserProfile(
+  formData: FormData
+): Promise<ApiResponse<User>> {
+  const res = await api.patch("/user/update", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return res.data;
+}
+
+// Change password
+export async function changePassword(data: {
+  oldPassword: string;
+  newPassword: string;
+}): Promise<ApiResponse<ChangePasswordResponse>> {
+  const res = await api.post("/user/change-password", data);
+  return res.data;
+}
+
+// Get user booking history
+export async function getUserBookings(
+  userId: string,
+  page = 1,
+  limit = 10
+): Promise<PaginatedResponse<Booking>> {
+  console.log("userId in API call:", userId);
+  const res = await api.get(
+    `/bookings/user/${userId}?page=${page}&limit=${limit}`
+  );
+  return res.data;
+}
+
+// Get single booking details
+export async function getBookingDetails(
+  bookingId: string
+): Promise<ApiResponse<Booking>> {
+  const res = await api.get(`/bookings/${bookingId}`);
+  return res.data;
+}
+
+// Get user tour history
+export async function getUserTourHistory(): Promise<
+  ApiResponse<VisitBooking[]>
+> {
+  const res = await api.get("/visit-booking/my-bookings");
+  return res.data;
+}
+
+// Submit review/feedback
+export async function submitReview(
+  data: ReviewData
+): Promise<ApiResponse<ReviewResponse>> {
+  const res = await api.post("/review-rating", data);
+  return res.data;
+}
+
+// Rebook facility
+export async function rebookFacility(
+  facilityId: string,
+  bookingData: RebookData
+): Promise<ApiResponse<RebookResponse>> {
+  const res = await api.post(`/bookings/rebook/${facilityId}`, bookingData);
+  return res.data;
+}
+
+export const getBookingHistory = getUserBookings;
+export const getTourHistory = getUserTourHistory;
+export const rebookTour = rebookFacility;

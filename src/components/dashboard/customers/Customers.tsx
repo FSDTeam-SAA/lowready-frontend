@@ -33,8 +33,8 @@ export function Customers() {
     [data]
   );
 
-  const totalPages = data?.meta?.totalPages || 0;
-  const totalResults = data?.meta?.totalItems || 0;
+  const totalPages = data?.pagination?.totalPages || 0;
+  const totalResults = data?.pagination?.totalItems || 0;
 
   // Pagination helpers
   const startItem = (currentPage - 1) * itemsPerPage + 1;

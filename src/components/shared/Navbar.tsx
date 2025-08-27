@@ -19,8 +19,13 @@ const Navbar = () => {
   // Close menus when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) setIsOpen(false);
-      if (profileRef.current && !profileRef.current.contains(event.target as Node)) setProfileMenuOpen(false);
+      if (menuRef.current && !menuRef.current.contains(event.target as Node))
+        setIsOpen(false);
+      if (
+        profileRef.current &&
+        !profileRef.current.contains(event.target as Node)
+      )
+        setProfileMenuOpen(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -34,7 +39,14 @@ const Navbar = () => {
     };
   }, [isOpen]);
 
-  const navItems = ["Home", "Facilities", "Search", "About Us", "Blogs", "Contact Us"];
+  const navItems = [
+    "Home",
+    "Facilities",
+    "Search",
+    "About Us",
+    "Blogs",
+    "Contact Us",
+  ];
 
   return (
     <header className="sticky top-0 h-20 bg-white z-50 shadow-sm">
@@ -53,7 +65,13 @@ const Navbar = () => {
                   key={item}
                   className="text-gray-700 hover:text-green-500 border-b-2 border-transparent hover:border-green-500 transition"
                 >
-                  <Link href={`/${item === "Home" ? "" : item.toLowerCase().replace(/\s+/g, "-")}`}>
+                  <Link
+                    href={`/${
+                      item === "Home"
+                        ? ""
+                        : item.toLowerCase().replace(/\s+/g, "-")
+                    }`}
+                  >
                     {item}
                   </Link>
                 </li>
@@ -75,10 +93,15 @@ const Navbar = () => {
                 </Button>
                 {profileMenuOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg py-2 z-50">
-                    <Link href="/profile" className="block px-4 py-2 hover:bg-gray-100">
+                    <Link
+                      href="/account"
+                      className="block px-4 py-2 hover:bg-gray-100"
+                    >
                       Profile
                     </Link>
-                    <span className="block px-4 py-2 text-gray-500">{session.user?.role}</span>
+                    <span className="block px-4 py-2 text-gray-500">
+                      {session.user?.role}
+                    </span>
                     <button
                       className="block w-full text-left px-4 py-2 hover:bg-gray-100"
                       onClick={() => signOut()}
@@ -98,7 +121,12 @@ const Navbar = () => {
 
             {/* Mobile Hamburger */}
             <div className="md:hidden ml-2">
-              <Button variant="ghost" size="icon" onClick={() => setIsOpen(!isOpen)} aria-label="Toggle menu">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsOpen(!isOpen)}
+                aria-label="Toggle menu"
+              >
                 {isOpen ? <X size={24} /> : <Menu size={24} />}
               </Button>
             </div>
@@ -120,7 +148,11 @@ const Navbar = () => {
                   className="text-gray-700 hover:text-green-500 border-b-2 border-transparent hover:border-green-500 transition py-2"
                 >
                   <Link
-                    href={`/${item === "Home" ? "" : item.toLowerCase().replace(/\s+/g, "-")}`}
+                    href={`/${
+                      item === "Home"
+                        ? ""
+                        : item.toLowerCase().replace(/\s+/g, "-")
+                    }`}
                     onClick={() => setIsOpen(false)}
                   >
                     {item}
@@ -150,7 +182,9 @@ const Navbar = () => {
                       >
                         Profile
                       </Link>
-                      <span className="block px-4 py-2 text-gray-500">{session?.user?.role}</span>
+                      <span className="block px-4 py-2 text-gray-500">
+                        {session?.user?.role}
+                      </span>
                       <button
                         className="block w-full text-left px-4 py-2 hover:bg-gray-100"
                         onClick={() => {

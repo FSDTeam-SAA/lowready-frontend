@@ -3,7 +3,6 @@ import { Geist, Geist_Mono, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import TanstackProvider from "@/provider/QueryProvider";
 import { Toaster } from "sonner";
-import AuthProvider from "@/provider/session-procider";
 import LayoutVisibilityWrapper from "@/provider/layout-visibility-wraper";
 
 const geistSans = Geist({
@@ -37,13 +36,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} antialiased`}
       >
-        <AuthProvider>
-          <TanstackProvider>
-            <LayoutVisibilityWrapper>{children}</LayoutVisibilityWrapper>
-
-            <Toaster position="top-right" />
-          </TanstackProvider>
-        </AuthProvider>
+        <TanstackProvider>
+          <LayoutVisibilityWrapper>{children}</LayoutVisibilityWrapper>
+          <Toaster position="top-right" />
+        </TanstackProvider>
       </body>
     </html>
   );

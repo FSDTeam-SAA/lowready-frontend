@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import React from "react";
 import Navbar from "@/components/shared/Navbar";
 import TopBanner from "@/components/shared/TopBanner";
@@ -8,12 +8,12 @@ import { usePathname } from "next/navigation";
 const HIDDEN_ROUTES = [
   "/signup",
   "/login",
+  "/forgot-password",
   "/reset-password",
   "/verify",
   "/verify-otp",
   "/dashboard",
-  "/signinaspage",
-  "/forget-password",
+  '/signinaspage',
 ];
 
 const LayoutVisibilityWrapper = ({
@@ -28,7 +28,7 @@ const LayoutVisibilityWrapper = ({
   );
   return (
     <>
-      {!shouldHideLayout && <TopBanner />}
+        {!shouldHideLayout && <TopBanner />}
       {!shouldHideLayout && <Navbar />}
       {children}
       {!shouldHideLayout && <Footer />}
