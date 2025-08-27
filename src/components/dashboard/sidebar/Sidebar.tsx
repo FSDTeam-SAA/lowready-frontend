@@ -55,7 +55,7 @@ const menuItems = [
   },
   {
     title: "Earnings Summary",
-    url: "/dashboard/EarningSummary",
+    url: "/dashboard/earningsummary",
     icon: Wallet,
   },
   {
