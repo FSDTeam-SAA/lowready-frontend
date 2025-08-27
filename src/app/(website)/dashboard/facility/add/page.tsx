@@ -201,34 +201,34 @@ export default function AddFacilityPage() {
     }
   };
 
-  const addTime = (day: string, time: string) => {
-    if (!time) return;
+//   const addTime = (day: string, time: string) => {
+//     if (!time) return;
 
-    setFormData((prev) => ({
-      ...prev,
-      availableTimes:
-        prev.availableTimes?.map((dayTime) =>
-          dayTime.day === day
-            ? { ...dayTime, times: [...dayTime.times, time] }
-            : dayTime
-        ) || [],
-    }));
-  };
+//     setFormData((prev) => ({
+//       ...prev,
+//       availableTimes:
+//         prev.availableTimes?.map((dayTime) =>
+//           dayTime.day === day
+//             ? { ...dayTime, times: [...dayTime.times, time] }
+//             : dayTime
+//         ) || [],
+//     }));
+//   };
 
-  const removeTime = (day: string, timeToRemove: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      availableTimes:
-        prev.availableTimes?.map((dayTime) =>
-          dayTime.day === day
-            ? {
-                ...dayTime,
-                times: dayTime.times.filter((t) => t !== timeToRemove),
-              }
-            : dayTime
-        ) || [],
-    }));
-  };
+//   const removeTime = (day: string, timeToRemove: string) => {
+//     setFormData((prev) => ({
+//       ...prev,
+//       availableTimes:
+//         prev.availableTimes?.map((dayTime) =>
+//           dayTime.day === day
+//             ? {
+//                 ...dayTime,
+//                 times: dayTime.times.filter((t) => t !== timeToRemove),
+//               }
+//             : dayTime
+//         ) || [],
+//     }));
+//   };
 
   return (
     <div className="flex h-screen bg-gray-50">
