@@ -4,37 +4,41 @@ import React, { useState } from "react";
 import { Clock3 } from "lucide-react";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
-import { useQuery } from "@tanstack/react-query";
-import { getAllBlogsPagination } from "@/lib/api";
-import Link from "next/link";
-import AllBlogsSkeleton from "./AllBlogsSkeleton";
 
 type Blog = {
-  _id: string;
+  id: number;
   title: string;
   description: string;
-  createdAt: string;
-  readTime?: string;
-  image: { url: string; public_id: string };
+  date: string;
+  readTime: string;
+  image: string;
+  link: string;
 };
 
-const ITEMS_PER_PAGE = 8;
+const blogs: Blog[] = [
+  // ---- Demo blogs ----
+  ...Array.from({ length: 12 }, (_, i) => ({
+    id: i + 1,
+    title: `Blog Post ${i + 1}`,
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus, elit nibh et nisl, pellentesque scelerisque faucibus facilisis at.",
+    date: "14 August, 2025",
+    readTime: "12 min read",
+    image: "/images/blogImage.jpg",
+    link: "#",
+  })),
+];
+
+const ITEMS_PER_PAGE = 4;
 
 export default function AllBlogs() {
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Fetch blogs using React Query
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["allBlogs", currentPage],
-    queryFn: () => getAllBlogsPagination(currentPage, ITEMS_PER_PAGE),
-    // keepPreviousData: true,
-  });
-
-  const blogs: Blog[] = data?.data || [];
-  const totalItems = data?.meta?.total || 0;
-  const totalPages = data?.meta?.totalPages || 1;
+  const totalItems = blogs.length;
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
 
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const currentBlogs = blogs.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
@@ -42,6 +46,7 @@ export default function AllBlogs() {
     }
   };
 
+  // Function for pagination numbers with ellipsis
   const getPageNumbers = () => {
     const pages: (number | string)[] = [];
     if (totalPages <= 5) {
@@ -57,10 +62,6 @@ export default function AllBlogs() {
     }
     return pages;
   };
-
-  if (isLoading) return <AllBlogsSkeleton />;
-  if (isError)
-    return <p className="text-center text-red-500">Failed to load blogs.</p>;
 
   return (
     <div className="px-6 py-12 mx-auto container">
@@ -80,29 +81,25 @@ export default function AllBlogs() {
 
       {/* Blog Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {blogs.map((blog) => (
+        {currentBlogs.map((blog) => (
           <Card
-            key={blog._id}
+            key={blog.id}
             className="w-full bg-[#F8F9FA] hover:shadow-xl hover:drop-shadow-xl shadow-none border-none transition-shadow duration-300 rounded-lg"
           >
             {/* Image */}
-            <div className="w-full h-56 md:h-64 lg:h-72 relative">
-              <Image
-                src={blog.image?.url || "/images/blogImage.jpg"}
-                alt={blog.title}
-                fill
-                className="object-cover rounded-t-lg"
-                sizes="(max-width: 768px) 100vw,
-           (max-width: 1200px) 50vw,
-           25vw"
-                priority={false}
-              />
-            </div>
+            <Image
+              src={blog.image}
+              alt={blog.title}
+              width={400}
+              height={250}
+              className="w-full object-cover rounded-t-lg"
+            />
 
             <CardContent className="p-4">
               {/* Meta Info */}
               <div className="flex justify-between items-center gap-4 text-gray-500 text-sm mb-2">
                 <span className="flex justify-center items-center ">
+                  {/* Calendar SVG */}
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
@@ -115,36 +112,26 @@ export default function AllBlogs() {
                       fill="#8E938F"
                     />
                   </svg>
-                  <span className="ml-1">
-                    {new Date(blog.createdAt).toLocaleDateString("en-US", {
-                      day: "numeric",
-                      month: "long",
-                      year: "numeric",
-                    })}
-                  </span>
+                  <span className="ml-1">{blog.date}</span>
                 </span>
 
                 <span className="flex justify-center items-center text-[#8E938F]">
                   <Clock3 className="w-4 h-4" />
-                  <span className="ml-1">{blog.readTime || "5 min read"}</span>
+                  <span className="ml-1">{blog.readTime}</span>
                 </span>
               </div>
 
               {/* Title */}
-              <Link href={`/blogs/${blog._id}`}>
-                <h3 className="text-lg font-semibold text-[#191D23] mb-2 hover:underline">
-                  {/* {blog.title} */}
-                  {blog.title.split(" ").slice(0, 10).join(" ")}
-                  {blog.title.split(" ").length > 10 && " ... "}
-                </h3>
-              </Link>
+              <h3 className="text-lg font-semibold text-[#191D23] mb-2">
+                {blog.title}
+              </h3>
 
               {/* Description + Read More */}
               <p className="text-[16px] text-[#68706A] mb-3">
                 {blog.description.split(" ").slice(0, 25).join(" ")}
                 {blog.description.split(" ").length > 25 && " ... "}
                 <a
-                  href={`/blogs/${blog._id}`}
+                  href={blog.link}
                   className="text-green-600 font-medium hover:underline"
                 >
                   Read More

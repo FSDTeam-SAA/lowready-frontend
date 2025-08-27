@@ -3,42 +3,99 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
-import { CarouselNavigation } from "@/components/shared/carousel-navigation";
+import { CarouselNavigation } from "@/components/shared/carousel-navigation"; // ✅ import navigation
 import { Clock3 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { getAllBlogs } from "@/lib/api";
 
+// Blog type
 interface Blog {
-  _id: string;
+  id: number;
   title: string;
   description: string;
-  createdAt: string;
-  image: {
-    url: string;
-    public_id: string;
-  };
+  date: string;
+  readTime: string;
+  image: string;
+  link: string;
 }
+
+// Dummy blog data
+const blogsData: Blog[] = [
+  {
+    id: 1,
+    title: "Choosing the Right Assisted Living",
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus, elit nibh et nisl Lobortis euismod lacinia maecenas convallis tincidunt pharetra dui, ridiculus nec ultrices non curabitur aliquam, nibh platea vestibulum placerat dapibus nunc. Metus curae erat ac class pulvinar eleifend consequat condimentum sapien, in a mi tristique posuere porttitor laoreet dictum, parturient diam at faucibus massa commodo aliquet ultricies....",
+    date: "14 August, 2025",
+    readTime: "12 min read",
+    image: "/images/blogImage.jpg",
+    link: "#",
+  },
+  {
+    id: 2,
+    title: "How to Support Senior Loved Ones",
+    description:
+      "Pellentesque scelerisque faucibus facilisis at. Placerat morbi sem viverra Lobortis euismod lacinia maecenas convallis tincidunt pharetra dui, ridiculus nec ultrices non curabitur aliquam, nibh platea vestibulum placerat dapibus nunc. Metus curae erat ac class pulvinar eleifend consequat condimentum sapien, in a mi tristique posuere porttitor laoreet dictum, parturient diam at faucibus massa commodo aliquet ultricies....",
+    date: "12 August, 2025",
+    readTime: "8 min read",
+    image: "/images/blogImage.jpg",
+    link: "#",
+  },
+  {
+    id: 3,
+    title: "Making Informed Care Decisions",
+    description:
+      "Curabitur sit amet elit in sapien varius interdum non vel justo. Etiam in feugiat eros Lobortis euismod lacinia maecenas convallis tincidunt pharetra dui, ridiculus nec ultrices non curabitur aliquam, nibh platea vestibulum placerat dapibus nunc. Metus curae erat ac class pulvinar eleifend consequat condimentum sapien, in a mi tristique posuere porttitor laoreet dictum, parturient diam at faucibus massa commodo aliquet ultricies....",
+    date: "10 August, 2025",
+    readTime: "10 min read",
+    image: "/images/blogImage.jpg",
+    link: "#",
+  },
+  {
+    id: 4,
+    title: "Tips for Healthy Aging",
+    description:
+      "Integer aliquet, orci in bibendum luctus, turpis ante pretium velit Lobortis euismod lacinia maecenas convallis tincidunt pharetra dui, ridiculus nec ultrices non curabitur aliquam, nibh platea vestibulum placerat dapibus nunc. Metus curae erat ac class pulvinar eleifend consequat condimentum sapien, in a mi tristique posuere porttitor laoreet dictum, parturient diam at faucibus massa commodo aliquet ultricies....",
+    date: "8 August, 2025",
+    readTime: "7 min read",
+    image: "/images/blogImage.jpg",
+    link: "#",
+  },
+  {
+    id: 4,
+    title: "Tips for Healthy Aging",
+    description:
+      "Integer aliquet, orci in bibendum luctus, turpis ante pretium velit Lobortis euismod lacinia maecenas convallis tincidunt pharetra dui, ridiculus nec ultrices non curabitur aliquam, nibh platea vestibulum placerat dapibus nunc. Metus curae erat ac class pulvinar eleifend consequat condimentum sapien, in a mi tristique posuere porttitor laoreet dictum, parturient diam at faucibus massa commodo aliquet ultricies....",
+    date: "8 August, 2025",
+    readTime: "7 min read",
+    image: "/images/blogImage.jpg",
+    link: "#",
+  },
+  {
+    id: 4,
+    title: "Tips for Healthy Aging",
+    description:
+      "Integer aliquet, orci in bibendum luctus, turpis ante pretium velit Lobortis euismod lacinia maecenas convallis tincidunt pharetra dui, ridiculus nec ultrices non curabitur aliquam, nibh platea vestibulum placerat dapibus nunc. Metus curae erat ac class pulvinar eleifend consequat condimentum sapien, in a mi tristique posuere porttitor laoreet dictum, parturient diam at faucibus massa commodo aliquet ultricies....",
+    date: "8 August, 2025",
+    readTime: "7 min read",
+    image: "/images/blogImage.jpg",
+    link: "#",
+  },
+];
 
 export default function BlogPage() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [slidesToShow, setSlidesToShow] = useState(1);
 
-  const { data: allBlogs, isLoading } = useQuery({
-    queryKey: ["blogs"],
-    queryFn: () => getAllBlogs(),
-  });
-
   // Responsive slides
   useEffect(() => {
     const updateSlides = () => {
       if (window.innerWidth >= 1280) {
-        setSlidesToShow(4);
+        setSlidesToShow(4); // Large desktop
       } else if (window.innerWidth >= 1024) {
-        setSlidesToShow(3);
+        setSlidesToShow(3); // Desktop
       } else if (window.innerWidth >= 768) {
-        setSlidesToShow(2);
+        setSlidesToShow(2); // Tablet
       } else {
-        setSlidesToShow(1);
+        setSlidesToShow(1); // Mobile
       }
     };
     updateSlides();
@@ -46,8 +103,7 @@ export default function BlogPage() {
     return () => window.removeEventListener("resize", updateSlides);
   }, []);
 
-  const blogs = allBlogs?.data || [];
-  const totalSlides = Math.max(0, blogs.length - slidesToShow + 1);
+  const totalSlides = Math.max(0, blogsData.length - slidesToShow + 1);
 
   const handlePrevious = () => {
     setCurrentSlide((prev) => Math.max(0, prev - 1));
@@ -60,10 +116,6 @@ export default function BlogPage() {
   const handleDotClick = (index: number) => {
     setCurrentSlide(index);
   };
-
-  if (isLoading) {
-    return <p className="text-center py-10">Loading blogs...</p>;
-  }
 
   return (
     <div className="container mx-auto py-16">
@@ -86,25 +138,20 @@ export default function BlogPage() {
             transform: `translateX(-${currentSlide * (100 / slidesToShow)}%)`,
           }}
         >
-          {blogs.map((blog: Blog) => (
+          {blogsData.map((blog) => (
             <div
-              key={blog._id}
+              key={blog.id}
               className="flex-shrink-0 px-3"
               style={{ width: `${100 / slidesToShow}%` }}
             >
               <Card className="w-full bg-[#F8F9FA] hover:shadow-xl hover:drop-shadow-xl shadow-none border-none transition-shadow duration-300 rounded-lg">
-                <div className="w-full h-56 md:h-64 lg:h-72 relative">
-                  <Image
-                    src={blog.image?.url || "/images/blogImage.jpg"}
-                    alt={blog.title}
-                    fill
-                    className="object-cover rounded-t-lg"
-                    sizes="(max-width: 768px) 100vw,
-           (max-width: 1200px) 50vw,
-           25vw"
-                    priority={false}
-                  />
-                </div>
+                <Image
+                  src={blog.image}
+                  alt={blog.title}
+                  width={400}
+                  height={250}
+                  className="w-full object-cover rounded-t-lg"
+                />
                 <CardContent className="p-4">
                   {/* Meta */}
                   <div className="flex justify-between items-center gap-4 text-gray-500 text-sm mb-2">
@@ -121,31 +168,23 @@ export default function BlogPage() {
                           fill="#8E938F"
                         />
                       </svg>
-                      <span className="ml-1">
-                        {new Date(blog.createdAt).toLocaleDateString("en-US", {
-                          day: "numeric",
-                          month: "long",
-                          year: "numeric",
-                        })}
-                      </span>
+                      <span className="ml-1">{blog.date}</span>
                     </span>
                     <span className="flex justify-center items-center text-[#8E938F]">
                       <Clock3 className="w-4 h-4" />
-                      <span className="ml-1">5 min read</span>
+                      <span className="ml-1">{blog.readTime}</span>
                     </span>
                   </div>
                   {/* Title */}
                   <h3 className="text-lg font-semibold text-[#191D23] mb-2">
-                    {/* {blog.title} */}
-                    {blog.title.split(" ").slice(0, 10).join(" ")}
-                    {blog.title.split(" ").length > 10 && " ... "}
+                    {blog.title}
                   </h3>
                   {/* Description + Read More */}
                   <p className="text-[16px] text-[#68706A] mb-3">
                     {blog.description.split(" ").slice(0, 25).join(" ")}
                     {blog.description.split(" ").length > 25 && " ... "}
                     <a
-                      href={`/blogs/${blog._id}`}
+                      href={blog.link}
                       className="text-green-600 font-medium hover:underline"
                     >
                       Read More

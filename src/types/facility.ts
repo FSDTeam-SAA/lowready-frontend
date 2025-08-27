@@ -22,5 +22,3 @@ export const CATEGORY_TYPES = {
   garden: "Garden",
   other: "Other",
 } as const
-
-

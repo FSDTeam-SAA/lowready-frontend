@@ -33,9 +33,9 @@ export default function DashboardLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable}`}
+        className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} `}
       >
-        <section>
+        <div>
           <SidebarProvider>
             <div className="flex min-h-screen">
               <DashboardSidebar />
@@ -43,11 +43,11 @@ export default function DashboardLayout({
                 <div className="sticky top-0 z-10 flex ">
                   <DashboardHeader />
                 </div>
-                <main className="md:ml-[15px] bg-[#F8F9FA] h-full">{children}</main>
+                <main className="md:ml-[15px]">{children}</main>
               </div>
             </div>
           </SidebarProvider>
-        </section>
+        </div>
       </body>
     </html>
   );
