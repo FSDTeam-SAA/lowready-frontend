@@ -27,7 +27,7 @@ api.interceptors.request.use(
 );
 
 // -------------------------------
-// Blog API functions
+// Blog API
 // -------------------------------
 export async function getAllBlogs() {
   const res = await api.get(`/blog/all`);
@@ -88,16 +88,42 @@ export interface Facility {
   images: string[];
 }
 
+export interface Avatar {
+  public_id: string;
+  url: string;
+}
+
+export interface VerificationInfo {
+  token: string;
+  verified: boolean;
+}
+
 export interface User {
+  _id: string;
   firstName: string;
   lastName: string;
   email: string;
-  avatar?: { url: string };
+  role?: string;
+
+  // optional fields
+  avatar?: Avatar;
+  avatars?: string;
+  bio?: string;
+  street?: string;
+  postCode?: string | null;
+  phoneNum?: string;
+  verificationInfo?: VerificationInfo;
+
+  // timestamps
+  createdAt?: string;
+  updatedAt?: string;
+
+  onboardingStatus?: boolean;
 }
 
 export interface ApiBooking {
   _id: string;
-  facility: Facility | null; // facility can be null
+  facility: Facility | null;
   userId: User;
   startingDate: string;
   duration: string;
@@ -121,7 +147,10 @@ export interface PaginatedResponse<T> {
 // -------------------------------
 // Mapper: ApiBooking → BookingData
 // -------------------------------
-export function mapApiBookingToBookingData(apiBooking: ApiBooking, index: number): BookingData {
+export function mapApiBookingToBookingData(
+  apiBooking: ApiBooking,
+  index: number
+): BookingData {
   const facility = apiBooking.facility; // can be null
   return {
     id: apiBooking._id,
@@ -173,9 +202,16 @@ export async function getFacilities() {
   }
 }
 
-export async function getBookingsdata(facilityId: string, page: number, limit: number): Promise<PaginatedResponse<ApiBooking>> {
+// ✅ unified customer/bookings API
+export async function getCustomers(
+  facilityId: string,
+  page: number,
+  limit: number
+): Promise<PaginatedResponse<ApiBooking>> {
   try {
-    const res = await api.get(`/bookings/facility/${facilityId}?page=${page}&limit=${limit}`);
+    const res = await api.get(
+      `/bookings/facility/${facilityId}?page=${page}&limit=${limit}`
+    );
     return res.data as PaginatedResponse<ApiBooking>;
   } catch (error) {
     if (error instanceof Error) {
@@ -195,6 +231,59 @@ export async function getNotifications(userId: string) {
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(`Error fetching notifications: ${error.message}`);
+    }
+    throw error;
+  }
+}
+
+// -------------------------------
+// Tour Requests
+// -------------------------------
+export interface FacilityImage {
+  public_id: string;
+  url: string;
+  _id: string;
+}
+
+export interface TourRequest {
+  _id: string;
+  userId: User;
+  name: string;
+  email: string;
+  phoneNumber: string;
+  relationWith: string;
+  message: string;
+  facility: Facility;
+  visitDate: string;
+  visitTime: string;
+  rating: number;
+  status: "upcoming" | "completed" | "cancelled";
+  createdAt: string;
+  updatedAt: string;
+  images: FacilityImage[];
+}
+
+export interface TourRequestResponse {
+  success: boolean;
+  message: string;
+  data: {
+    bookings: TourRequest[];
+    pagination: {
+      total: number;
+      page: number;
+      limit: number;
+      totalPages: number;
+    };
+  };
+}
+
+export async function getTourRequest(): Promise<TourRequestResponse> {
+  try {
+    const res = await api.get("/visit-booking/facility-bookings");
+    return res.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error fetching tour requests: ${error.message}`);
     }
     throw error;
   }

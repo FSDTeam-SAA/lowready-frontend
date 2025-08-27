@@ -11,7 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Eye, ChevronLeft, ChevronRight } from "lucide-react";
 import {
@@ -20,16 +20,16 @@ import {
   mapApiBookingToBookingData,
   type BookingData,
 } from "@/lib/api";
-import { BookingDetailsDialog } from "./PlacementDialog";
 
-export function BookingsTable() {
+export function Customers() {
   const [selectedBooking, setSelectedBooking] = useState<BookingData | null>(
     null
   );
-  const [dialogOpen, setDialogOpen] = useState(false);
+
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
+  // Fetch facilities
   const { data: facilityData, isLoading: isFacilitiesLoading } = useQuery({
     queryKey: ["facilityId"],
     queryFn: () => getFacilities(),
@@ -37,34 +37,36 @@ export function BookingsTable() {
 
   const facilityId = facilityData?.data?.[0]?._id || "";
 
+  // Fetch bookings
   const { data, error, isLoading } = useQuery({
-    queryKey: ["bookings", facilityId, currentPage, itemsPerPage],
+    queryKey: ["customers", facilityId, currentPage, itemsPerPage],
     queryFn: () => getCustomers(facilityId, currentPage, itemsPerPage),
     enabled: !!facilityId,
   });
 
   const bookings: BookingData[] =
     data?.data.map((b, i) => mapApiBookingToBookingData(b, i)) || [];
+
   const totalPages = data?.meta?.totalPages || 0;
   const totalResults = data?.meta?.totalItems || 0;
 
   const handleDetailsClick = (booking: BookingData) => {
     setSelectedBooking(booking);
-    setDialogOpen(true);
+   
   };
 
   if (isFacilitiesLoading || isLoading) {
     return (
-      <div className="flex items-center justify-center h-64 text-muted-foreground">
-        Loading bookings...
+      <div className="flex items-center justify-center h-64">
+        <div className="text-muted-foreground">Loading bookings...</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-64 text-destructive">
-        {error instanceof Error ? error.message : "Error loading bookings"}
+      <div className="flex items-center justify-center h-64">
+        <div className="text-destructive">Error loading bookings</div>
       </div>
     );
   }
@@ -74,14 +76,12 @@ export function BookingsTable() {
       <div className="border rounded-lg">
         <Table>
           <TableHeader>
-            <TableRow className="bg-[#E6FAEE]">
+            <TableRow className=" bg-[#E6FAEE] ">
               <TableHead>Invoice</TableHead>
               <TableHead>Customer</TableHead>
               <TableHead>Location</TableHead>
-              <TableHead>Price</TableHead>
-              <TableHead>Status</TableHead>
               <TableHead>Date</TableHead>
-              <TableHead>Referral Fee</TableHead>
+              <TableHead>Price</TableHead>
               <TableHead>Action</TableHead>
             </TableRow>
           </TableHeader>
@@ -112,22 +112,9 @@ export function BookingsTable() {
                   </div>
                 </TableCell>
                 <TableCell>{booking.location}</TableCell>
-                <TableCell>${booking.price.toLocaleString()}</TableCell>
-                <TableCell>
-                  <Badge
-                    variant={
-                      booking.status === "Paid" ? "default" : "destructive"
-                    }
-                  >
-                    {booking.status}
-                  </Badge>
-                </TableCell>
                 <TableCell>{booking.date}</TableCell>
-                <TableCell>
-                  {booking.status === "Cancelled"
-                    ? "-"
-                    : `$${booking.referralFee}`}
-                </TableCell>
+                <TableCell>${booking.price.toLocaleString()}</TableCell>
+
                 <TableCell>
                   <Button
                     className="bg-green-600 text-white cursor-pointer hover:bg-green-100"
@@ -135,7 +122,7 @@ export function BookingsTable() {
                     size="sm"
                     onClick={() => handleDetailsClick(booking)}
                   >
-                    <Eye className="h-4 w-4 mr-1" /> Details
+                    <Eye className="h-4 w-4 mr-1 " /> Details
                   </Button>
                 </TableCell>
               </TableRow>
@@ -186,13 +173,7 @@ export function BookingsTable() {
         </div>
       </div>
 
-      {selectedBooking && (
-        <BookingDetailsDialog
-          booking={selectedBooking}
-          open={dialogOpen}
-          onOpenChange={setDialogOpen}
-        />
-      )}
+    
     </div>
   );
 }
