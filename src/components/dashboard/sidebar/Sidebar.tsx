@@ -40,12 +40,12 @@ const menuItems = [
   },
   {
     title: "Tour Requests",
-    url: "/dashboard/TourRequests",
+    url: "/dashboard/tourrequest",
     icon: PlaneTakeoff,
   },
   {
     title: "Customers",
-    url: "/dashboard/Customers",
+    url: "/dashboard/customers",
     icon: Users,
   },
   {
