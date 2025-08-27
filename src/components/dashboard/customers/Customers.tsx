@@ -1,61 +1,46 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import Link from "next/link";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Eye, ChevronLeft, ChevronRight } from "lucide-react";
-import {
-  getCustomers,
-  getFacilities,
-  mapApiBookingToBookingData,
-  type BookingData,
-} from "@/lib/api";
+import { getCustomers, getFacilities, mapApiBookingToBookingData, type BookingData } from "@/lib/api";
 
 export function Customers() {
-  const [selectedBooking, setSelectedBooking] = useState<BookingData | null>(
-    null
-  );
-
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
   // Fetch facilities
   const { data: facilityData, isLoading: isFacilitiesLoading } = useQuery({
-    queryKey: ["facilityId"],
-    queryFn: () => getFacilities(),
+    queryKey: ["facilities"],
+    queryFn: getFacilities,
   });
 
   const facilityId = facilityData?.data?.[0]?._id || "";
 
-  // Fetch bookings
-  const { data, error, isLoading } = useQuery({
+  // Fetch customers/bookings
+  const { data, isLoading: isBookingsLoading, error } = useQuery({
     queryKey: ["customers", facilityId, currentPage, itemsPerPage],
     queryFn: () => getCustomers(facilityId, currentPage, itemsPerPage),
     enabled: !!facilityId,
   });
 
-  const bookings: BookingData[] =
-    data?.data.map((b, i) => mapApiBookingToBookingData(b, i)) || [];
+  const bookings: BookingData[] = useMemo(
+    () => data?.data.map((b, i) => mapApiBookingToBookingData(b, i)) || [],
+    [data]
+  );
 
   const totalPages = data?.meta?.totalPages || 0;
   const totalResults = data?.meta?.totalItems || 0;
 
-  const handleDetailsClick = (booking: BookingData) => {
-    setSelectedBooking(booking);
-   
-  };
+  // Pagination helpers
+  const startItem = (currentPage - 1) * itemsPerPage + 1;
+  const endItem = Math.min(currentPage * itemsPerPage, totalResults);
 
-  if (isFacilitiesLoading || isLoading) {
+  if (isFacilitiesLoading || isBookingsLoading) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-muted-foreground">Loading bookings...</div>
@@ -76,7 +61,7 @@ export function Customers() {
       <div className="border rounded-lg">
         <Table>
           <TableHeader>
-            <TableRow className=" bg-[#E6FAEE] ">
+            <TableRow className="bg-[#E6FAEE]">
               <TableHead>Invoice</TableHead>
               <TableHead>Customer</TableHead>
               <TableHead>Location</TableHead>
@@ -92,10 +77,7 @@ export function Customers() {
                 <TableCell>
                   <div className="flex items-center gap-3">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage
-                        src={booking.customer.avatar}
-                        alt={booking.customer.name}
-                      />
+                      <AvatarImage src={booking.customer.avatar} alt={booking.customer.name} />
                       <AvatarFallback>
                         {booking.customer.name
                           .split(" ")
@@ -105,25 +87,19 @@ export function Customers() {
                     </Avatar>
                     <div>
                       <div className="font-medium">{booking.customer.name}</div>
-                      <div className="text-sm text-muted-foreground">
-                        {booking.customer.email}
-                      </div>
+                      <div className="text-sm text-muted-foreground">{booking.customer.email}</div>
                     </div>
                   </div>
                 </TableCell>
                 <TableCell>{booking.location}</TableCell>
                 <TableCell>{booking.date}</TableCell>
                 <TableCell>${booking.price.toLocaleString()}</TableCell>
-
                 <TableCell>
-                  <Button
-                    className="bg-green-600 text-white cursor-pointer hover:bg-green-100"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleDetailsClick(booking)}
-                  >
-                    <Eye className="h-4 w-4 mr-1 " /> Details
-                  </Button>
+                  <Link href={`/dashboard/customers/${booking.id}`}>
+                    <Button className="bg-green-600 text-white hover:bg-green-700" variant="ghost" size="sm">
+                      <Eye className="h-4 w-4 mr-1" /> Details
+                    </Button>
+                  </Link>
                 </TableCell>
               </TableRow>
             ))}
@@ -134,9 +110,7 @@ export function Customers() {
       {/* Pagination */}
       <div className="flex items-center justify-between px-10">
         <div className="text-sm text-muted-foreground">
-          Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
-          {Math.min(currentPage * itemsPerPage, totalResults)} of {totalResults}{" "}
-          results
+          Showing {startItem} to {endItem} of {totalResults} results
         </div>
         <div className="flex items-center gap-2">
           <Button
@@ -163,17 +137,13 @@ export function Customers() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() =>
-              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-            }
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
             disabled={currentPage === totalPages}
           >
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
       </div>
-
-    
     </div>
   );
 }
