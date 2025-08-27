@@ -1,11 +1,23 @@
 // API configuration and types
+import {
+  ApiResponse,
+  Booking,
+  ChangePasswordResponse,
+  PaginatedResponse,
+  RebookData,
+  RebookResponse,
+  ReviewData,
+  ReviewResponse,
+  User,
+  VisitBooking,
+} from "@/types/account";
 import axios from "axios";
 
 import { getSession } from "next-auth/react";
 
-
 // import { config } from "process";
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
+export const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
 
 //create axios instance
 const api = axios.create({
@@ -17,7 +29,7 @@ api.interceptors.request.use(
   async (config) => {
     const session = await getSession();
     if (session?.accessToken) {
-      config.headers.Authorization = `${session.accessToken}`;
+      config.headers.Authorization = `Bearer ${session.accessToken}`;
     } else {
       console.warn("no token in session");
     }
@@ -25,7 +37,6 @@ api.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
-
 
 // Get All Blogs with pagination
 export async function getAllBlogsPagination(page: number, limit: number) {
@@ -39,62 +50,63 @@ export async function getSingleBlog(id: string) {
   return res.data;
 }
 
-
 //test api call to fetch bookings
 
 // API functions for booking management
 export interface BookingData {
-  id: string
-  invoice: string
+  id: string;
+  invoice: string;
   customer: {
-    name: string
-    email: string
-    avatar: string
-  }
-  location: string
-  price: number
-  status: "Paid" | "Cancelled"
-  date: string
-  referralFee: number
-  referralPercentage: number
+    name: string;
+    email: string;
+    avatar: string;
+  };
+  location: string;
+  price: number;
+  status: "Paid" | "Cancelled";
+  date: string;
+  referralFee: number;
+  referralPercentage: number;
   // Detailed information for dialog
   residentInfo: {
-    facilityName: string
-    bookedTime: string
-    specialNeeds: string
-  }
+    facilityName: string;
+    bookedTime: string;
+    specialNeeds: string;
+  };
   bookerInfo: {
-    fullName: string
-    relationToResident: string
-    phoneNumber: string
-    emailAddress: string
-  }
+    fullName: string;
+    relationToResident: string;
+    phoneNumber: string;
+    emailAddress: string;
+  };
   bookingDetails: {
-    facilityName: string
-    roomServiceType: string
-    admissionDate: string
-    durationOfStay: string
-    totalBill: number
-  }
+    facilityName: string;
+    roomServiceType: string;
+    admissionDate: string;
+    durationOfStay: string;
+    totalBill: number;
+  };
 }
 
 export async function fetchBookings(
   page = 1,
-  limit = 10,
+  limit = 10
 ): Promise<{
-  data: BookingData[]
-  total: number
-  page: number
-  totalPages: number
+  data: BookingData[];
+  total: number;
+  page: number;
+  totalPages: number;
 }> {
   try {
-    const response = await fetch(`http://localhost:5000/api/v1/bookings?page=${page}&limit=${limit}`)
+    const response = await fetch(
+      `http://localhost:5000/api/v1/bookings?page=${page}&limit=${limit}`
+    );
 
     if (!response.ok) {
-      throw new Error("Failed to fetch bookings")
+      throw new Error("Failed to fetch bookings");
     }
 
-    const result = await response.json()
+    const result = await response.json();
 
     // Transform API response to match our BookingData interface
     // Adjust this mapping based on your actual API response structure
@@ -103,9 +115,9 @@ export async function fetchBookings(
       total: result.total || result.count || 0,
       page: result.page || page,
       totalPages: result.totalPages || Math.ceil((result.total || 0) / limit),
-    }
+    };
   } catch (error) {
-    console.error("Error fetching bookings:", error)
+    console.error("Error fetching bookings:", error);
     // Fallback to mock data for development
     const mockData = [
       {
@@ -125,7 +137,8 @@ export async function fetchBookings(
         residentInfo: {
           facilityName: "Sunny Hills Assisted Living",
           bookedTime: "12:00 PM",
-          specialNeeds: "Wheelchair accessible room, Vegetarian meals, daily medication assistance.",
+          specialNeeds:
+            "Wheelchair accessible room, Vegetarian meals, daily medication assistance.",
         },
         bookerInfo: {
           fullName: "Olivia Rhye",
@@ -158,7 +171,8 @@ export async function fetchBookings(
         residentInfo: {
           facilityName: "Sunny Hills Assisted Living",
           bookedTime: "12:00 PM",
-          specialNeeds: "Wheelchair accessible room, Vegetarian meals, daily medication assistance.",
+          specialNeeds:
+            "Wheelchair accessible room, Vegetarian meals, daily medication assistance.",
         },
         bookerInfo: {
           fullName: "Olivia Rhye",
@@ -174,28 +188,22 @@ export async function fetchBookings(
           totalBill: 2000,
         },
       })),
-    ]
+    ];
 
     return {
       data: mockData.slice((page - 1) * limit, page * limit),
       total: mockData.length,
       page,
       totalPages: Math.ceil(mockData.length / limit),
-    }
+    };
   }
 }
 
-
 // main api
-
 
 // Get All Blogs with pagination
 
-
-
-
-
-export async function getBookingdata(page: number, limit: number){
+export async function getBookingdata(page: number, limit: number) {
   try {
     const res = await api.get("/bookings", { params: { page, limit } });
     console.log("API response:", res.data);
@@ -204,7 +212,84 @@ export async function getBookingdata(page: number, limit: number){
     if (error instanceof Error) {
       throw new Error(`Error fetching bookings: ${error.message}`);
     }
-  
   }
 }
 
+//? accouunt related api
+
+// Update user profile
+export async function updateUserProfile(
+  formData: FormData
+): Promise<ApiResponse<User>> {
+  const res = await api.patch("/user/update", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return res.data;
+}
+
+// Change password
+export async function changePassword(data: {
+  oldPassword: string;
+  newPassword: string;
+}): Promise<ApiResponse<ChangePasswordResponse>> {
+  const res = await api.post("/user/change-password", data);
+  return res.data;
+}
+
+// Get user booking history
+export async function getUserBookings(
+  userId: string,
+  page = 1,
+  limit = 10
+): Promise<PaginatedResponse<Booking>> {
+  console.log("userId in API call:", userId);
+  const res = await api.get(
+    `/bookings/user/${userId}?page=${page}&limit=${limit}`
+  );
+  return res.data;
+}
+
+// Get single booking details
+export async function getBookingDetails(
+  bookingId: string
+): Promise<ApiResponse<Booking>> {
+  const res = await api.get(`/bookings/${bookingId}`);
+  return res.data;
+}
+
+// Get user tour history
+export async function getUserTourHistory(): Promise<
+  ApiResponse<VisitBooking[]>
+> {
+  const res = await api.get("/visit-booking/my-bookings");
+  return res.data;
+}
+
+// Submit review/feedback
+export async function submitReview(
+  data: ReviewData
+): Promise<ApiResponse<ReviewResponse>> {
+  const res = await api.post("/review-rating", data);
+  return res.data;
+}
+
+// Rebook facility
+export async function rebookFacility(
+  facilityId: string,
+  bookingData: RebookData
+): Promise<ApiResponse<RebookResponse>> {
+  const res = await api.post(`/bookings/rebook/${facilityId}`, bookingData);
+  return res.data;
+}
+
+// Get All Blogs
+export async function getAllBlogs() {
+  const res = await api.get(`/blog/all`);
+  return res.data;
+}
+
+export const getBookingHistory = getUserBookings;
+export const getTourHistory = getUserTourHistory;
+export const rebookTour = rebookFacility;
