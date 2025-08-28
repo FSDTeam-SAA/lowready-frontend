@@ -20,6 +20,12 @@ export interface Facility {
     day: string
     times: string[]
   }[]
+  facilityLicenseNumber?: string
+  medicaidPrograms?: {
+    public_id: string
+    url: string
+    _id: string
+  }[]
 }
 
 export interface User {

@@ -5,27 +5,31 @@ import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "../ui/button";
-import { Menu, X, User } from "lucide-react";
+import { Menu, X,  } from "lucide-react";
+
+// Import shadcn/ui components
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const Navbar = () => {
-  const { data: session } = useSession();
-  const isLoggedIn = !!session;
+  const { data: session, status } = useSession();
+  const isLoggedIn = status === "authenticated";
 
   const [isOpen, setIsOpen] = useState(false); // Mobile menu
-  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const profileRef = useRef<HTMLDivElement>(null);
 
   // Close menus when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node))
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setIsOpen(false);
-      if (
-        profileRef.current &&
-        !profileRef.current.contains(event.target as Node)
-      )
-        setProfileMenuOpen(false);
+      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -38,6 +42,16 @@ const Navbar = () => {
       document.body.style.overflow = "auto";
     };
   }, [isOpen]);
+
+  // Helper to get initials for fallback
+  const getInitials = (name?: string | null) => {
+    if (!name) return "UN"; // Unknown User
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase();
+  };
 
   const navItems = [
     "Home",
@@ -82,34 +96,33 @@ const Navbar = () => {
           {/* Right: Sign In / Profile */}
           <div className="flex-shrink-0 flex items-center gap-4">
             {isLoggedIn ? (
-              <div className="relative hidden md:block" ref={profileRef}>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-primary"
-                  onClick={() => setProfileMenuOpen(!profileMenuOpen)}
-                >
-                  <User size={32} />
-                </Button>
-                {profileMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg py-2 z-50">
-                    <Link
-                      href="/account"
-                      className="block px-4 py-2 hover:bg-gray-100"
-                    >
-                      Profile
+              <div className="hidden md:block">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    {/* Desktop profile display */}
+                    <Button variant="ghost" className="flex items-center gap-2">
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage src={session?.user.image || ""} alt={session?.user.name || ""} />
+                        <AvatarFallback>{getInitials(session?.user.name)}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex flex-col text-left">
+                        <div className="font-medium">{session?.user.name}</div>
+                        <div className="text-sm text-muted-foreground">{session?.user.role}</div>
+                      </div>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-56" align="end" forceMount>
+                    <Link href="/account" passHref>
+                      <DropdownMenuItem className="cursor-pointer">
+                        Profile
+                      </DropdownMenuItem>
                     </Link>
-                    <span className="block px-4 py-2 text-gray-500">
-                      {session.user?.role}
-                    </span>
-                    <button
-                      className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                      onClick={() => signOut()}
-                    >
-                      Logout
-                    </button>
-                  </div>
-                )}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem className="cursor-pointer" onClick={() => signOut()}>
+                      Log out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             ) : (
               <div className="hidden md:block">
@@ -163,43 +176,34 @@ const Navbar = () => {
 
             <div className="mt-8">
               {isLoggedIn ? (
-                <div className="relative" ref={profileRef}>
-                  <Button
-                    className="w-full text-primary flex items-center justify-center gap-2"
-                    variant="ghost"
-                    onClick={() => setProfileMenuOpen(!profileMenuOpen)}
-                  >
-                    <User size={32} />
-                    <span>Profile</span>
-                  </Button>
-
-                  {profileMenuOpen && (
-                    <div className="absolute left-0 mt-2 w-full bg-white border rounded-md shadow-lg py-2 z-50">
-                      <Link
-                        href="/profile"
-                        className="block px-4 py-2 hover:bg-gray-100"
-                        onClick={() => setIsOpen(false)}
-                      >
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button className="w-full text-primary flex items-center justify-center gap-2" variant="ghost">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={session?.user.image || ""} alt={session?.user.name || ""} />
+                        <AvatarFallback>{getInitials(session?.user.name)}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex flex-col text-left">
+                        <div className="font-medium">{session?.user.name}</div>
+                        <div className="text-sm text-muted-foreground">{session?.user.role}</div>
+                      </div>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-full" align="end" forceMount>
+                    <Link href="/account" passHref>
+                      <DropdownMenuItem className="cursor-pointer" onClick={() => setIsOpen(false)}>
                         Profile
-                      </Link>
-                      <span className="block px-4 py-2 text-gray-500">
-                        {session?.user?.role}
-                      </span>
-                      <button
-                        className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                        onClick={() => {
-                          signOut();
-                          setIsOpen(false);
-                        }}
-                      >
-                        Logout
-                      </button>
-                    </div>
-                  )}
-                </div>
+                      </DropdownMenuItem>
+                    </Link>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem className="cursor-pointer" onClick={() => { signOut(); setIsOpen(false); }}>
+                      Log out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               ) : (
                 <Button className="bg-primary w-full">
-                  <Link href="/login">Sign in</Link>
+                  <Link href="/login" onClick={() => setIsOpen(false)}>Sign in</Link>
                 </Button>
               )}
             </div>
