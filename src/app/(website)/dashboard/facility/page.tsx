@@ -124,9 +124,9 @@ export default function ManageFacilityPage() {
     router.push("/dashboard/facility/add")
   }
 
-  const handleFacilityCreated = (facility: Facility) => {
-    setFacilities([facility])
-  }
+  // const handleFacilityCreated = (facility: Facility) => {
+  //   setFacilities([facility])
+  // }
 
   const hasFacilities =
     facilities.length > 0 || (typeof window !== "undefined" && window.location.search.includes("demo=true"))

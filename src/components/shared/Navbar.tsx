@@ -5,7 +5,7 @@ import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "../ui/button";
-import { Menu, X, User } from "lucide-react";
+import { Menu, X,  } from "lucide-react";
 
 // Import shadcn/ui components
 import {

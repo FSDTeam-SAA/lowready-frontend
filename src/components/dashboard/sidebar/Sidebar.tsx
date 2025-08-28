@@ -82,7 +82,7 @@ export function DashboardSidebar(props: React.ComponentProps<typeof Sidebar>) {
   return (
     <>
       <Sidebar
-        className="border-r-0 w-[312px] shadow-2xl text-[#68706A]"
+        className="border-r-0 w-[312px]  shadow-2xl text-[#68706A]"
         collapsible="none"
         {...props}
       >
@@ -116,7 +116,7 @@ export function DashboardSidebar(props: React.ComponentProps<typeof Sidebar>) {
                           }`}
                         />
                       )}
-                      <span className="flex-1 text-[12px] font-medium">
+                      <span className="flex-1 text-[12px] font-medium text-[#68706A] group-hover:text-white">
                         {item.title}
                       </span>
                     </Link>
@@ -164,42 +164,42 @@ export function DashboardSidebar(props: React.ComponentProps<typeof Sidebar>) {
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
+
+            {/* Logout button under settings dropdown */}
+            <SidebarMenuItem>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <SidebarMenuButton
+                    className="group py-8 flex justify-center hover:bg-[#28A745] data-[active=true]:bg-[#28A745]"
+                  >
+                    <div className="flex gap-2 items-center">
+                      <LogOut className="h-5 w-5 text-[#68706A] group-hover:text-white" />
+                      <span className="text-[12px] font-medium text-[#68706A] group-hover:text-white">
+                        Logout
+                      </span>
+                    </div>
+                  </SidebarMenuButton>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md">
+                  <DialogHeader>
+                    <DialogTitle>Confirm Logout</DialogTitle>
+                    <DialogDescription>
+                      Are you sure you want to logout?
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter className="flex-row sm:justify-end gap-2">
+                    <Button variant="outline" type="button">
+                      Cancel
+                    </Button>
+                    <Button variant="destructive" type="button" onClick={handleLogout}>
+                      Logout
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
-
-        {/* Logout button positioned at the bottom */}
-        <div className="absolute bottom-[100px] -left-20 w-[312px]">
-          <Dialog>
-            <DialogTrigger asChild>
-              <SidebarMenuButton
-                className="group py-8 flex justify-center hover:bg-[#ffffff]"
-              >
-                <div className="flex gap-2 items-center">
-                  <LogOut className="text-gray-400 group-hover:text-[#212121]" />
-                  <span className="text-[12px] font-medium text-gray group-hover:text-[#212121]">
-                    Logout
-                  </span>
-                </div>
-              </SidebarMenuButton>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle>Confirm Logout</DialogTitle>
-                <DialogDescription>
-                  Are you sure you want to logout?
-                </DialogDescription>
-              </DialogHeader>
-              <DialogFooter className="flex-row sm:justify-end gap-2">
-                <Button variant="outline" type="button" onClick={() => (document.getElementById("close-logout-dialog") as HTMLButtonElement)?.click()}>
-                  Cancel
-                </Button>
-                <Button variant="destructive" type="button" onClick={handleLogout}>
-                  Logout
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </div>
       </Sidebar>
     </>
   );
