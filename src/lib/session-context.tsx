@@ -13,7 +13,7 @@ interface User {
 interface SessionContextType {
   user: User | null
   isLoading: boolean
-  isAuthenticated?: boolean
+  isAuthenticated: boolean  // Made required instead of optional
   signIn: (email: string, password: string) => Promise<boolean>
   signOut: () => void
 }
@@ -23,6 +23,9 @@ const SessionContext = createContext<SessionContextType | undefined>(undefined)
 export function SessionProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+
+  // Calculate isAuthenticated based on user state
+  const isAuthenticated = !!user
 
   useEffect(() => {
     // Check for existing session
@@ -79,7 +82,11 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem("demo-user")
   }
 
-  return <SessionContext.Provider value={{ user, isLoading, signIn, signOut }}>{children}</SessionContext.Provider>
+  return (
+    <SessionContext.Provider value={{ user, isLoading, isAuthenticated, signIn, signOut }}>
+      {children}
+    </SessionContext.Provider>
+  )
 }
 
 export function useSession() {

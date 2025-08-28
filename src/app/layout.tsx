@@ -37,6 +37,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} antialiased`}
       >
         
+          
           <TanstackProvider>
             <LayoutVisibilityWrapper>{children}</LayoutVisibilityWrapper>
             <Toaster position="top-right" />
