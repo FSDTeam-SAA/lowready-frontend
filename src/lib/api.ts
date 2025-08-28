@@ -6,7 +6,6 @@ import {
   RebookData,
   RebookResponse,
   ReviewData,
-  ReviewResponse,
   User,
   VisitBooking,
 } from "@/types/account";
@@ -299,6 +298,19 @@ export async function getTourRequest(): Promise<TourRequestResponse> {
   }
 }
 
+// tour reschedule 
+export async function rescheduleTour(bookingId: string, ) {
+  try {
+    const res = await api.put(`/visit-booking/status/${bookingId}`);
+    return res.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error rescheduling tour: ${error.message}`);
+    }
+    throw error;
+  }
+}
+
 //? accouunt related api
 
 // Update user profile
@@ -366,6 +378,54 @@ export async function rebookFacility(
 ): Promise<ApiResponse<RebookResponse>> {
   const res = await api.post(`/bookings/rebook/${facilityId}`, bookingData);
   return res.data;
+}
+
+// review Ratings
+export interface Review {
+  _id: string;
+  comment: string;
+  star: number;
+  createdAt: string;
+  updatedAt: string;
+  userId: {
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+  facility: {
+    _id: string;
+    name: string;
+  };
+}
+
+export interface ReviewResponse {
+  success: boolean;
+  total: number;
+  data: Review[];
+}
+
+export async function getReviewRating(id: string) {
+  try {
+    const res = await api.get(`/review-rating/facility/${id}`);
+    return res.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error fetching review and ratings: ${error.message}`);
+    }
+  }
+}
+
+// Review Delete
+
+export async function DeleteReview(id: string) {
+  try {
+    const res = await api.delete(`/reviews/${id}`);
+    return res.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error Deleted you Review: ${error.message}`);
+    }
+  }
 }
 
 export const getBookingHistory = getUserBookings;

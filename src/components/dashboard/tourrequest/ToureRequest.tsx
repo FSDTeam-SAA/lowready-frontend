@@ -14,7 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import { Button } from "@/components/ui/button";
 import { Check, ChevronLeft, ChevronRight, Eye, X } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { getTourRequest, TourRequest } from "@/lib/api";
 
 const ToureRequest = () => {
@@ -29,6 +29,11 @@ const ToureRequest = () => {
     queryKey: ["tourrequest"],
     queryFn: getTourRequest,
   });
+
+  // const statusMutation= useMutation({
+  //   mutationKey: ['status'],
+  //   mutationFn: async (status: {id:string, status:string}) =>
+  // })
 
   // Ensure bookings is always an array
   const tourbookings: TourRequest[] = data?.data?.bookings || [];
@@ -46,7 +51,7 @@ const ToureRequest = () => {
 
   return (
     <section>
-      <div className="space-y-4">
+      <div className="space-y-4 py-6">
         <div className="border rounded-lg">
           <Table>
             <TableHeader>
