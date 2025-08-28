@@ -53,7 +53,7 @@ const menuItems = [
   { title: "Customers", url: "/dashboard/Customers", icon: Users },
   { title: "Manage Facility", url: "/dashboard/facility", icon: Building2 },
   { title: "Earnings Summary", url: "/dashboard/EarningSummary", icon: Wallet },
-  { title: "Commissions", url: "/dashboard/Commissions", icon: Percent },
+  // { title: "Commissions", url: "/dashboard/Commissions", icon: Percent },
   { title: "Reviews & Ratings", url: "/dashboard/ReviewsRatings", icon: Star },
   
 
