@@ -1,4 +1,5 @@
 "use client";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 import React, { useState } from "react";
 import {
@@ -79,7 +80,7 @@ const ReviewRatingBottom = () => {
   });
 
   const reviews = data?.data || [];
-  const totalResults = data?.total || 0;
+  const totalResults = reviews.length; // ✅ fix here
 
   const totalPages = Math.ceil(totalResults / pageSize);
   const startItem = (currentPage - 1) * pageSize + 1;
@@ -225,72 +226,71 @@ const ReviewRatingBottom = () => {
         </div>
       </div>
 
-      {/* Details Dialog */}
-      <Dialog
-        open={!!selectedReview}
-        onOpenChange={() => setSelectedReview(null)}
-      >
-        <DialogContent className="max-w-md rounded-2xl p-6">
-          {selectedReview && (
-            <div className="space-y-4">
-              {/* Header with avatar, name and close */}
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src="" alt={selectedReview.userId.firstName} />
-                    <AvatarFallback>
-                      {selectedReview.userId.firstName[0]}
-                      {selectedReview.userId.lastName[0]}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <h3 className="font-semibold text-lg">
-                      {selectedReview.userId.firstName}{" "}
-                      {selectedReview.userId.lastName}
-                    </h3>
-                    <p className="text-sm text-gray-500">
-                      {/* {selectedReview.userId.city || "Unknown Location"} */}
-                    </p>
-                  </div>
-                </div>
-              </div>
+  
+   {/* Details Dialog */}
+<Dialog
+  open={!!selectedReview}
+  onOpenChange={() => setSelectedReview(null)}
+>
+  <DialogContent className="max-w-md rounded-2xl p-6">
+    {selectedReview && (
+      <div className="space-y-4">
+        {/* 🔑 Hidden title for accessibility */}
+        <VisuallyHidden>
+          <DialogTitle>Review Details</DialogTitle>
+        </VisuallyHidden>
 
-              {/* Stars */}
-              <div className="flex items-center">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <span
-                    key={i}
-                    className={
-                      i < selectedReview.star
-                        ? "text-yellow-400"
-                        : "text-gray-300"
-                    }
-                  >
-                    ★
-                  </span>
-                ))}
-              </div>
-
-              {/* Review Text */}
-              <p className="text-gray-700 leading-relaxed">
-                {selectedReview.comment}
-              </p>
-
-              {/* Date */}
-              <p className="text-sm text-gray-400">
-                {new Date(selectedReview.createdAt).toLocaleDateString(
-                  "en-US",
-                  {
-                    month: "long",
-                    day: "numeric",
-                    year: "numeric",
-                  }
-                )}
+        {/* Header with avatar, name and close */}
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-3">
+            <Avatar className="h-8 w-8">
+              <AvatarImage src="" alt={selectedReview.userId.firstName} />
+              <AvatarFallback>
+                {selectedReview.userId.firstName[0]}
+                {selectedReview.userId.lastName[0]}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <h3 className="font-semibold text-lg">
+                {selectedReview.userId.firstName} {selectedReview.userId.lastName}
+              </h3>
+              <p className="text-sm text-gray-500">
+                {/* location or extra info */}
               </p>
             </div>
-          )}
-        </DialogContent>
-      </Dialog>
+          </div>
+        </div>
+
+        {/* Stars */}
+        <div className="flex items-center">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <span
+              key={i}
+              className={i < selectedReview.star ? "text-yellow-400" : "text-gray-300"}
+            >
+              ★
+            </span>
+          ))}
+        </div>
+
+        {/* Review Text */}
+        <p className="text-gray-700 leading-relaxed">
+          {selectedReview.comment}
+        </p>
+
+        {/* Date */}
+        <p className="text-sm text-gray-400">
+          {new Date(selectedReview.createdAt).toLocaleDateString("en-US", {
+            month: "long",
+            day: "numeric",
+            year: "numeric",
+          })}
+        </p>
+      </div>
+    )}
+  </DialogContent>
+</Dialog>
+
 
       {/* Delete Dialog */}
       <Dialog open={!!deleteReview} onOpenChange={() => setDeleteReview(null)}>
