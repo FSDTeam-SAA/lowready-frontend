@@ -71,14 +71,14 @@ export default function SearchField() {
   };
 
   return (
-    <div className="relative w-full min-h-screen bg-white">
+    <div className="relative container mx-auto w-full min-h-screen bg-white">
       {/* Search Bar */}
-      <div className="sticky top-0 z-50 bg-white shadow-sm p-4 flex items-center gap-2">
+      <div className=" z-50 bg-white shadow-2xl my-10 p-4  rounded-xl flex items-center mx-auto justify-between w-[85%] lg:w-8/12 gap-2">
         <Input
           placeholder="Enter location..."
           value={filters.location}
           onChange={handleLocationChange}
-          className="flex-1"
+          className=" border-none w-[70%] outline-none shadow-none"
         />
         <Button onClick={() => refetch()}>Search</Button>
       </div>
@@ -245,6 +245,15 @@ export default function SearchField() {
               <p>Loading facilities...</p>
             ) : facilities.length > 0 ? (
               <>
+                <div className="pb-[80px]">
+                  <h2 className="text-[40px] font-bold leading-[150%] text-[#343A40]">
+                    Facilities near {filters.location} - <span className="text-[#28A745]">{facilities.length} Round</span>
+                  </h2>
+                  <p className="text-[16px] text-[#68706A] pt-[4px]">
+                    Browse through carefully selected senior living options near
+                    New York to find the perfect match for your loved one.
+                  </p>
+                </div>
                 {facilities.map((facility: Facility) => (
                   <Card key={facility._id} className="overflow-hidden py-0">
                     <div className="grid md:grid-cols-3 gap-4">
