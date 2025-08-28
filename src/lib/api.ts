@@ -298,10 +298,21 @@ export async function getTourRequest(): Promise<TourRequestResponse> {
   }
 }
 
-// tour reschedule 
-export async function rescheduleTour(bookingId: string, ) {
+// tour status update
+export async function statusTourRequest(bookingId: string, ) {
   try {
     const res = await api.put(`/visit-booking/status/${bookingId}`);
+    return res.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error rescheduling tour: ${error.message}`);
+    }
+    throw error;
+  }
+}
+export async function statusCancelTourRequest(bookingId: string, ) {
+  try {
+    const res = await api.put(`/visit-booking/status-cancel/${bookingId}`);
     return res.data;
   } catch (error) {
     if (error instanceof Error) {

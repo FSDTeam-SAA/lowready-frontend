@@ -49,12 +49,12 @@ const menuItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Placements", url: "/dashboard/placements", icon: CalendarCheck },
 
-  { title: "Tour Requests", url: "/dashboard/TourRequests", icon: PlaneTakeoff },
-  { title: "Customers", url: "/dashboard/Customers", icon: Users },
+  { title: "Tour Requests", url: "/dashboard/tourrequest", icon: PlaneTakeoff },
+  { title: "Customers", url: "/dashboard/customers", icon: Users },
   { title: "Manage Facility", url: "/dashboard/facility", icon: Building2 },
-  { title: "Earnings Summary", url: "/dashboard/EarningSummary", icon: Wallet },
-  // { title: "Commissions", url: "/dashboard/Commissions", icon: Percent },
-  { title: "Reviews & Ratings", url: "/dashboard/ReviewsRatings", icon: Star },
+  { title: "Earnings Summary", url: "/dashboard/earningsummary", icon: Wallet },
+  { title: "Referral Fee", url: "/dashboard/referralfee", icon: BadgePercent },
+  { title: "Reviews & Ratings", url: "/dashboard/reviewratings", icon: Star },
   
 
 ];
