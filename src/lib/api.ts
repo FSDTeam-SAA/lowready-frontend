@@ -6,7 +6,7 @@ import {
   RebookData,
   RebookResponse,
   ReviewData,
-  User,
+ 
   VisitBooking,
 } from "@/types/account";
 import axios from "axios";
@@ -94,7 +94,7 @@ export interface Facility {
   name: string;
   location: string;
   price: number;
-  images: string[];
+  images: ImageType[];
 }
 
 export interface Avatar {
@@ -107,28 +107,28 @@ export interface VerificationInfo {
   verified: boolean;
 }
 
-// export interface User {
-//   _id: string;
-//   firstName: string;
-//   lastName: string;
-//   email: string;
-//   role?: string;
+export interface User {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role?: string;
 
-//   // optional fields
-//   avatar?: Avatar;
-//   avatars?: string;
-//   bio?: string;
-//   street?: string;
-//   postCode?: string | null;
-//   phoneNum?: string;
-//   verificationInfo?: VerificationInfo;
+  // optional fields
+  avatar?: Avatar;
+  avatars?: string;
+  bio?: string;
+  street?: string;
+  postCode?: string | null;
+  phoneNum?: string;
+  verificationInfo?: VerificationInfo;
 
-//   // timestamps
-//   createdAt?: string;
-//   updatedAt?: string;
+  // timestamps
+  createdAt?: string;
+  updatedAt?: string;
 
-//   onboardingStatus?: boolean;
-// }
+  onboardingStatus?: boolean;
+}
 
 export interface ApiBooking {
   _id: string;
@@ -250,7 +250,7 @@ export async function getNotifications(userId: string) {
 // -------------------------------
 export interface FacilityImage {
   public_id: string;
-  url: string;
+  url: ImageType;
   _id: string;
 }
 
@@ -298,10 +298,21 @@ export async function getTourRequest(): Promise<TourRequestResponse> {
   }
 }
 
-// tour reschedule 
-export async function rescheduleTour(bookingId: string, ) {
+// tour status update
+export async function statusTourRequest(bookingId: string) {
   try {
     const res = await api.put(`/visit-booking/status/${bookingId}`);
+    return res.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error rescheduling tour: ${error.message}`);
+    }
+    throw error;
+  }
+}
+export async function statusCancelTourRequest(bookingId: string) {
+  try {
+    const res = await api.put(`/visit-booking/status-cancel/${bookingId}`);
     return res.data;
   } catch (error) {
     if (error instanceof Error) {
@@ -427,6 +438,105 @@ export async function DeleteReview(id: string) {
     }
   }
 }
+
+export interface FacilityFilters {
+  location?: string;
+  careServices?: string[];
+  amenities?: string[];
+  page?: number;
+  limit?: number;
+  rating?: number;
+  minPrice?: number;
+  maxPrice?: number;
+  availability?: boolean;
+}
+
+// ---------- Sub-types ----------
+export interface ImageType {
+  public_id: string;
+  url: string;
+  _id?: string;
+}
+
+export interface AmenityService {
+  name: string;
+  image: ImageType;
+}
+
+export interface MedicaidProgram {
+  public_id: string;
+  url: string;
+  _id?: string;
+}
+
+export interface User {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
+// ---------- Facility ----------
+export interface Facility {
+  _id: string;
+  name: string;
+  location: string;
+  description?: string;
+  about?: string;
+  images: ImageType[];
+  amenities: string[];
+  amenitiesServices?: AmenityService[];
+  careServices?: string[];
+  medicaidPrograms?: MedicaidProgram[];
+  rating?: number;
+  price: number;
+  base?: string; // e.g. "monthly"
+  availability?: boolean;
+  availableTime?: string[];
+  uploadVideo?: string;
+  videoTitle?: string;
+  videoDescription?: string;
+  userId?: User;
+  createdAt?: string;
+  updatedAt?: string;
+  __v?: number;
+}
+
+// ---------- API Response ----------
+export interface FacilitySearchResponse {
+  data: Facility[];
+  totalPages: number;
+}
+
+// ---------- API Function ----------
+export async function FacilitySearchData(
+  filters: FacilityFilters
+): Promise<FacilitySearchResponse> {
+  try {
+    const res = await api.get(`/facility/all`, { params: filters });
+    return res.data as FacilitySearchResponse;
+  } catch (error) {
+    console.error("Error fetching facilities:", error);
+    return { data: [], totalPages: 1 };
+  }
+}
+
+// Locations API
+export interface Location {
+  _id: string;
+  location: string;
+}
+
+export async function facilitiesLocation(): Promise<{ data: Location[] }> {
+  try {
+    const res = await api.get(`/facility/locations`);
+    return res.data as { data: Location[] };
+  } catch (error) {
+    console.error("Error fetching locations:", error);
+    return { data: [] };
+  }
+}
+
 
 export const getBookingHistory = getUserBookings;
 export const getTourHistory = getUserTourHistory;
