@@ -90,4 +90,6 @@ const DetailsCard: React.FC<DetailsCardProps> = ({ profileData }) => {
   )
 }
 
+
 export default DetailsCard
+

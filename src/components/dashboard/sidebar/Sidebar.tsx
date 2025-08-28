@@ -10,10 +10,10 @@ import {
   Users,
   Building2,
   Wallet,
-  Percent,
   Star,
   LogOut,
   Settings,
+  BadgePercent,
 } from "lucide-react";
 
 import {
@@ -48,6 +48,7 @@ import Image from "next/image";
 const menuItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Placements", url: "/dashboard/placements", icon: CalendarCheck },
+
   { title: "Tour Requests", url: "/dashboard/TourRequests", icon: PlaneTakeoff },
   { title: "Customers", url: "/dashboard/Customers", icon: Users },
   { title: "Manage Facility", url: "/dashboard/facility", icon: Building2 },
@@ -55,6 +56,7 @@ const menuItems = [
   { title: "Commissions", url: "/dashboard/Commissions", icon: Percent },
   { title: "Reviews & Ratings", url: "/dashboard/ReviewsRatings", icon: Star },
   
+
 ];
 
 const settingsSubItems = [
@@ -67,19 +69,17 @@ const settingsSubItems = [
 export function DashboardSidebar(props: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
 
-  // Check if a path is the currently active one
   const isActive = (path: string) => pathname === path;
 
-  // Check if any settings sub-item is active to highlight the parent dropdown
-  const isSettingsParentActive = () => {
-    return settingsSubItems.some(sub => isActive(sub.url));
-  };
+  const isSettingsParentActive = () =>
+    settingsSubItems.some((sub) => isActive(sub.url));
 
   const handleLogout = async () => {
     await signOut({ callbackUrl: "/" });
   };
 
   return (
+
     <>
       <Sidebar
         className="border-r-0 w-[312px]  shadow-2xl text-[#68706A]"
@@ -202,5 +202,6 @@ export function DashboardSidebar(props: React.ComponentProps<typeof Sidebar>) {
         </SidebarContent>
       </Sidebar>
     </>
+
   );
 }
