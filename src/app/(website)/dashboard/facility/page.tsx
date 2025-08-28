@@ -3,13 +3,10 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { PricingModal } from "@/components/dashboard/facility/pricing-modal"
-import { FacilityCard } from "@/components/dashboard/facility/facility-card"
-import { VisitorCounter } from "@/components/dashboard/facility/visitor-counter"
-import { RecentPlacements } from "@/components/dashboard/facility/recent-placements"
-import { RecentReviews } from "@/components/dashboard/facility/recent-reviews"
 import { Search, Plus } from "lucide-react"
-import type { Facility, Placement, Review, SubscriptionPlan } from "@/types/servicefacility"
+import type { Facility, SubscriptionPlan } from "@/types/servicefacility"
 import { useRouter } from "next/navigation"
+import FacilityListing from "@/components/dashboard/facility/all-facility"
 
 export default function ManageFacilityPage() {
   const router = useRouter()
@@ -50,59 +47,7 @@ export default function ManageFacilityPage() {
     availableTimes: [],
   }
 
-  const mockPlacements: Placement[] = [
-    {
-      id: "1",
-      user: { name: "Olivia Rhye", email: "example@example.com", avatar: "/placeholder.svg?height=40&width=40" },
-      location: "2715 Ash Dr, San Jose, South Dako...",
-      amount: 2000,
-    },
-    {
-      id: "2",
-      user: { name: "Olivia Rhye", email: "example@example.com", avatar: "/placeholder.svg?height=40&width=40" },
-      location: "2715 Ash Dr, San Jose, South Dako...",
-      amount: 2000,
-    },
-    {
-      id: "3",
-      user: { name: "Olivia Rhye", email: "example@example.com", avatar: "/placeholder.svg?height=40&width=40" },
-      location: "2715 Ash Dr, San Jose, South Dako...",
-      amount: 2000,
-    },
-    {
-      id: "4",
-      user: { name: "Olivia Rhye", email: "example@example.com", avatar: "/placeholder.svg?height=40&width=40" },
-      location: "2715 Ash Dr, San Jose, South Dako...",
-      amount: 2000,
-    },
-  ]
 
-  const mockReviews: Review[] = [
-    {
-      id: "1",
-      user: { name: "Connect Directly", email: "", avatar: "/placeholder.svg?height=40&width=40" },
-      rating: 4,
-      comment:
-        "I've been ordering from TABLEFRESH for over year now, and the quality of their organic produce is consistently exce...",
-      location: "Portland, OR",
-    },
-    {
-      id: "2",
-      user: { name: "Connect Directly", email: "", avatar: "/placeholder.svg?height=40&width=40" },
-      rating: 4,
-      comment:
-        "I've been ordering from TABLEFRESH for over year now, and the quality of their organic produce is consistently exce...",
-      location: "Portland, OR",
-    },
-    {
-      id: "3",
-      user: { name: "Connect Directly", email: "", avatar: "/placeholder.svg?height=40&width=40" },
-      rating: 4,
-      comment:
-        "I've been ordering from TABLEFRESH for over year now, and the quality of their organic produce is consistently exce...",
-      location: "Portland, OR",
-    },
-  ]
 
   const handleAddFacility = () => {
     if (!isSubscribed) {
@@ -124,9 +69,7 @@ export default function ManageFacilityPage() {
     router.push("/dashboard/facility/add")
   }
 
-  // const handleFacilityCreated = (facility: Facility) => {
-  //   setFacilities([facility])
-  // }
+ 
 
   const hasFacilities =
     facilities.length > 0 || (typeof window !== "undefined" && window.location.search.includes("demo=true"))
@@ -140,7 +83,7 @@ export default function ManageFacilityPage() {
          
 
         <main className="flex-1 overflow-auto p-8">
-          {!hasFacilities ? (
+          {hasFacilities ? (
             // Empty State
             <div className="flex flex-col items-center justify-center h-full max-w-md mx-auto text-center">
               <div className="mb-8">
@@ -159,20 +102,8 @@ export default function ManageFacilityPage() {
             </div>
           ) : (
             // Facilities View
-            <div className="space-y-8">
-              {/* Facility Cards */}
-              <div className="space-y-6">
-                {displayFacilities.map((facility) => (
-                  <FacilityCard key={facility.id} facility={facility} onEdit={handleEditFacility} />
-                ))}
-              </div>
-
-              {/* Stats and Activity */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <VisitorCounter totalVisitors={1234} totalPlacements={1234} month="August" year={2025} />
-                <RecentPlacements placements={mockPlacements} />
-                <RecentReviews reviews={mockReviews} />
-              </div>
+           <div className="space-y-6">
+                <FacilityListing/>
             </div>
           )}
         </main>
