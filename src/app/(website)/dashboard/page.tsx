@@ -48,7 +48,7 @@ const chartConfig = {
 
 export default function DashboardPage() {
   return (
-    <main role="main" className="p-6 space-y-6 bg-gray-50 min-h-screen">
+    <main role="main" className="p-6 space-y-6 bg-gray-50  ">
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard

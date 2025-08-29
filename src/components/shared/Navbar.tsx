@@ -5,7 +5,7 @@ import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "../ui/button";
-import { Menu, X,  } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 // Import shadcn/ui components
 import {
@@ -23,11 +23,18 @@ const Navbar = () => {
 
   const [isOpen, setIsOpen] = useState(false); // Mobile menu
   const menuRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   // Close menus when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      // Check if click is outside both menu and button
+      if (
+        menuRef.current && 
+        !menuRef.current.contains(event.target as Node) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -77,7 +84,7 @@ const Navbar = () => {
               {navItems.map((item) => (
                 <li
                   key={item}
-                  className="text-gray-700 hover:text-green-500 border-b-2 border-transparent hover:border-green-500 transition"
+                  className="text-gray-700 hover:text-green-500 border-b-2 text-base border-transparent hover:border-green-500 transition"
                 >
                   <Link
                     href={`/${
@@ -132,13 +139,15 @@ const Navbar = () => {
               </div>
             )}
 
-            {/* Mobile Hamburger */}
+            {/* Mobile Hamburger - Fixed with ref and proper toggle */}
             <div className="md:hidden ml-2">
               <Button
+                ref={buttonRef}
                 variant="ghost"
                 size="icon"
-                onClick={() => setIsOpen(!isOpen)}
+                onClick={() => setIsOpen(prev => !prev)}
                 aria-label="Toggle menu"
+                className="z-60 relative" // Increased z-index to ensure button is above menu
               >
                 {isOpen ? <X size={24} /> : <Menu size={24} />}
               </Button>
@@ -146,7 +155,7 @@ const Navbar = () => {
           </div>
         </nav>
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu - Fixed z-index issue */}
         <div
           ref={menuRef}
           className={`mobile-menu md:hidden fixed top-20 left-0 w-full h-[calc(100vh-5rem)] bg-white z-50 overflow-y-auto transition-transform duration-300 ease-in-out ${
