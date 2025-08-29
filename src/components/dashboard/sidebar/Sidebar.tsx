@@ -82,7 +82,7 @@ export function DashboardSidebar(props: React.ComponentProps<typeof Sidebar>) {
 
     <>
       <Sidebar
-        className="border-r-0 w-[312px]  shadow-2xl text-[#68706A]"
+        className="border-r-0 w-[312px]  shadow-2xl text-[#68706A] !max-h-screen fixed"
         collapsible="none"
         {...props}
       >

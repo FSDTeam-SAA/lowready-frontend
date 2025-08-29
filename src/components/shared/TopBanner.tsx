@@ -11,10 +11,10 @@ export default function TopBanner() {
   return (
     <section className="bg-[#E6F9EB] relative h-auto w-ful font-poppins">
       <div className="container mx-auto">
-        {/* Close Button at Right Corner - hidden on mobile */}
+        
         <button
           onClick={() => setIsVisible(false)}
-          className=" absolute md:right-4 md:top-2 right-4 top-10  text-gray-600 flex items-center hover:text-red-500 transition"
+          className=" absolute md:right-2 md:top-4 right-4 top-5 sm:right-2 sm:top-5  text-gray-600 flex items-center hover:text-red-500 transition"
         >
           <X size={20} />
         </button>
