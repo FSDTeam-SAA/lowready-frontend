@@ -1,8 +1,10 @@
 "use client";
 
-import type * as React from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import * as React from "react";
+import { usePathname, useRouter } from "next/navigation";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { signOut } from "next-auth/react";
 import {
   LayoutDashboard,
   CalendarCheck,
@@ -17,191 +19,116 @@ import {
 } from "lucide-react";
 
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar";
-
-import {
   DropdownMenu,
+  DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-
-import { Button } from "@/components/ui/button";
-import { signOut } from "next-auth/react";
-import Image from "next/image";
-
 const menuItems = [
-  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
-  { title: "Placements", url: "/dashboard/placements", icon: CalendarCheck },
-
-  { title: "Tour Requests", url: "/dashboard/tourrequest", icon: PlaneTakeoff },
-  { title: "Customers", url: "/dashboard/customers", icon: Users },
-  { title: "Manage Facility", url: "/dashboard/facility", icon: Building2 },
-  { title: "Earnings Summary", url: "/dashboard/earningsummary", icon: Wallet },
-  { title: "Referral Fee", url: "/dashboard/referralfee", icon: BadgePercent },
-  { title: "Reviews & Ratings", url: "/dashboard/reviewratings", icon: Star },
-  
-
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Placements", href: "/dashboard/placements", icon: CalendarCheck },
+  { name: "Tour Requests", href: "/dashboard/tourrequest", icon: PlaneTakeoff },
+  { name: "Customers", href: "/dashboard/customers", icon: Users },
+  { name: "Manage Facility", href: "/dashboard/facility", icon: Building2 },
+  { name: "Earnings Summary", href: "/dashboard/earningsummary", icon: Wallet },
+  { name: "Referral Fee", href: "/dashboard/referralfee", icon: BadgePercent },
+  { name: "Reviews & Ratings", href: "/dashboard/reviewratings", icon: Star },
 ];
 
-const settingsSubItems = [
-  { title: "Profile", url: "/dashboard/profile" },
-  { title: "Change Password", url: "/dashboard/change-password" },
-  { title: "Document", url: "/dashboard/document" },
-  { title: "Subscription", url: "/dashboard/Subscription" },
+const settingsItems = [
+  { name: "Profile", href: "/dashboard/profile" },
+  { name: "Change Password", href: "/dashboard/change-password" },
+  { name: "Document", href: "/dashboard/document" },
+  { name: "Subscription", href: "/dashboard/Subscription" },
 ];
 
-export function DashboardSidebar(props: React.ComponentProps<typeof Sidebar>) {
+export function DashboardSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
 
-  const isActive = (path: string) => pathname === path;
-
-  const isSettingsParentActive = () =>
-    settingsSubItems.some((sub) => isActive(sub.url));
+  const isActive = (href: string) => pathname === href;
 
   const handleLogout = async () => {
     await signOut({ callbackUrl: "/" });
   };
 
   return (
+    <div className="flex flex-col h-screen w-[312px] fixed shadow-2xl border-r-0 bg-white">
+      {/* Logo */}
+      <div className="px-4 py-6">
+        <Image
+          src="/images/Logo.png"
+          alt="Logo"
+          width={150}
+          height={80}
+          className="mx-auto h-[80px] w-[150px] object-contain mb-4"
+        />
+      </div>
 
-    <>
-      <Sidebar
-        className="border-r-0 w-[312px]  shadow-2xl text-[#68706A] !max-h-screen fixed"
-        collapsible="none"
-        {...props}
-      >
-        <SidebarContent className="p-4 bg-[#FFFFFF]">
-          <Link href={"/dashboard"} className="text-white">
-            <Image
-              src="/dashboard/dashboardlogo.png"
-              alt="Logo"
-              width={150}
-              height={80}
-              className="mx-auto h-[80px] font-bold w-[150px] object-contain mb-4"
-            />
-          </Link>
+      {/* Navigation */}
+      <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+        {menuItems.map((item) => (
+          <Button
+            key={item.name}
+            variant="ghost"
+            className={`w-full justify-start gap-3 h-12 px-4 rounded-lg font-medium transition-all duration-200 ${
+              isActive(item.href)
+                ? "bg-[#179649] text-white hover:bg-[#179649]"
+                : "text-[#68706a] hover:bg-[#f8f9fa] hover:text-[#179649]"
+            }`}
+            onClick={() => router.push(item.href)}
+          >
+            <item.icon className="h-5 w-5" />
+            {item.name}
+          </Button>
+        ))}
 
-          <SidebarMenu className="space-y-2">
-            {menuItems.map((item) => (
-              <div key={item.title}>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    className="group py-8 flex hover:bg-[#28A745] data-[active=true]:bg-[#28A745]"
-                    isActive={isActive(item.url ?? "")}
-                  >
-                    <Link
-                      href={item.url}
-                      className="flex gap-2 items-center w-full"
-                    >
-                      {item.icon && (
-                        <item.icon
-                          className={`h-5 w-5 ${
-                            isActive(item.url) ? "text-white" : "text-[#68706A] group-hover:text-white"
-                          }`}
-                        />
-                      )}
-                      <span className="flex-1 text-[12px] font-medium text-[#68706A] group-hover:text-white">
-                        {item.title}
-                      </span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </div>
+        {/* Settings Dropdown using ShadCN UI */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              className={`w-full justify-start gap-3 h-12 px-4 rounded-lg font-medium transition-all duration-200 ${
+                settingsItems.some((item) => isActive(item.href))
+                  ? "bg-[#179649] text-white hover:bg-[#179649]"
+                  : "text-[#68706a] hover:bg-[#f8f9fa] hover:text-[#179649]"
+              }`}
+            >
+              <Settings className="h-5 w-5" />
+              Settings
+            </Button>
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent className="ml-6 flex flex-col space-y-1 bg-white p-2 border border-gray-200 shadow-md">
+            {settingsItems.map((item) => (
+              <DropdownMenuItem
+                key={item.name}
+                className={`text-[12px] py-2 px-4 rounded cursor-pointer ${
+                  isActive(item.href)
+                    ? "bg-[#179649] text-white"
+                    : "text-[#68706a] hover:bg-gray-100"
+                }`}
+                onClick={() => router.push(item.href)}
+              >
+                {item.name}
+              </DropdownMenuItem>
             ))}
-            
-            {/* Settings Dropdown with Active State */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    className="group py-8 flex hover:bg-[#28A745] data-[active=true]:bg-[#28A745]"
-                    isActive={isSettingsParentActive()}
-                  >
-                    <div className="flex gap-2 items-center w-full">
-                      <Settings
-                        className={`h-5 w-5 ${
-                          isSettingsParentActive() ? "text-white" : "text-[#68706A] group-hover:text-white"
-                        }`}
-                      />
-                      <span className="flex-1 text-[12px] font-medium text-[#68706A] group-hover:text-white">
-                        Settings
-                      </span>
-                    </div>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="ml-6 flex flex-col space-y-1 bg-white p-2 border border-gray-200 shadow-md">
-                {settingsSubItems.map((sub) => (
-                  <Link
-                    key={sub.title}
-                    href={sub.url}
-                    passHref
-                  >
-                    <DropdownMenuItem
-                      className={`text-[12px] py-2 px-4 rounded cursor-pointer ${
-                        isActive(sub.url) ? "bg-[#28A745] text-white" : "text-[#68706A] hover:bg-gray-100"
-                      }`}
-                    >
-                      {sub.title}
-                    </DropdownMenuItem>
-                  </Link>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </nav>
 
-            {/* Logout button under settings dropdown */}
-            <SidebarMenuItem>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <SidebarMenuButton
-                    className="group py-8 flex justify-center hover:bg-[#28A745] data-[active=true]:bg-[#28A745]"
-                  >
-                    <div className="flex gap-2 items-center">
-                      <LogOut className="h-5 w-5 text-[#68706A] group-hover:text-white" />
-                      <span className="text-[12px] font-medium text-[#68706A] group-hover:text-white">
-                        Logout
-                      </span>
-                    </div>
-                  </SidebarMenuButton>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-md">
-                  <DialogHeader>
-                    <DialogTitle>Confirm Logout</DialogTitle>
-                    <DialogDescription>
-                      Are you sure you want to logout?
-                    </DialogDescription>
-                  </DialogHeader>
-                  <DialogFooter className="flex-row sm:justify-end gap-2">
-                    <Button variant="outline" type="button">
-                      Cancel
-                    </Button>
-                    <Button variant="destructive" type="button" onClick={handleLogout}>
-                      Logout
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarContent>
-      </Sidebar>
-    </>
-
+      {/* Logout at bottom */}
+      <div className="px-4 py-4 mt-auto border-t border-gray-100">
+        <Button
+          variant="ghost"
+          className="w-full justify-start gap-3 h-12 px-4 rounded-lg font-medium text-[#e5102e] hover:bg-[#feecee] hover:text-[#e5102e] transition-all duration-200"
+          onClick={handleLogout}
+        >
+          <LogOut className="h-5 w-5" />
+          Log Out
+        </Button>
+      </div>
+    </div>
   );
 }

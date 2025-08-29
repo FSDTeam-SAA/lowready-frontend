@@ -6,17 +6,17 @@ import React from 'react'
 
 const Page = ({ params }: { params: { id: string } }) => {
   return (
-    <div className="min-h-screen p-5 bg-gray-50">
-      <div className="mx-auto p-0 ">
+    <div className="p-8 bg-gray-50 h-auto">
+      <div className="mx-auto p-0 space-y-3 flex flex-col gap-8 h-auto overflow-hidden">
         {/* Main layout grid */}
-        <div className="grid grid-cols-12   ">
+        <div className="grid grid-cols-12  min-h-[528px] ">
           {/* Left column - Facility details */}
-          <div className="col-span-12 lg:col-span-10">
+          <div className="col-span-12 lg:col-span-9">
             <SingleFacilityDetails facilityId={params.id} />
           </div>
           
           {/* Right column - Visitor counter */}
-          <div className="col-span-12 lg:col-span-2 px-2 py-2">
+          <div className="col-span-12 lg:col-span-3 ">
             <VisitorCounter facilityId={params.id} />
           </div>
         </div>

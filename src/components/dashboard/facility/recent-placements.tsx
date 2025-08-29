@@ -93,7 +93,7 @@ export function RecentPlacements({ facilityId }: RecentPlacementsProps) {
   const placements = apiPlacements ? transformPlacements(apiPlacements) : [];
 
   return (
-    <div className="bg-white rounded-lg border h-[400px] border-gray-200 p-6  ">
+    <div className="bg-white rounded-lg border h-[300px] border-gray-200 p-6  ">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold text-gray-900">Recent Placements</h3>
