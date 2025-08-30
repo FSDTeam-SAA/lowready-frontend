@@ -1,8 +1,11 @@
+import EditFacilityPage from '@/components/dashboard/facility/EditFacilityPage'
 import React from 'react'
 
 const page = () => {
   return (
-    <div>edit facility</div>
+    <div>
+        <EditFacilityPage />
+    </div>
   )
 }
 

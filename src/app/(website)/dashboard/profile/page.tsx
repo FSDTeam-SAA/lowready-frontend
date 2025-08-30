@@ -23,14 +23,14 @@ const DashboardProfilePage = () => {
   }
 
   return (
-    <div className="flex flex-col lg:flex-row gap-5 p-5">
-      {/* Profile Card */}
-      <div className="w-full lg:w-1/3">
+    <div className="grid grid-cols-12 gap-5 p-5 ">
+      {/* Profile Card - spans 4 columns */}
+      <div className="col-span-4">
         <ProfileCard />
       </div>
 
-      {/* Personal Info Form */}
-      <div className="w-full lg:w-2/3">
+      {/* Personal Info Form - spans 8 columns */}
+      <div className="col-span-8">
         <PersonalInformationForm />
       </div>
     </div>

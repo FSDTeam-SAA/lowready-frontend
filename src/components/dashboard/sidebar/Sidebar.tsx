@@ -24,6 +24,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const menuItems = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -44,14 +45,21 @@ const settingsItems = [
 ];
 
 export function DashboardSidebar() {
+  const [isOpen, setIsOpen] = React.useState(false);
+
+
   const pathname = usePathname();
   const router = useRouter();
 
   const isActive = (href: string) => pathname === href;
-
-  const handleLogout = async () => {
+   const handleLogout = async () => {
     await signOut({ callbackUrl: "/" });
   };
+  const confirmLogout = () => {
+    handleLogout();
+    setIsOpen(false);
+  };
+ 
 
   return (
     <div className="flex flex-col h-screen w-[312px] fixed shadow-2xl border-r-0 bg-white">
@@ -123,11 +131,30 @@ export function DashboardSidebar() {
         <Button
           variant="ghost"
           className="w-full justify-start gap-3 h-12 px-4 rounded-lg font-medium text-[#e5102e] hover:bg-[#feecee] hover:text-[#e5102e] transition-all duration-200"
-          onClick={handleLogout}
+          onClick={()=>setIsOpen(true)}
         >
           <LogOut className="h-5 w-5" />
           Log Out
         </Button>
+        {/* Confirmation Modal */}
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Logout</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-gray-600 mt-2">
+            Are you sure you want to log out?
+          </p>
+          <DialogFooter className="mt-4 flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setIsOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={confirmLogout}>
+              Log Out
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       </div>
     </div>
   );

@@ -21,6 +21,28 @@ import DashboardLayout from "./profile-dashboard-layout";
 // ✅ API Endpoints
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
+// ✅ Type definitions for better type safety
+interface ExtendedUser {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  gender: "male" | "female";
+  bio?: string;
+  street: string;
+  postCode?: number;
+  phoneNum: string;
+  avatar?: {
+    url: string;
+  };
+  createdAt: string;
+}
+
+interface ExtendedSession {
+  accessToken: string;
+  user: ExtendedUser;
+}
+
 const profileSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
@@ -41,8 +63,10 @@ export default function ProfilePage() {
   const queryClient = useQueryClient();
   const { data: session } = useSession();
 
-  const accessToken = session?.accessToken;
-  const userId = (session?.user as any )?.id;
+  // ✅ Fixed: Properly typed session casting
+  const extendedSession = session as ExtendedSession | null;
+  const accessToken = extendedSession?.accessToken;
+  const userId = extendedSession?.user?.id;
 
   // ✅ Fetch user profile using Tanstack Query
   const {
@@ -59,7 +83,7 @@ export default function ProfilePage() {
       });
       if (!res.ok) throw new Error("Failed to fetch profile");
       const json = await res.json();
-      return json.data;
+      return json.data as ExtendedUser;
     },
     enabled: !!userId && !!accessToken,
   });
@@ -110,7 +134,8 @@ export default function ProfilePage() {
       toast.success("Profile updated successfully");
       queryClient.invalidateQueries({ queryKey: ["userProfile", userId] });
     },
-    onError: (error: any) => {
+    // ✅ Fixed: Properly typed error parameter
+    onError: (error: Error) => {
       toast.error(error.message || "Failed to update profile");
     },
   });

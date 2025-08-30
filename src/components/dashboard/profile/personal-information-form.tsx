@@ -86,7 +86,7 @@ export function PersonalInformationForm() {
   const updateProfileMutation = useMutation({
     mutationFn: () => updateUserProfile(formData, session?.accessToken || ""),
     onSuccess: (data) => {
-      toast.success("Profile updated successfully!",data);
+      toast.success("Profile updated successfully!", data);
       setHasChanges(false);
       queryClient.invalidateQueries({ queryKey: ["userProfile"] });
     },
@@ -112,104 +112,106 @@ export function PersonalInformationForm() {
   };
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-6">
-        <div>
-          <h3 className="text-lg font-semibold text-gray-900">
-            Personal Information
-          </h3>
-          <p className="text-sm text-gray-600">
-            Manage your personal information and profile details.
-          </p>
-        </div>
-        <Badge
-          variant="secondary"
-          className="bg-green-100 text-green-700 hover:bg-green-100"
-        >
-          <Crown className="mr-1 h-3 w-3" />
-          Subscribed
-        </Badge>
-      </CardHeader>
-
-      <CardContent className="space-y-6">
-        {/* Gender */}
-        <RadioGroup
-          value={formData.gender}
-          onValueChange={(value) => handleInputChange("gender", value)}
-          className="flex gap-6"
-        >
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="male" id="male" />
-            <Label htmlFor="male">Male</Label>
+    <div className="overflow-hidden ">
+      <Card className="overflow-hidden">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-6">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900">
+              Personal Information
+            </h3>
+            <p className="text-sm text-gray-600">
+              Manage your personal information and profile details.
+            </p>
           </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="female" id="female" />
-            <Label htmlFor="female">Female</Label>
-          </div>
-        </RadioGroup>
+          <Badge
+            variant="secondary"
+            className="bg-green-100 text-green-700 hover:bg-green-100"
+          >
+            <Crown className="mr-1 h-3 w-3" />
+            Subscribed
+          </Badge>
+        </CardHeader>
 
-        {/* Text Inputs */}
-        {[
-          "firstName",
-          "lastName",
-          "email",
-          "phoneNum",
-          "bio",
-          "address",
-          "location",
-          "postCode",
-        ].map((field) => (
-          <div key={field} className="space-y-2">
-            <Label className="capitalize text-sm font-medium text-gray-700">
-              {field}
+        <CardContent className="space-y-6">
+          {/* Gender */}
+          <RadioGroup
+            value={formData.gender}
+            onValueChange={(value) => handleInputChange("gender", value)}
+            className="flex gap-6"
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="male" id="male" />
+              <Label htmlFor="male">Male</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="female" id="female" />
+              <Label htmlFor="female">Female</Label>
+            </div>
+          </RadioGroup>
+
+          {/* Text Inputs */}
+          {[
+            "firstName",
+            "lastName",
+            "email",
+            "phoneNum",
+            "bio",
+            "address",
+            "location",
+            "postCode",
+          ].map((field) => (
+            <div key={field} className="space-y-2">
+              <Label className="capitalize text-sm font-medium text-gray-700">
+                {field}
+              </Label>
+              <Input
+                type={field === "email" ? "email" : "text"}
+                value={formData[field as keyof FormDataType] as string}
+                onChange={(e) =>
+                  handleInputChange(field as keyof FormDataType, e.target.value)
+                }
+                className="w-full"
+              />
+            </div>
+          ))}
+
+          {/* Photo Upload */}
+          <div className="space-y-2">
+            <Label className="text-sm font-medium text-gray-700">
+              Profile Photo
             </Label>
             <Input
-              type={field === "email" ? "email" : "text"}
-              value={formData[field as keyof FormDataType] as string}
+              type="file"
+              accept="image/*"
               onChange={(e) =>
-                handleInputChange(field as keyof FormDataType, e.target.value)
+                handleInputChange("photo", e.target.files?.[0] || null)
               }
-              className="w-full"
             />
+            {formData.photo instanceof File && (
+              <p className="text-xs text-gray-500">
+                Selected: {formData.photo.name}
+              </p>
+            )}
           </div>
-        ))}
 
-        {/* Photo Upload */}
-        <div className="space-y-2">
-          <Label className="text-sm font-medium text-gray-700">
-            Profile Photo
-          </Label>
-          <Input
-            type="file"
-            accept="image/*"
-            onChange={(e) =>
-              handleInputChange("photo", e.target.files?.[0] || null)
-            }
-          />
-          {formData.photo instanceof File && (
-            <p className="text-xs text-gray-500">
-              Selected: {formData.photo.name}
-            </p>
-          )}
-        </div>
-
-        {/* Buttons */}
-        <div className="flex justify-end gap-3 pt-4">
-          <Button
-            variant="outline"
-            onClick={handleDiscard}
-            disabled={!hasChanges}
-          >
-            Discard Changes
-          </Button>
-          <Button
-            onClick={handleSave}
-            disabled={!hasChanges || updateProfileMutation.isPending}
-          >
-            {updateProfileMutation.isPending ? "Saving..." : "Save Changes"}
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+          {/* Buttons */}
+          <div className="flex justify-end gap-3 pt-4">
+            <Button
+              variant="outline"
+              onClick={handleDiscard}
+              disabled={!hasChanges}
+            >
+              Discard Changes
+            </Button>
+            <Button
+              onClick={handleSave}
+              disabled={!hasChanges || updateProfileMutation.isPending}
+            >
+              {updateProfileMutation.isPending ? "Saving..." : "Save Changes"}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
