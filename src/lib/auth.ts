@@ -1,5 +1,8 @@
 // -----------------------------
 // Login User (Verify OTP)
+
+
+
 // -----------------------------
 export const loginUser = async (data: { email: string; otp: string }) => {
   try {
@@ -55,6 +58,7 @@ export const registerUser = async (data: {
     return result;
   } catch (error) {
     console.error("Error in registerUser:", error);
+
     throw new Error(error instanceof Error ? error.message : "Unknown error");
   }
 };
@@ -90,7 +94,7 @@ export const resetPassword = async (password: string, token: string) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({password}),
+        body: JSON.stringify({ password }),
       }
     );
     const result = await res.json();

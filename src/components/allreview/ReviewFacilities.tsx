@@ -1,20 +1,17 @@
 "use client";
 
-
 import React from "react";
 import FacilityCard from "../shared/facility-card";
 import { useQuery } from "@tanstack/react-query";
 import { getallFacilities } from "@/lib/api";
 
-const FacilitiesFeatured = () => {
-const {
-    data: facilitie,
-    isLoading: facilitiesLoading,
-  
-  } = useQuery({
+const ReviewFacilities = () => {
+  const { data: facilitie } = useQuery({
     queryKey: ["facilitiescard"],
     queryFn: () => getallFacilities(),
   });
+  const facilities = facilitie?.data || [];
+
   const handleSeeDetails = (id: string) => {
     console.log("See details clicked for", id);
   };
@@ -22,15 +19,13 @@ const {
   const handleBookTour = (id: string) => {
     console.log("Book tour clicked for", id);
   };
- 
-  
-const facilities = facilitie?.data || [];
+
   return (
     <section>
       <div className="container mx-auto py-8 lg:py-20">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            Featured <span className="text-green-600">Facilities</span>
+            Suggested <span className="text-green-600">Facilities</span>
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto leading-relaxed">
             Discover highlighted senior living options carefully tailored to
@@ -52,4 +47,4 @@ const facilities = facilitie?.data || [];
   );
 };
 
-export default FacilitiesFeatured;
+export default ReviewFacilities;
