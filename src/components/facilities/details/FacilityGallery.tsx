@@ -25,7 +25,7 @@ export function FacilityGallery({ data }: FacilityTourProps) {
   console.log(datas.amenities); // Log the data for debugging
 
   return (
-    <section>
+    <section className="py-[80px]">
       <div className="lg:flex items-center gap-[48px] mx-auto">
         <div className="flex gap-2 items-center mx-auto">
           {/* Image Thumbnails */}
