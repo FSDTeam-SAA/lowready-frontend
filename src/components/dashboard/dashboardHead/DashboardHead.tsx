@@ -11,7 +11,6 @@ export function DashboardHeader() {
 
 
   const currentPage = pathname?.split("/").filter(Boolean).pop() || "Dashboard";
-
   return (
     <header className="flex w-full items-center justify-between bg-white text-black  p-4 backdrop-blur-xl">
       <h1 className="text-[24px] text-[#28A745] font-bold capitalize">

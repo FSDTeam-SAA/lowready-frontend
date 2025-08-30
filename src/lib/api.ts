@@ -6,7 +6,6 @@ import {
   RebookData,
   RebookResponse,
   ReviewData,
- 
   VisitBooking,
 } from "@/types/account";
 import axios from "axios";
@@ -322,6 +321,32 @@ export async function statusCancelTourRequest(bookingId: string) {
   }
 }
 
+interface CreateBookingData {
+  name: string;
+  email: string;
+  phoneNumber: string;
+  relationWith: string;
+  message: string;
+  facility: string;
+  visitDate: string; // Date formatted as "YYYY-MM-DD"
+  visitTime: string;
+}
+export async function CreateBookingTour(data: CreateBookingData) {
+  try {
+    const response = await api.post("/visit-booking/create", data, {
+      headers: {
+        "Content-Type": "application/json", // Ensure the correct content type
+      },
+    });
+    return response.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error creating booking: ${error.message}`);
+    }
+    throw error;
+  }
+}
+
 //? accouunt related api
 
 // Update user profile
@@ -439,6 +464,63 @@ export async function DeleteReview(id: string) {
   }
 }
 
+// create review
+interface CreateReviewRequest {
+  userId: string;
+  facility: string;
+  star: number;
+  comment: string;
+}
+export const createReview = async (
+  reviewData: CreateReviewRequest
+): Promise<Review> => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/review-rating`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(reviewData),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to create review");
+  }
+
+  return response.json();
+};
+
+//fetch review data
+
+export async function fetchReviews(facilityId: string) {
+  try {
+    const response = await api.get(`/review-rating/facility/${facilityId}`);
+    const data = response.data;
+    return data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error Deleted you Review: ${error.message}`);
+    }
+  }
+}
+
+//get facilities review by facilites
+
+export async function getbySigleFacilities(id: string) {
+  try {
+    console.log("ides", id);
+
+    const res = await api.get(`/facility/${id}`);
+    return res.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error Deleted you Review: ${error.message}`);
+    }
+  }
+}
+
 export interface FacilityFilters {
   location?: string;
   careServices?: string[];
@@ -502,10 +584,36 @@ export interface Facility {
   __v?: number;
 }
 
+export interface FacilityCards {
+  _id: string;
+  name: string;
+  location: string;
+  description?: string;
+  about?: string;
+  images: ImageType[];
+  amenities: string[];
+  amenitiesServices?: AmenityService[];
+  careServices?: string[];
+  medicaidPrograms?: MedicaidProgram[];
+  rating?: number;
+  price: number;
+  base?: string; // e.g. "monthly"
+  availability?: boolean;
+  availableTime?: string[];
+  uploadVideo?: string;
+  videoTitle?: string;
+  videoDescription?: string;
+  userId?: User;
+  createdAt?: string;
+  updatedAt?: string;
+  __v?: number;
+  reviewCount?:number;
+}
+
 // ---------- API Response ----------
 export interface FacilitySearchResponse {
   data: Facility[];
-  totalPages: number;
+  totalPages?: number;
 }
 
 // ---------- API Function ----------
@@ -514,6 +622,15 @@ export async function FacilitySearchData(
 ): Promise<FacilitySearchResponse> {
   try {
     const res = await api.get(`/facility/all`, { params: filters });
+    return res.data as FacilitySearchResponse;
+  } catch (error) {
+    console.error("Error fetching facilities:", error);
+    return { data: [], totalPages: 1 };
+  }
+}
+export async function getallFacilities(): Promise<FacilitySearchResponse> {
+  try {
+    const res = await api.get(`/facility/all`);
     return res.data as FacilitySearchResponse;
   } catch (error) {
     console.error("Error fetching facilities:", error);
@@ -536,7 +653,6 @@ export async function facilitiesLocation(): Promise<{ data: Location[] }> {
     return { data: [] };
   }
 }
-
 
 export const getBookingHistory = getUserBookings;
 export const getTourHistory = getUserTourHistory;

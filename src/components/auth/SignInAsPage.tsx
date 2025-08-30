@@ -81,7 +81,7 @@ const SignInAsPage = () => {
                 </ul>
                 <Button
                   className="w-full bg-green-600 hover:bg-green-700"
-                  onClick={() => router.push("/auth/signup?role=user")}
+                  onClick={() => router.push("/signup?role=user")}
                 >
                   Continue as User
                 </Button>

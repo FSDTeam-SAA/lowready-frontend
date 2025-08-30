@@ -23,6 +23,8 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 
+import Link from "next/link";
+
 interface Location {
   _id: string;
   location: string;
@@ -69,6 +71,10 @@ export default function SearchField() {
     setFilters({ ...filters, location: e.target.value });
     setIsSearching(e.target.value.length > 0);
   };
+
+  // const handelDetailpage=(facility)=>{
+
+  // }
 
   return (
     <div className="relative container mx-auto w-full min-h-screen bg-white">
@@ -247,7 +253,10 @@ export default function SearchField() {
               <>
                 <div className="pb-[80px]">
                   <h2 className="text-[40px] font-bold leading-[150%] text-[#343A40]">
-                    Facilities near {filters.location} - <span className="text-[#28A745]">{facilities.length} Round</span>
+                    Facilities near {filters.location} -{" "}
+                    <span className="text-[#28A745]">
+                      {facilities.length} Round
+                    </span>
                   </h2>
                   <p className="text-[16px] text-[#68706A] pt-[4px]">
                     Browse through carefully selected senior living options near
@@ -305,7 +314,11 @@ export default function SearchField() {
                           </span>
                           <div className="flex justify-between gap-5 pt-4 pb-6 ">
                             <Button className="w-1/2" variant="outline">
-                              See Details
+                              <Link className="w-full h-full cursor-pointer"
+                                href={`/facilities/details/${facility._id}`}
+                              >
+                                See Details
+                              </Link>
                             </Button>
                             <Button className="w-1/2">Book a Tour</Button>
                           </div>

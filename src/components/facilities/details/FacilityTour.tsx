@@ -1,18 +1,34 @@
 "use client";
-import Image from "next/image";
+import { Facility } from "@/lib/api";
 
-export function FacilityTour() {
+interface FacilityTourProps {
+  data: { data: Facility };
+}
+
+export function FacilityTour({ data }: FacilityTourProps) {
+  if (!data) return null;
+
+  const datas = data.data || [];
+
   return (
     <section className="my-[80px]">
-      <h2 className="text-xl text-[32px] font-semibold">Villa <span className="text-green-400">Tour</span></h2>
-      <p className="text-[16px] text-[#8E938F]">Set apart from the main community building, our villas offer spacious 2-bedroom, 2-bathroom layouts complete with an attached parking garage and private enclosed patio. Designed for comfort, convenience, and independence, The Villas provide a perfect blend of privacy and connection to the larger community.</p>
+      {/* Tour Title */}
+      <h2 className="text-xl text-[32px] font-semibold">
+        {datas?.videoTitle} <span className="text-green-400">Tour</span>
+      </h2>
+
+      {/* Video Description */}
+      <p className="text-[16px] text-[#8E938F]">{datas?.videoDescription}</p>
+
+      {/* Video Section */}
       <div className="mt-4 rounded-xl overflow-hidden">
-        <Image
-          src="/villaTour.png"
-          alt="Tour"
+        {/* Video tag to display the tour video */}
+        <video
+          controls
+          src={datas?.uploadVideo}
           width={800}
           height={400}
-          className="w-full h-auto pt-[40px] object-cover"
+          className="w-full h-auto rounded-b-sm pt-[40px] object-cover"
         />
       </div>
     </section>

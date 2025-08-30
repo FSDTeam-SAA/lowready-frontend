@@ -1,7 +1,82 @@
 "use client";
+import * as React from "react";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { CreateBookingTour, Facility } from "@/lib/api";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+interface FacilityTourProps {
+  data: { data: Facility };
+}
 
-export function FacilityBooking() {
+// ✅ Validation schema
+const bookingSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Invalid email address"),
+  phone: z.string().min(10, "Phone number must be at least 10 digits"),
+  relationship: z.string().min(1, "Please select a relationship"),
+  message: z.string().min(10, "Message must be at least 10 characters"),
+  date: z.date().optional(),
+  time: z.string().min(1, "Please select a time"),
+});
+
+type BookingFormData = z.infer<typeof bookingSchema>;
+
+export function FacilityBooking({ data }: FacilityTourProps) {
+  const [date, setDate] = React.useState<Date | undefined>(new Date());
+  const [selectedTime, setSelectedTime] = React.useState<string | null>(null); // Track selected time
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+  } = useForm<BookingFormData>({
+    resolver: zodResolver(bookingSchema),
+  });
+
+  // ✅ API mutation
+  const tourCreateMutation = useMutation({
+    mutationKey: ["create"],
+    mutationFn: (formData: BookingFormData) => {
+      const payload = {
+        name: formData.name,
+        email: formData.email,
+        phoneNumber: formData.phone,
+        relationWith: formData.relationship,
+        message: formData.message,
+        facility: "68ae03455f33292a0f0b049d", // Replace with actual facility ID
+        visitDate: formData.date?.toISOString().split("T")[0] || "",
+        visitTime: formData.time,
+      };
+      return CreateBookingTour(payload);
+    },
+    onError: () => {
+      toast.error("Something went wrong");
+    },
+    onSuccess: () => {
+      toast.success("Tour successfully booked!");
+    },
+  });
+
+  const handleCreate = (formData: BookingFormData) => {
+    tourCreateMutation.mutate(formData);
+  };
+
+  const datas = data?.data || [];
+
   return (
     <section className="my-6">
       <h2 className="text-xl font-semibold">
@@ -12,58 +87,142 @@ export function FacilityBooking() {
         Schedule a visit today and experience the warm, welcoming environment of
         Sunny Hills Assisted Living firsthand.
       </p>
-      <div className="grid grid-cols-2  pt-[80px] gap-6 mt-4">
+
+      <form
+        onSubmit={handleSubmit(handleCreate)}
+        className="grid grid-cols-2 pt-[80px] gap-6 mt-4"
+      >
+        {/* Left Column */}
         <div>
           <div>
-            <p>Select a Date:</p>
-            <input type="date" className="border rounded-md p-2 mt-2 w-full" />
+            <p className="pb-[16px] text-[20px] text-[#343A40] leading-[150%] font-semibold">
+              Select a Date:
+            </p>
+            <Calendar
+              mode="single"
+              selected={date}
+              onSelect={(selectedDate) => {
+                setDate(selectedDate);
+                setValue("date", selectedDate); // ✅ Bind to form
+              }}
+              className="rounded-md border shadow-sm w-1/2 lg:w-[70%] bg-gray-100"
+              captionLayout="dropdown"
+            />
+            {errors.date && (
+              <p className="text-red-500 text-sm">{errors.date.message}</p>
+            )}
           </div>
+
           <div className="pt-[24px]">
             <h2>Available Time</h2>
-            <div>
-              <Button className="">12-00 PM</Button>
-            </div>
+            <ul className="flex flex-wrap gap-2">
+              {datas?.availableTime?.map((item: string, id: number) => (
+                <li
+                  key={id}
+                  onClick={() => {
+                    setSelectedTime(item); // Set selected time
+                    setValue("time", item); // Bind selected time to form
+                  }}
+                  className={` px-5 py-2 cursor-pointer  text-[#68706A] rounded-xl hover:bg-[#28A745] hover:text-white ${
+                    item === selectedTime ? "bg-[#28A745] text-white" : ""
+                  } ${errors.time ? "border-2 border-red-500" : ""}`}
+                >
+                  {item}
+                </li>
+              ))}
+            </ul>
+            {errors.time && (
+              <p className="text-red-500 text-sm">{errors.time.message}</p>
+            )}
           </div>
         </div>
+
+        {/* Right Column */}
         <div>
-          <p>Your Information:</p>
-          <div>
-            <label htmlFor="">Name</label>
-            <input
-              type="text"
+          <p className="text-[20px] text-[#343A40] leading-[150%] pb-[40px] font-semibold">
+            Your Information:
+          </p>
+
+          <div className="pb-[16px]">
+            <label>Name</label>
+            <Input
+              {...register("name")}
               placeholder="Name"
               className="border rounded-md p-2 mt-2 w-full"
             />
+            {errors.name && (
+              <p className="text-red-500 text-sm">{errors.name.message}</p>
+            )}
           </div>
-          <div>
-            <label htmlFor="">Email Addres</label>
-            <input
+
+          <div className="pb-4">
+            <label>Email Address</label>
+            <Input
+              {...register("email")}
               type="email"
               placeholder="Email"
               className="border rounded-md p-2 mt-2 w-full"
             />
+            {errors.email && (
+              <p className="text-red-500 text-sm">{errors.email.message}</p>
+            )}
           </div>
-          <div>
-            <label htmlFor="">Phone Number</label>
-            <input
+
+          <div className="pb-4">
+            <label>Phone Number</label>
+            <Input
+              {...register("phone")}
               type="tel"
               placeholder="Phone"
               className="border rounded-md p-2 mt-2 w-full"
             />
+            {errors.phone && (
+              <p className="text-red-500 text-sm">{errors.phone.message}</p>
+            )}
           </div>
-          <div>
-            <label htmlFor="">Relationship with Resident</label>
-            <section className="border rounded-md p-2 mt-2 w-full">
-              <option value="">open</option>
-            </section>
+
+          <div className="pb-4">
+            <label>Relationship with Resident</label>
+            {/* ✅ Fixed Shadcn Select */}
+            <Select onValueChange={(value) => setValue("relationship", value)}>
+              <SelectTrigger className="mt-2 w-full">
+                <SelectValue placeholder="Select Relationship" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="family">Family</SelectItem>
+                <SelectItem value="friend">Friend</SelectItem>
+                <SelectItem value="caregiver">Caregiver</SelectItem>
+              </SelectContent>
+            </Select>
+            {errors.relationship && (
+              <p className="text-red-500 text-sm">
+                {errors.relationship.message}
+              </p>
+            )}
           </div>
-          <div className="flex flex-col gap-2">
-            <label htmlFor="">Message</label>
-            <textarea placeholder="Write your message" className="h-8" />
+
+          <div className="flex flex-col gap-2 pb-4">
+            <label>Message</label>
+            <Textarea
+              {...register("message")}
+              placeholder="Write your message"
+              className="border rounded-md p-2 mt-2 w-full"
+            />
+            {errors.message && (
+              <p className="text-red-500 text-sm">{errors.message.message}</p>
+            )}
           </div>
-          <Button className="mt-4 w-full">Submit</Button>
+
+          {/* ✅ Submit Button with loading */}
+          <Button
+            type="submit"
+            className="mt-8 w-full"
+            disabled={tourCreateMutation.isPending}
+          >
+            {tourCreateMutation.isPending ? "Submitting..." : "Submit"}
+          </Button>
         </div>
-      </div>
+      </form>
     </section>
   );
 }

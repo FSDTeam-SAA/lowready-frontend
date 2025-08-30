@@ -1,67 +1,114 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { AmenityService, Facility } from "@/lib/api";
+
 import { MapPin } from "lucide-react";
 import Image from "next/image";
+import { useState, useEffect } from "react";
+interface FacilityTourProps {
+  data: { data: Facility };
+}
+export function FacilityGallery({ data }: FacilityTourProps) {
+  const datas = data?.data || [];
 
-export function FacilityGallery() {
-  const images = ["/i.png", "/i1.png", "/i2.png", "/i3.png", "/i4.png"];
+  // Initialize preview image state with the first image from amenitiesServices if available
+  const [previewImage, setPreviewImage] = useState(
+    datas?.images?.[0]?.url|| "/default-image.png"
+  );
+
+  useEffect(() => {
+    if ((datas?.amenitiesServices ?? []).length > 0) {
+      setPreviewImage(datas.amenitiesServices?.[0]?.image?.url || "/default-image.png");
+    }
+  }, [datas.amenitiesServices]);
+
+  console.log(datas.amenities); // Log the data for debugging
 
   return (
-    <section className="">
-        <div className="lg:flex items-center gap-[48px] mx-auto">
+    <section>
+      <div className="lg:flex items-center gap-[48px] mx-auto">
+        <div className="flex gap-2 items-center mx-auto">
+          {/* Image Thumbnails */}
+          <div className="flex gap-3 flex-col">
+            {datas?.amenitiesServices?.map(
+              (img: AmenityService, id: number) => (
+                <Image
+                  onClick={() => setPreviewImage(img.image.url)}
+                  key={id}
+                  src={img.image.url}
+                  alt={`${id}`}
+                  width={105}
+                  height={80}
+                  className="rounded-xl object-cover w-full h-full cursor-pointer"
+                />
+              )
+            )}
+          </div>
 
-      <div className="flex  gap-2 items-center mx-auto ">
-        <div className="flex flex-col">
-          {images.map((img, i) => (
+          {/* Main Image Preview */}
+          <div className="col-span-3 row-span-2">
             <Image
-              key={i}
-              src={img}
-              alt={`Gallery ${i}`}
-              width={105}
-              height={80}
-              className="rounded-xl object-cover w-full h-full"
+              src={previewImage}
+              alt="Main Preview"
+              width={600}
+              height={400}
+              className="rounded-2xl object-cover w-[400] h-[400] lg:w-[600px] lg:h-[600px]"
             />
-          ))}
+          </div>
         </div>
-        <div className="col-span-3 row-span-2">
-          <Image
-            src="/im.png"
-            alt="Main"
-            width={600}
-            height={400}
-            className="rounded-2xl object-cover w-[400] h-[400] lg-w-[600px] lg:h-[600px]"
-          />
-        </div>
-      </div>
-      <div>
-        <Button className="text-green-300 border-1 border-green-300">Available</Button>
-        <h1 className="text-2xl font-bold pt-[24px] text-[#343A40]">Sunny Hills Assisted Living</h1>
-        <p className="text-muted-foreground mt-2 flex gap-2">
-           
-          <MapPin /> 3.9 (34 Reviews) | 1234 Elm St, Springfield, IL 62704
-        </p>
-        <p className="py-4 text-[#68706A] text-[16px] leading-[150%]">
-          Sunny Hills Assisted Living provides a safe, nurturing environment
-          with a wide variety of services tailored to meet the needs of each
-          resident.
-        </p>
-        <div className="pt-[40px] pb-[60px]">
-            <h3 className="text-[20px] text-[#343A40] pb-[6px]">Amenites</h3>
-            <div>
-                <Button className="text-[12px] font-medium bg-gray-200 text-black">Assisted Living</Button>
-            </div>
-        </div>
-        <div className="flex justify-between items-center mt-6">
-          <p className="text-2xl font-semibold text-green-600">
-            $2,200 / month
+
+        {/* Facility Info */}
+        <div>
+          <Button className="text-green-300 border-1 border-green-300">
+            Available
+          </Button>
+          <h1 className="text-2xl font-bold pt-[24px] text-[#343A40]">
+            {datas?.name}
+          </h1>
+          <p className="text-muted-foreground mt-2 flex gap-2">
+            <MapPin />
+            {datas?.location}
           </p>
-          <div className="space-x-2">
-            <Button variant="outline">Request Info</Button>
-            <Button>Book a Tour</Button>
+          <p className="py-4 text-[#68706A] text-[16px] leading-[150%]">
+            {datas?.description}
+          </p>
+
+          {/* Amenities Section */}
+          <div className="pt-[40px] pb-[60px]">
+            <h3 className="text-[20px] text-[#343A40] pb-[6px]">Amenities</h3>
+            <div>
+              <ul className="flex items-center gap-3 flex-wrap">
+                {datas?.amenities?.map((item: string, id: number) => {
+                  return (
+                    <li
+                      className="text-[12px] px-4 rounded-sm border-1 py-1  inline-block font-medium bg-[#F7F8F8] text-[#68706A]"
+                      key={id}
+                    >
+                      {item}
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </div>
+
+          {/* Price and Actions */}
+          <div className="mt-6">
+            <p className="text-[20px] font-semibold text-[#343A40]">Pricing</p>
+            <div className=" ">
+              <p className="text-2xl font-semibold text-green-600">
+                $2,200 / month
+              </p>
+              <div className="space-x-2 pt-[80px] flex justify-between">
+                <Button className="w-1/2" variant="outline">
+                  Request Info
+                </Button>
+                <Button className="w-1/2">Book a Tour</Button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-        </div>
     </section>
   );
 }
