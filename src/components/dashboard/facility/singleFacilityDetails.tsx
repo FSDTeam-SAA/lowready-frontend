@@ -201,97 +201,100 @@ const SingleFacilityDetails: React.FC<SingleFacilityDetailsProps> = ({
     });
   }
 
-  return (
-    <div className=" bg-gray-50 p-2 h-full">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Main Card - Horizontal Layout */}
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-          <div className="flex flex-col lg:flex-row">
-            {/* Left Column - Image */}
-            <div className="lg:w-2/5">
-              <div className="relative h-64 lg:h-full">
-                <Image
-                  src={
-                    facilityData.images && facilityData.images.length > 0
-                      ? facilityData.images[0].url
-                      : "/api/placeholder/400/300"
-                  }
-                  alt={facilityData.name}
-                  fill
-                  className="object-cover"
-                />
+ 
+return (
+  <div className="bg-gray-50 h-[400px]">
+    <div className="mx-auto px-3 sm:px-4 lg:px-8">
+      {/* Main Card - Horizontal Layout */}
+      <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+        <div className="flex flex-col lg:flex-row">
+          {/* Left Column - Image */}
+          <div className="lg:w-2/5">
+            <div className="relative h-64 lg:h-full">
+              <Image
+                src={
+                  facilityData.images && facilityData.images.length > 0
+                    ? facilityData.images[0].url
+                    : "/api/placeholder/400/300"
+                }
+                alt={facilityData.name}
+                fill
+                className="object-cover"
+              />
+            </div>
+          </div>
+
+          {/* Right Column - Details */}
+          <div className="lg:w-3/5 p-6 space-y-4">
+            <h1 className="text-3xl font-bold text-gray-900">
+              {facilityData.name}
+            </h1>
+            {/* Location */}
+            <div className="flex items-center gap-2">
+              <MapPin className="w-5 h-5 text-gray-400" />
+              <span className="text-gray-600">{facilityData.location}.</span>
+            </div>
+
+            {/* Availability */}
+            <div className="flex items-center gap-2">
+              <Dot className={`w-6 h-6 ${availabilityColor}`} />
+              <span className="text-gray-600">- {availabilityText}</span>
+            </div>
+
+            {/* Description */}
+            <div>
+              <p className="text-gray-700 leading-relaxed">
+                - {facilityData.description}
+              </p>
+            </div>
+
+            {/* Amenities Grid */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                Amenities
+              </h3>
+              <div className="grid grid-cols-5 gap-2">
+                {amenitiesList.slice(0, 10).map((amenity, index) => (
+                  <div
+                    key={index}
+                    className="bg-gray-100 px-3 py-2 rounded-lg text-center"
+                  >
+                    <span className="text-sm text-gray-700 truncate">
+                      {typeof amenity === "string"
+                        ? amenity.substring(0, 6) + "..."
+                        : "Ameni..."}
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
 
-            {/* Right Column - Details */}
-            <div className="lg:w-3/5 p-6 space-y-4">
-              <h1 className="text-3xl font-bold text-gray-900">
-                {facilityData.name}
-              </h1>
-              {/* Location */}
-              <div className="flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-gray-400" />
-                <span className="text-gray-600">{facilityData.location}.</span>
-              </div>
-
-              {/* Availability */}
-              <div className="flex items-center gap-2">
-                <Dot className={`w-6 h-6 ${availabilityColor}`} />
-                <span className="text-gray-600">- {availabilityText}</span>
-              </div>
-
-              {/* Description */}
+            {/* Price and Action */}
+            <div className="flex items-center justify-between pt-4 border-t border-gray-200">
               <div>
-                <p className="text-gray-700 leading-relaxed">
-                  - {facilityData.description}
-                </p>
+                <span className="text-2xl font-bold text-gray-900">
+                  $ {facilityData.price?.toLocaleString()}
+                </span>
+                <span className="text-gray-500 ml-1">
+                  / {facilityData.base || "Month"}
+                </span>
               </div>
-
-              {/* Amenities Grid */}
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                  Amenities
-                </h3>
-                <div className="grid grid-cols-5 gap-2">
-                  {amenitiesList.slice(0, 10).map((amenity, index) => (
-                    <div
-                      key={index}
-                      className="bg-gray-100 px-3 py-2 rounded-lg text-center"
-                    >
-                      <span className="text-sm text-gray-700 truncate">
-                        {typeof amenity === "string"
-                          ? amenity.substring(0, 6) + "..."
-                          : "Ameni..."}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Price and Action */}
-              <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-                <div>
-                  <span className="text-2xl font-bold text-gray-900">
-                    $ {facilityData.price?.toLocaleString()}
-                  </span>
-                  <span className="text-gray-500 ml-1">
-                    / {facilityData.base || "Month"}
-                  </span>
-                </div>
+               
                 <Button
                   onClick={handleEdit}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2"
+                  className="bg-green-500 hover:bg-green-700  cursor-pointer text-white px-4 py-2"
                 >
                   <Edit className="h-4 w-4 mr-2" />
                   Edit Information
                 </Button>
-              </div>
+               
             </div>
           </div>
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 };
 
 export default SingleFacilityDetails;

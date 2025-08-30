@@ -56,14 +56,14 @@ async function fetchUserProfile(accessToken: string, id: string): Promise<ApiRes
 export function ProfileCard() {
   const { data: session } = useSession()
   
-  const { data: userProfile, isLoading, error } = useQuery({
+  const { data: userProfile, isLoading, error } = useQuery<ApiResponse, Error>({
     queryKey: ['userProfile'],
     queryFn: () => fetchUserProfile(session?.accessToken as string, session?.user.id as string),
     enabled: !!session?.accessToken, // Only run query if access token exists
   })
 
   // Loading state
-  if (isLoading) {
+  if (isLoading) { // Fixed: Changed !isLoading to isLoading
     return (
       <Card className="overflow-hidden">
         <div className="h-24 bg-gradient-to-r from-green-400 to-green-500"></div>
@@ -122,7 +122,7 @@ export function ProfileCard() {
     : userData.street || "Not specified"
 
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden h-screen">
       {/* Green header background */}
       <div className="h-24 bg-gradient-to-r from-green-400 to-green-500"></div>
 

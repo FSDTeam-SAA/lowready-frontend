@@ -24,7 +24,7 @@ export default function DashboardLayout({
                 <div className="sticky top-0 z-10 flex bg-[#FFFFFF]">
                   <DashboardHeader />
                 </div>
-                <main className="md:ml-[15px] bg-[#F8F9FA] h-screen">{children}</main>
+                <main className="md:ml-[15px] bg-[#f8f9fa] min-h-screen h-full">{children}</main>
               </div>
             </div>
           </SidebarProvider>

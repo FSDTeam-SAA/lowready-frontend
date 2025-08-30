@@ -1,10 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import type React from "react";
-
-import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -17,9 +15,33 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Edit } from "lucide-react";
 import { toast } from "sonner";
-import { updateUserProfile } from "@/lib/api";
 import { useSession } from "next-auth/react";
 import DashboardLayout from "./profile-dashboard-layout";
+
+// ✅ API Endpoints
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
+// ✅ Type definitions for better type safety
+interface ExtendedUser {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  gender: "male" | "female";
+  bio?: string;
+  street: string;
+  postCode?: number;
+  phoneNum: string;
+  avatar?: {
+    url: string;
+  };
+  createdAt: string;
+}
+
+interface ExtendedSession {
+  accessToken: string;
+  user: ExtendedUser;
+}
 
 const profileSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -41,30 +63,32 @@ export default function ProfilePage() {
   const queryClient = useQueryClient();
   const { data: session } = useSession();
 
-  const userProfile: any | null = session?.user
-    ? {
-        _id: "mock-id",
-        firstName: session.user.name?.split(" ")[0] || "Olivia",
-        lastName: session.user.name?.split(" ")[1] || "Rhye",
-        email: session.user.email || "bessieadwards@gmail.com",
-        gender: "female" as const,
-        bio: "Fashion designer passionate about creating styles that celebrate individuality and comfort.",
-        street: "1234 Oak Avenue, San Francisco, CA 94102A",
-        postCode: 30301,
-        phoneNum: "+1 (555) 123-4567",
-        avatar: {
-          url: session.user.image || "/abstract-profile.png",
-          public_id: "mock-public-id",
-        },
-        createdAt: "2025-08-21T19:24:00.739Z",
-        updatedAt: "2025-08-21T19:55:43.959Z",
-        role: "user",
-        fine: 0,
-        refresh_token: "",
-        dateOfBirth: "1990-01-01",
-      }
-    : null;
+  // ✅ Fixed: Properly typed session casting
+  const extendedSession = session as ExtendedSession | null;
+  const accessToken = extendedSession?.accessToken;
+  const userId = extendedSession?.user?.id;
 
+  // ✅ Fetch user profile using Tanstack Query
+  const {
+    data: userProfile,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["userProfile", userId],
+    queryFn: async () => {
+      const res = await fetch(`${BASE_URL}/user/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      if (!res.ok) throw new Error("Failed to fetch profile");
+      const json = await res.json();
+      return json.data as ExtendedUser;
+    },
+    enabled: !!userId && !!accessToken,
+  });
+
+  // ✅ React Hook Form Setup
   const {
     register,
     handleSubmit,
@@ -74,29 +98,45 @@ export default function ProfilePage() {
     watch,
   } = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
-    defaultValues: userProfile
-      ? {
-          firstName: userProfile.firstName,
-          lastName: userProfile.lastName,
-          email: userProfile.email,
-          gender: userProfile.gender,
-          bio: userProfile.bio || "",
-          street: userProfile.street,
-          location: "Florida, USA",
-          postCode: userProfile.postCode?.toString() || "",
-          phoneNum: userProfile.phoneNum,
-        }
-      : undefined,
   });
 
+  // ✅ Populate form after fetching user data
+  useEffect(() => {
+    if (userProfile) {
+      reset({
+        firstName: userProfile.firstName,
+        lastName: userProfile.lastName,
+        email: userProfile.email,
+        gender: userProfile.gender,
+        bio: userProfile.bio || "",
+        street: userProfile.street,
+        location: "Florida, USA", // static for now
+        postCode: userProfile.postCode?.toString() || "",
+        phoneNum: userProfile.phoneNum,
+      });
+    }
+  }, [userProfile, reset]);
+
+  // ✅ Update Profile Mutation
   const updateProfileMutation = useMutation({
-    mutationFn: updateUserProfile,
+    mutationFn: async (formData: FormData) => {
+      const res = await fetch(`${BASE_URL}/user/update`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: formData,
+      });
+      if (!res.ok) throw new Error("Failed to update profile");
+      return res.json();
+    },
     onSuccess: () => {
       toast.success("Profile updated successfully");
-      queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+      queryClient.invalidateQueries({ queryKey: ["userProfile", userId] });
     },
-    onError: (error: { response?: { data?: { message?: string } } }) => {
-      toast.error(error?.response?.data?.message || "Failed to update profile");
+    // ✅ Fixed: Properly typed error parameter
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to update profile");
     },
   });
 
@@ -115,6 +155,7 @@ export default function ProfilePage() {
     formData.append("lastName", data.lastName);
     formData.append("phoneNum", data.phoneNum);
     formData.append("address", data.street);
+    formData.append("gender", data.gender);
     if (data.bio) formData.append("bio", data.bio);
     if (data.postCode) formData.append("postCode", data.postCode);
 
@@ -126,17 +167,39 @@ export default function ProfilePage() {
   };
 
   const handleDiscard = () => {
-    reset();
+    if (userProfile) {
+      reset({
+        firstName: userProfile.firstName,
+        lastName: userProfile.lastName,
+        email: userProfile.email,
+        gender: userProfile.gender,
+        bio: userProfile.bio || "",
+        street: userProfile.street,
+        location: "Florida, USA",
+        postCode: userProfile.postCode?.toString() || "",
+        phoneNum: userProfile.phoneNum,
+      });
+    }
     setSelectedFile(null);
     setPreviewUrl(null);
     toast.info("Changes discarded");
   };
 
-  if (!userProfile) {
+  if (isLoading) {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#179649]"></div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  if (isError || !userProfile) {
+    return (
+      <DashboardLayout>
+        <div className="text-center py-10 text-red-500">
+          Failed to load profile data.
         </div>
       </DashboardLayout>
     );
@@ -208,7 +271,8 @@ export default function ProfilePage() {
                     {userProfile?.street}
                   </div>
                   <div>
-                    <span className="font-medium">Since:</span> 14 August, 2025
+                    <span className="font-medium">Since:</span>{" "}
+                    {new Date(userProfile?.createdAt).toLocaleDateString()}
                   </div>
                 </div>
               </div>
@@ -357,10 +421,10 @@ export default function ProfilePage() {
                   />
                   {errors.phoneNum && (
                     <p className="text-sm text-[#e5102e]">
-                      {errors.phoneNum.message}
-                    </p>
-                  )}
-                </div>
+                        {errors.phoneNum.message}
+                      </p>
+                    )}
+                  </div>
 
                 {/* Action Buttons */}
                 <div className="flex gap-4 pt-4">
