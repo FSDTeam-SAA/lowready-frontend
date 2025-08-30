@@ -82,10 +82,17 @@ const ToureRequest = () => {
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error loading bookings</p>;
+  if (!tourbookings || tourbookings.length === 0) {
+  return (
+    <div className="flex items-center justify-center h-64 text-8xl text-muted-foreground">
+      No Data available
+    </div>
+  );
+}
 
   return (
     <section>
-      <div className="space-y-4 py-6">
+      <div className="space-y-4 p-6">
         <div className="border rounded-lg">
           <Table>
             <TableHeader>

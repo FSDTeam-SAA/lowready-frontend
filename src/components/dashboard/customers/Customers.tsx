@@ -3,11 +3,23 @@
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Eye, ChevronLeft, ChevronRight } from "lucide-react";
-import { getCustomers, getFacilities, mapApiBookingToBookingData, type BookingData } from "@/lib/api";
+import {
+  getCustomers,
+  getFacilities,
+  mapApiBookingToBookingData,
+  type BookingData,
+} from "@/lib/api";
 
 export function Customers() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -22,7 +34,11 @@ export function Customers() {
   const facilityId = facilityData?.data?.[0]?._id || "";
 
   // Fetch customers/bookings
-  const { data, isLoading: isBookingsLoading, error } = useQuery({
+  const {
+    data,
+    isLoading: isBookingsLoading,
+    error,
+  } = useQuery({
     queryKey: ["customers", facilityId, currentPage, itemsPerPage],
     queryFn: () => getCustomers(facilityId, currentPage, itemsPerPage),
     enabled: !!facilityId,
@@ -56,8 +72,16 @@ export function Customers() {
     );
   }
 
+  if (!bookings || bookings.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-64 text-8xl text-muted-foreground">
+        No Customer available
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 p-6">
       <div className="border rounded-lg">
         <Table>
           <TableHeader>
@@ -77,7 +101,10 @@ export function Customers() {
                 <TableCell>
                   <div className="flex items-center gap-3">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={booking.customer.avatar} alt={booking.customer.name} />
+                      <AvatarImage
+                        src={booking.customer.avatar}
+                        alt={booking.customer.name}
+                      />
                       <AvatarFallback>
                         {booking.customer.name
                           .split(" ")
@@ -87,7 +114,9 @@ export function Customers() {
                     </Avatar>
                     <div>
                       <div className="font-medium">{booking.customer.name}</div>
-                      <div className="text-sm text-muted-foreground">{booking.customer.email}</div>
+                      <div className="text-sm text-muted-foreground">
+                        {booking.customer.email}
+                      </div>
                     </div>
                   </div>
                 </TableCell>
@@ -96,7 +125,11 @@ export function Customers() {
                 <TableCell>${booking.price.toLocaleString()}</TableCell>
                 <TableCell>
                   <Link href={`/dashboard/customers/${booking.id}`}>
-                    <Button className="bg-green-600 text-white hover:bg-green-700" variant="ghost" size="sm">
+                    <Button
+                      className="bg-green-600 text-white hover:bg-green-700"
+                      variant="ghost"
+                      size="sm"
+                    >
                       <Eye className="h-4 w-4 mr-1" /> Details
                     </Button>
                   </Link>
@@ -137,7 +170,9 @@ export function Customers() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
             disabled={currentPage === totalPages}
           >
             <ChevronRight className="h-4 w-4" />

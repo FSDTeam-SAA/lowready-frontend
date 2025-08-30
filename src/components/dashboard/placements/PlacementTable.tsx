@@ -29,12 +29,12 @@ export function BookingsTable() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-
+  
   const { data: facilityData, isLoading: isFacilitiesLoading } = useQuery({
     queryKey: ["facilityId"],
     queryFn: () => getFacilities(),
   });
-
+  
   const facilityId = facilityData?.data?.[0]?._id || "";
 
   const { data, error, isLoading } = useQuery({
@@ -68,6 +68,14 @@ export function BookingsTable() {
       </div>
     );
   }
+
+  if (!bookings || bookings.length === 0) {
+  return (
+    <div className="flex items-center justify-center  font-bold h-50 text-4xl text-muted-foreground">
+      No Placements available
+    </div>
+  );
+}
 
   return (
     <div className="space-y-4">

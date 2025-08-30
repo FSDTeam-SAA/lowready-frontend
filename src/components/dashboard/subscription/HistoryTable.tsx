@@ -44,13 +44,13 @@ const historyData = [
 
 const HistoryTable = () => {
   return (
-    <div className="w-full px-3 mx-auto mt-8">
+    <div className="w-full px-3 mx-auto  mt-8">
       <h2 className="text-3xl font-semibold mb-3">Subscription History</h2>
       <p className="text-gray-500 mb-6 text-lg">
         Stay updated with the latest alerts and messages.
       </p>
 
-      <div className="rounded-md border">
+      <div className="rounded-md border mx-auto">
         <Table>
           <TableHeader>
             <TableRow className="bg-green-50">

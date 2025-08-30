@@ -5,9 +5,7 @@ import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "../ui/button";
-import { Menu, X,  } from "lucide-react";
-
-// Import shadcn/ui components
+import { Menu, X } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,11 +21,16 @@ const Navbar = () => {
 
   const [isOpen, setIsOpen] = useState(false); // Mobile menu
   const menuRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
-  // Close menus when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(event.target as Node) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -35,7 +38,6 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Prevent scroll when mobile menu open
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "auto";
     return () => {
@@ -43,9 +45,8 @@ const Navbar = () => {
     };
   }, [isOpen]);
 
-  // Helper to get initials for fallback
   const getInitials = (name?: string | null) => {
-    if (!name) return "UN"; // Unknown User
+    if (!name) return "UN";
     return name
       .split(" ")
       .map((n) => n[0])
@@ -62,29 +63,29 @@ const Navbar = () => {
     "Contact Us",
   ];
 
+  const LoadingPlaceholder = () => (
+    <div className="h-10 w-24 bg-gray-200 rounded animate-pulse"></div>
+  );
+
   return (
     <header className="sticky top-0 h-20 bg-white z-50 shadow-sm">
       <div className="container mx-auto px-4">
         <nav className="flex justify-between items-center py-[26px]">
-          {/* Left: Logo */}
+          {/* Logo */}
           <div className="flex-shrink-0">
             <Image src="/images/Logo.png" alt="logo" width={150} height={48} />
           </div>
 
-          {/* Center: Navigation */}
+          {/* Navigation */}
           <div className="hidden md:flex flex-1 justify-center">
             <ul className="flex gap-10 font-poppins">
               {navItems.map((item) => (
                 <li
                   key={item}
-                  className="text-gray-700 hover:text-green-500 border-b-2 border-transparent hover:border-green-500 transition"
+                  className="text-gray-700 hover:text-green-500 border-b-2 text-base border-transparent hover:border-green-500 transition"
                 >
                   <Link
-                    href={`/${
-                      item === "Home"
-                        ? ""
-                        : item.toLowerCase().replace(/\s+/g, "-")
-                    }`}
+                    href={`/${item === "Home" ? "" : item.toLowerCase().replace(/\s+/g, "-")}`}
                   >
                     {item}
                   </Link>
@@ -94,12 +95,13 @@ const Navbar = () => {
           </div>
 
           {/* Right: Sign In / Profile */}
-          <div className="flex-shrink-0 flex items-center gap-4">
-            {isLoggedIn ? (
+          <div className="flex-shrink-0 px-6 py-2 flex items-center gap-4">
+            {status === "loading" ? (
+              <LoadingPlaceholder />
+            ) : isLoggedIn ? (
               <div className="hidden md:block">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    {/* Desktop profile display */}
                     <Button variant="ghost" className="flex items-center gap-2">
                       <Avatar className="h-10 w-10">
                         <AvatarImage src={session?.user.image || ""} alt={session?.user.name || ""} />
@@ -113,9 +115,7 @@ const Navbar = () => {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-56" align="end" forceMount>
                     <Link href="/account" passHref>
-                      <DropdownMenuItem className="cursor-pointer">
-                        Profile
-                      </DropdownMenuItem>
+                      <DropdownMenuItem className="cursor-pointer">Profile</DropdownMenuItem>
                     </Link>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem className="cursor-pointer" onClick={() => signOut()}>
@@ -135,10 +135,12 @@ const Navbar = () => {
             {/* Mobile Hamburger */}
             <div className="md:hidden ml-2">
               <Button
+                ref={buttonRef}
                 variant="ghost"
                 size="icon"
-                onClick={() => setIsOpen(!isOpen)}
+                onClick={() => setIsOpen((prev) => !prev)}
                 aria-label="Toggle menu"
+                className="z-60 relative"
               >
                 {isOpen ? <X size={24} /> : <Menu size={24} />}
               </Button>
@@ -161,11 +163,7 @@ const Navbar = () => {
                   className="text-gray-700 hover:text-green-500 border-b-2 border-transparent hover:border-green-500 transition py-2"
                 >
                   <Link
-                    href={`/${
-                      item === "Home"
-                        ? ""
-                        : item.toLowerCase().replace(/\s+/g, "-")
-                    }`}
+                    href={`/${item === "Home" ? "" : item.toLowerCase().replace(/\s+/g, "-")}`}
                     onClick={() => setIsOpen(false)}
                   >
                     {item}
@@ -175,7 +173,9 @@ const Navbar = () => {
             </ul>
 
             <div className="mt-8">
-              {isLoggedIn ? (
+              {status === "loading" ? (
+                <LoadingPlaceholder />
+              ) : isLoggedIn ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button className="w-full text-primary flex items-center justify-center gap-2" variant="ghost">
@@ -191,14 +191,10 @@ const Navbar = () => {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-full" align="end" forceMount>
                     <Link href="/account" passHref>
-                      <DropdownMenuItem className="cursor-pointer" onClick={() => setIsOpen(false)}>
-                        Profile
-                      </DropdownMenuItem>
+                      <DropdownMenuItem className="cursor-pointer" onClick={() => setIsOpen(false)}>Profile</DropdownMenuItem>
                     </Link>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="cursor-pointer" onClick={() => { signOut(); setIsOpen(false); }}>
-                      Log out
-                    </DropdownMenuItem>
+                    <DropdownMenuItem className="cursor-pointer" onClick={() => { signOut(); setIsOpen(false); }}>Log out</DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (

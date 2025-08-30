@@ -98,7 +98,7 @@ export function RecentReviews({ facilityId }: RecentReviewsProps) {
   const reviews = apiReviews ? transformReviews(apiReviews) : [];
 
   return (
-    <div className="bg-white rounded-lg border p-6 h-[400px] shadow-sm">
+    <div className="bg-white rounded-lg border p-6 h-[300px] shadow-sm">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-900">Recent Reviews</h3>

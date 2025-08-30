@@ -18,13 +18,13 @@ export default function DashboardLayout({
     
         <div>
           <SidebarProvider>
-            <div className="flex min-h-screen ">
+            <div className="flex min-h-screen relative">
               <DashboardSidebar />
-              <div className="flex-1 md:w-[calc(100vw-312px)]">
+              <div className="flex-1 md:w-[calc(100vw-312px)] ml-[312px]">
                 <div className="sticky top-0 z-10 flex bg-[#FFFFFF]">
                   <DashboardHeader />
                 </div>
-                <main className="md:ml-[15px] bg-[#F8F9FA] h-full">{children}</main>
+                <main className="md:ml-[15px] bg-[#f8f9fa] min-h-screen h-full">{children}</main>
               </div>
             </div>
           </SidebarProvider>
