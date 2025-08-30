@@ -8,15 +8,13 @@ interface FacilityTourProps {
   data: { data: Facility };
 }
 export function FacilityCare({ data }: FacilityTourProps) {
- 
+  if (!data) return null;
 
- const datas = data.data || [];
-
-
+  const datas = data.data || [];
 
   return (
     <section className="my-6">
-      <div >
+      <div>
         <Card className="px-10 py-10">
           <div>
             <h2 className="text-xl lg:text-[32px] font-semibold">
@@ -51,11 +49,18 @@ export function FacilityCare({ data }: FacilityTourProps) {
               comfort they need every day.
             </p>
             <div className="flex flex-wrap items-center gap-4 pt-[40px]">
-              {datas?.amenitiesServices?.map((item,id:number) => (
+              {datas?.amenitiesServices?.map((item, id: number) => (
                 <div key={id} className="flex items-center gap-2 space-x-2">
-                  <Image src={item.image.url} width={40} height={40} alt="item.name"/>
+                  <Image
+                    src={item.image.url}
+                    width={40}
+                    height={40}
+                    alt="item.name"
+                  />
                   {/* render icon */}
-                  <span className="text-[#68706A] text-[18px] font-normal">{item.name}</span>
+                  <span className="text-[#68706A] text-[18px] font-normal">
+                    {item.name}
+                  </span>
                 </div>
               ))}
             </div>

@@ -90,7 +90,7 @@ export default function FacilityCard({
             </Link>
           </Button>
           <Button
-            className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+            className="flex-1 cursor-pointer bg-green-600 hover:bg-green-700 text-white"
             onClick={() => onBookTour(facility?._id)}
           >
             Book a Tour
