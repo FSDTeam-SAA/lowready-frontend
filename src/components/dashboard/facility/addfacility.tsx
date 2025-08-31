@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -60,7 +60,7 @@ type FacilityFormData = {
 
 export default function AddFacilityPage() {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const createFacilityMutation = useCreateFacility();
 
   const [formData, setFormData] = useState<FacilityFormData>({

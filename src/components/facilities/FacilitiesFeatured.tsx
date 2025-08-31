@@ -23,6 +23,9 @@ const {
     console.log("Book tour clicked for", id);
   };
  
+  if(facilitiesLoading){
+    <h2>Loading..............</h2>
+  }
   
 const facilities = facilitie?.data || [];
   return (
