@@ -1,19 +1,11 @@
 "use client";
 
-
-
 import FacilityCard from "../shared/facility-card";
 import { getallFacilities } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 
 const FacilitiesBrowse = () => {
- 
-
-  const {
-    data: facilitie,
-   
-  
-  } = useQuery({
+  const { data: facilitie } = useQuery({
     queryKey: ["facilitiescard"],
     queryFn: () => getallFacilities(),
   });
@@ -24,9 +16,8 @@ const FacilitiesBrowse = () => {
   const handleBookTour = (id: string) => {
     console.log("Book tour clicked for", id);
   };
- 
-  
-const facilities = facilitie?.data || [];
+
+  const facilities = facilitie?.data || [];
   return (
     <section>
       <div className="container mx-auto py-8 lg:py-20">

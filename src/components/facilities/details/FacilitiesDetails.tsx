@@ -3,7 +3,7 @@ import React from "react";
 import { FacilityGallery } from "./FacilityGallery";
 
 import { FacilityCare } from "./FacilityCare";
-import { FacilityAmenities } from "./FacilityAmenities";
+
 import { FacilityAbout } from "./FacilityAbout";
 import { FacilityTour } from "./FacilityTour";
 import { FacilityBooking } from "./FacilityBooking";
@@ -36,13 +36,14 @@ const FacilitiesDetails = () => {
   return (
     <div>
       <FacilityGallery data={data} />
-
       <FacilityCare data={data} />
-      <FacilityAmenities />
       <FacilityAbout />
       <FacilityTour data={data} />
       <FacilityBooking data={data} />
-      <FacilityReviews userId={session?.user.id || ''} facilityId={lastSegment} />
+      <FacilityReviews
+        userId={session?.user.id || ""}
+        facilityId={lastSegment}
+      />
       <FacilitySimilar />
       <FacilityFAQ />
     </div>

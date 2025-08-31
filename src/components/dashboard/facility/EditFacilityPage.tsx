@@ -29,6 +29,7 @@ import { ChevronLeft, Upload, X, Plus, MapPin, ImageIcon } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { toast } from "sonner";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -104,28 +105,34 @@ type FacilityFormData = {
 };
 
 // Custom Components
-const FormSection = ({ title, children }: { title: string; children: React.ReactNode }) => (
+const FormSection = ({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) => (
   <Card className="bg-white rounded-lg p-6 border border-gray-200">
     <h3 className="text-lg font-semibold mb-4">{title}</h3>
     {children}
   </Card>
 );
 
-const FileUploadZone = ({ 
-  id, 
-  accept, 
-  onFileChange, 
-  label, 
-  description, 
-  selectedFile, 
-  children 
-}: { 
-  id: string; 
-  accept: string; 
-  onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void; 
-  label: string; 
-  description: string; 
-  selectedFile?: string; 
+const FileUploadZone = ({
+  id,
+  accept,
+  onFileChange,
+  label,
+  description,
+  selectedFile,
+  children,
+}: {
+  id: string;
+  accept: string;
+  onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  label: string;
+  description: string;
+  selectedFile?: string;
   children?: React.ReactNode;
 }) => (
   <div className="space-y-4">
@@ -155,7 +162,11 @@ const FileUploadZone = ({
             <p className="text-sm font-medium text-blue-900">{selectedFile}</p>
             <button
               type="button"
-              onClick={() => onFileChange({ target: { files: null } } as React.ChangeEvent<HTMLInputElement>)}
+              onClick={() =>
+                onFileChange({
+                  target: { files: null },
+                } as React.ChangeEvent<HTMLInputElement>)
+              }
               className="text-red-500 hover:text-red-700 p-1"
               title="Remove file"
             >
@@ -176,16 +187,20 @@ const LoadingSpinner = ({ text }: { text: string }) => (
   </div>
 );
 
-const ErrorDisplay = ({ message, onRetry }: { message: string; onRetry: () => void }) => (
+const ErrorDisplay = ({
+  message,
+  onRetry,
+}: {
+  message: string;
+  onRetry: () => void;
+}) => (
   <div className="flex flex-col items-center justify-center h-screen space-y-4">
     <p className="text-red-500 text-lg text-center">{message}</p>
     <div className="flex space-x-4">
       <Button onClick={onRetry} variant="outline">
         Retry
       </Button>
-      <Button onClick={() => window.history.back()}>
-        Go Back
-      </Button>
+      <Button onClick={() => window.history.back()}>Go Back</Button>
     </div>
   </div>
 );
@@ -194,7 +209,7 @@ export default function EditFacilityPage() {
   const router = useRouter();
   const { id } = useParams<{ id: string }>();
   const { data: session, status } = useSession();
-  const userId = session?.user.id
+  // const userId = session?.user.id
   const queryClient = useQueryClient();
 
   const token = session?.accessToken as string;
@@ -224,11 +239,20 @@ export default function EditFacilityPage() {
   const [selectedVideo, setSelectedVideo] = useState<File | null>(null);
   const [facilityLicenseNumber, setFacilityLicenseNumber] = useState("");
   const [medicalDocument, setMedicalDocument] = useState<File | null>(null);
-  const [showAmenitiesServicesModal, setShowAmenitiesServicesModal] = useState(false);
-  const [newAmenityService, setNewAmenityService] = useState<NewAmenityService>({ name: "", photo: null });
-  const [currentTimeSlot, setCurrentTimeSlot] = useState<TimeSlot>({ hours: 12, minutes: 0, period: "AM" });
+  const [showAmenitiesServicesModal, setShowAmenitiesServicesModal] =
+    useState(false);
+  const [newAmenityService, setNewAmenityService] = useState<NewAmenityService>(
+    { name: "", photo: null }
+  );
+  const [currentTimeSlot, setCurrentTimeSlot] = useState<TimeSlot>({
+    hours: 12,
+    minutes: 0,
+    period: "AM",
+  });
   const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
-  const [amenityServicesWithPhotos, setAmenityServicesWithPhotos] = useState<{ name: string; photo: File }[]>([]);
+  const [amenityServicesWithPhotos, setAmenityServicesWithPhotos] = useState<
+    { name: string; photo: File }[]
+  >([]);
 
   const predefinedAmenities = [
     "Room and Board",
@@ -264,17 +288,17 @@ export default function EditFacilityPage() {
       if (!token || !id) {
         throw new Error("Missing authentication or facility ID");
       }
-      
+
       const { data } = await axios.get(`${API_BASE_URL}/facility/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      
+
       if (!data.success) {
         throw new Error(data.message || "Failed to fetch facility data");
       }
-      
+
       return data.data as FacilityResponse;
     },
     enabled: !!token && !!id,
@@ -292,11 +316,15 @@ export default function EditFacilityPage() {
       // Map form data to API expected format
       const updatePayload = {
         _id: id,
-        firstName: updatedData.firstName || updatedData.name?.split(' ')[0] || '',
-        lastName: updatedData.lastName || updatedData.name?.split(' ').slice(1).join(' ') || '',
-        bio: updatedData.description || updatedData.bio || '',
-        street: updatedData.address || updatedData.street || '',
-        phoneNum: updatedData.phoneNum || '',
+        firstName:
+          updatedData.firstName || updatedData.name?.split(" ")[0] || "",
+        lastName:
+          updatedData.lastName ||
+          updatedData.name?.split(" ").slice(1).join(" ") ||
+          "",
+        bio: updatedData.description || updatedData.bio || "",
+        street: updatedData.address || updatedData.street || "",
+        phoneNum: updatedData.phoneNum || "",
         postCode: updatedData.postCode,
         // Add any other fields that the API accepts
       };
@@ -307,7 +335,7 @@ export default function EditFacilityPage() {
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         }
       );
@@ -321,77 +349,84 @@ export default function EditFacilityPage() {
     onSuccess: (data) => {
       // Invalidate and refetch the facility data
       queryClient.invalidateQueries({ queryKey: ["facility", id] });
-      
+
       // Show success message
-      alert("Facility updated successfully!");
-      
+      toast.success(data.message)
+
       // Navigate back or to facility list
       router.push("/dashboard/facility");
     },
     onError: (error: unknown) => {
       console.error("Update error:", error);
-      const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 
-                           (error as Error).message || 
-                           "Failed to update facility";
-      alert(errorMessage);
+      const errorMessage =
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message ||
+        (error as Error).message ||
+        "Failed to update facility";
+      toast.error(errorMessage)
       setErrors({ general: errorMessage });
     },
   });
 
-
-// ✅ Prefill form data when facility data is loaded
+  // ✅ Prefill form data when facility data is loaded
   useEffect(() => {
     if (facility) {
       // Parse amenities if they're stringified JSON
       let parsedAmenities: string[] = [];
       if (facility.amenities && facility.amenities.length > 0) {
         try {
-          parsedAmenities = facility.amenities.flatMap(amenity => 
-            typeof amenity === 'string' ? JSON.parse(amenity) : [amenity]
-          ).filter(Boolean);
+          parsedAmenities = facility.amenities
+            .flatMap((amenity) =>
+              typeof amenity === "string" ? JSON.parse(amenity) : [amenity]
+            )
+            .filter(Boolean);
         } catch (error) {
-          console.warn('Failed to parse amenities:', error);
-          parsedAmenities = facility.amenities.filter(a => typeof a === 'string');
+          console.warn("Failed to parse amenities:", error);
+          parsedAmenities = facility.amenities.filter(
+            (a) => typeof a === "string"
+          );
         }
       }
 
       // Format available times
       let formattedTimes: string[] = [];
       if (facility.availableTime && facility.availableTime.length > 0) {
-        formattedTimes = facility.availableTime.map(time => {
+        formattedTimes = facility.availableTime.map((time) => {
           const date = new Date(time);
           const hours = date.getHours();
           const minutes = date.getMinutes();
-          const period = hours >= 12 ? 'PM' : 'AM';
+          const period = hours >= 12 ? "PM" : "AM";
           const displayHours = hours % 12 || 12;
-          return `${String(displayHours).padStart(2, '0')}:${String(minutes).padStart(2, '0')} ${period}`;
+          return `${String(displayHours).padStart(2, "0")}:${String(
+            minutes
+          ).padStart(2, "0")} ${period}`;
         });
         setSelectedTimes(formattedTimes);
       }
 
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         availability: facility.availability ? "Available" : "Unavailable",
-        name: facility.firstName || '',
-        location: facility.street || '',
-        address: facility.location || '', // Using location as address since that's what the API provides
-        description: facility.description || '',
+        name: facility.firstName || "",
+        location: facility.street || "",
+        address: facility.location || "", // Using location as address since that's what the API provides
+        description: facility.description || "",
         price: facility.price || 0,
-        priceType: facility.base === 'monthly' ? 'Monthly' : 'Yearly',
+        priceType: facility.base === "monthly" ? "Monthly" : "Yearly",
         amenities: parsedAmenities,
         careServices: [], // This might need mapping if your API provides care services
         about: {
-          description: facility.about || facility.description || '',
-          videoTitle: facility.videoTitle || '',
-          videoDescription: facility.videoDescription || '',
-          videoUrl: facility.uploadVideo || '',
+          description: facility.about || facility.description || "",
+          videoTitle: facility.videoTitle || "",
+          videoDescription: facility.videoDescription || "",
+          videoUrl: facility.uploadVideo || "",
         },
         availableTimes: formattedTimes,
-        firstName: facility.name?.split(' ')[0] || '',
-        lastName: facility.name?.split(' ').slice(1).join(' ') || '',
-        bio: facility.about || facility.description || '',
-        street: facility.location || '',
-        phoneNum: '', // Not provided in the API response
+        firstName: facility.name?.split(" ")[0] || "",
+        lastName: facility.name?.split(" ").slice(1).join(" ") || "",
+        bio: facility.about || facility.description || "",
+        street: facility.location || "",
+        phoneNum: "", // Not provided in the API response
         postCode: null, // Not provided in the API response
       }));
     }
@@ -446,14 +481,20 @@ export default function EditFacilityPage() {
   const handleDocumentUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+      const validTypes = [
+        "application/pdf",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      ];
       const isValidType = validTypes.includes(file.type);
       const isValidSize = file.size <= 10 * 1024 * 1024; // 10MB limit
-      
+
       if (isValidType && isValidSize) {
         setMedicalDocument(file);
       } else {
-        alert("Invalid document file. Please select a PDF, DOC, or DOCX file under 10MB.");
+        alert(
+          "Invalid document file. Please select a PDF, DOC, or DOCX file under 10MB."
+        );
       }
     }
   };
@@ -473,12 +514,14 @@ export default function EditFacilityPage() {
     });
   };
 
-  const handleAmenitiesServicePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAmenitiesServicePhotoChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = e.target.files?.[0];
     if (file) {
       const isValidType = file.type.startsWith("image/");
       const isValidSize = file.size <= 5 * 1024 * 1024; // 5MB limit
-      
+
       if (isValidType && isValidSize) {
         setNewAmenityService((prev) => ({ ...prev, photo: file }));
       } else {
@@ -505,29 +548,32 @@ export default function EditFacilityPage() {
     setAmenityServicesWithPhotos((prev) => prev.filter((_, i) => i !== index));
 
   const addTimeSlot = () => {
-    const formatted = `${String(currentTimeSlot.hours).padStart(2, "0")}:${String(
-      currentTimeSlot.minutes
-    ).padStart(2, "0")} ${currentTimeSlot.period}`;
+    const formatted = `${String(currentTimeSlot.hours).padStart(
+      2,
+      "0"
+    )}:${String(currentTimeSlot.minutes).padStart(2, "0")} ${
+      currentTimeSlot.period
+    }`;
     if (!selectedTimes.includes(formatted)) {
       setSelectedTimes((prev) => [...prev, formatted]);
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        availableTimes: [...prev.availableTimes, formatted]
+        availableTimes: [...prev.availableTimes, formatted],
       }));
     }
   };
 
   const removeTimeSlot = (time: string) => {
     setSelectedTimes((prev) => prev.filter((t) => t !== time));
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      availableTimes: prev.availableTimes.filter((t) => t !== time)
+      availableTimes: prev.availableTimes.filter((t) => t !== time),
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -551,8 +597,10 @@ export default function EditFacilityPage() {
 
   if (isError) {
     return (
-      <ErrorDisplay 
-        message={`Failed to load facility data. ${error instanceof Error ? error.message : ''}`}
+      <ErrorDisplay
+        message={`Failed to load facility data. ${
+          error instanceof Error ? error.message : ""
+        }`}
         onRetry={refetch}
       />
     );
@@ -571,7 +619,9 @@ export default function EditFacilityPage() {
               >
                 <ChevronLeft className="h-5 w-5" />
               </Button>
-              <h1 className="text-xl font-semibold text-gray-900">Edit Facility</h1>
+              <h1 className="text-xl font-semibold text-gray-900">
+                Edit Facility
+              </h1>
             </div>
 
             {errors.general && (
@@ -628,18 +678,20 @@ export default function EditFacilityPage() {
                           value={formData.name}
                           onChange={(e) => {
                             const fullName = e.target.value;
-                            const nameParts = fullName.split(' ');
+                            const nameParts = fullName.split(" ");
                             setFormData((prev) => ({
                               ...prev,
                               name: fullName,
-                              firstName: nameParts[0] || '',
-                              lastName: nameParts.slice(1).join(' ') || '',
+                              firstName: nameParts[0] || "",
+                              lastName: nameParts.slice(1).join(" ") || "",
                             }));
                           }}
                           className={errors.name ? "border-red-500" : ""}
                         />
                         {errors.name && (
-                          <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+                          <p className="text-red-500 text-sm mt-1">
+                            {errors.name}
+                          </p>
                         )}
                       </div>
 
@@ -682,7 +734,9 @@ export default function EditFacilityPage() {
                           <MapPin className="absolute right-3 top-3 h-4 w-4 text-gray-400" />
                         </div>
                         {errors.address && (
-                          <p className="text-red-500 text-sm mt-1">{errors.address}</p>
+                          <p className="text-red-500 text-sm mt-1">
+                            {errors.address}
+                          </p>
                         )}
                       </div>
 
@@ -703,7 +757,9 @@ export default function EditFacilityPage() {
                           className={errors.phoneNum ? "border-red-500" : ""}
                         />
                         {errors.phoneNum && (
-                          <p className="text-red-500 text-sm mt-1">{errors.phoneNum}</p>
+                          <p className="text-red-500 text-sm mt-1">
+                            {errors.phoneNum}
+                          </p>
                         )}
                       </div>
 
@@ -718,7 +774,9 @@ export default function EditFacilityPage() {
                           onChange={(e) =>
                             setFormData((prev) => ({
                               ...prev,
-                              postCode: e.target.value ? parseInt(e.target.value) : null,
+                              postCode: e.target.value
+                                ? parseInt(e.target.value)
+                                : null,
                             }))
                           }
                         />
@@ -793,7 +851,10 @@ export default function EditFacilityPage() {
                   <FormSection title="Amenities">
                     <div className="space-y-4">
                       {predefinedAmenities.map((amenity) => (
-                        <div key={amenity} className="flex items-center space-x-2">
+                        <div
+                          key={amenity}
+                          className="flex items-center space-x-2"
+                        >
                           <Checkbox
                             id={amenity}
                             checked={formData.amenities.includes(amenity)}
@@ -819,7 +880,10 @@ export default function EditFacilityPage() {
                   <FormSection title="Care Offering">
                     <div className="grid grid-cols-2 gap-4">
                       {careServiceOptions.map((service) => (
-                        <div key={service} className="flex items-center space-x-2">
+                        <div
+                          key={service}
+                          className="flex items-center space-x-2"
+                        >
                           <Checkbox
                             id={service}
                             checked={formData.careServices.includes(service)}
