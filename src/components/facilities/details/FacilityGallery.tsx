@@ -99,11 +99,11 @@ export function FacilityGallery({ data }: FacilityTourProps) {
               <p className="text-2xl font-semibold text-green-600">
                 $2,200 / month
               </p>
-              <div className="space-x-2 pt-[80px] flex justify-between">
+              <div className="space-x-2 pt-[80px] flex cursor-pointer justify-between">
                 <Button className="w-1/2" variant="outline">
                   Request Info
                 </Button>
-                <Button className="w-1/2">Book a Tour</Button>
+                <Button className="w-1/2 cursor-pointer">Book a Tour</Button>
               </div>
             </div>
           </div>
