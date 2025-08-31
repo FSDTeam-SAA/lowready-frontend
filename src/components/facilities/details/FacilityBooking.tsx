@@ -90,137 +90,141 @@ export function FacilityBooking({ data }: FacilityTourProps) {
 
       <form
         onSubmit={handleSubmit(handleCreate)}
-        className="grid grid-cols-2 pt-[80px] gap-6 mt-4"
+        className=" pt-[80px] mt-4"
       >
-        {/* Left Column */}
-        <div>
-          <div>
-            <p className="pb-[16px] text-[20px] text-[#343A40] leading-[150%] font-semibold">
-              Select a Date:
-            </p>
-            <Calendar
-              mode="single"
-              selected={date}
-              onSelect={(selectedDate) => {
-                setDate(selectedDate);
-                setValue("date", selectedDate); // ✅ Bind to form
-              }}
-              className="rounded-md border shadow-sm w-1/2 lg:w-[70%] bg-gray-100"
-              captionLayout="dropdown"
-            />
-            {errors.date && (
-              <p className="text-red-500 text-sm">{errors.date.message}</p>
-            )}
-          </div>
-
-          <div className="pt-[24px]">
-            <h2>Available Time</h2>
-            <ul className="flex flex-wrap gap-2">
-              {datas?.availableTime?.map((item: string, id: number) => (
-                <li
-                  key={id}
-                  onClick={() => {
-                    setSelectedTime(item); // Set selected time
-                    setValue("time", item); // Bind selected time to form
-                  }}
-                  className={` px-5 py-2 cursor-pointer  text-[#68706A] rounded-xl hover:bg-[#28A745] hover:text-white ${
-                    item === selectedTime ? "bg-[#28A745] text-white" : ""
-                  } ${errors.time ? "border-2 border-red-500" : ""}`}
-                >
-                  {item}
-                </li>
-              ))}
-            </ul>
-            {errors.time && (
-              <p className="text-red-500 text-sm">{errors.time.message}</p>
-            )}
-          </div>
-        </div>
-
-        {/* Right Column */}
-        <div>
-          <p className="text-[20px] text-[#343A40] leading-[150%] pb-[40px] font-semibold">
-            Your Information:
-          </p>
-
-          <div className="pb-[16px]">
-            <label>Name</label>
-            <Input
-              {...register("name")}
-              placeholder="Name"
-              className="border rounded-md p-2 mt-2 w-full"
-            />
-            {errors.name && (
-              <p className="text-red-500 text-sm">{errors.name.message}</p>
-            )}
-          </div>
-
-          <div className="pb-4">
-            <label>Email Address</label>
-            <Input
-              {...register("email")}
-              type="email"
-              placeholder="Email"
-              className="border rounded-md p-2 mt-2 w-full"
-            />
-            {errors.email && (
-              <p className="text-red-500 text-sm">{errors.email.message}</p>
-            )}
-          </div>
-
-          <div className="pb-4">
-            <label>Phone Number</label>
-            <Input
-              {...register("phone")}
-              type="tel"
-              placeholder="Phone"
-              className="border rounded-md p-2 mt-2 w-full"
-            />
-            {errors.phone && (
-              <p className="text-red-500 text-sm">{errors.phone.message}</p>
-            )}
-          </div>
-
-          <div className="pb-4">
-            <label>Relationship with Resident</label>
-            {/* ✅ Fixed Shadcn Select */}
-            <Select onValueChange={(value) => setValue("relationship", value)}>
-              <SelectTrigger className="mt-2 w-full">
-                <SelectValue placeholder="Select Relationship" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="family">Family</SelectItem>
-                <SelectItem value="friend">Friend</SelectItem>
-                <SelectItem value="caregiver">Caregiver</SelectItem>
-              </SelectContent>
-            </Select>
-            {errors.relationship && (
-              <p className="text-red-500 text-sm">
-                {errors.relationship.message}
+        <div className="lg:flex justify-between">
+          {/* Left Column */}
+          <div className="lg:w-1/2 mx-auto lg:mx-0">
+            <div>
+              <p className="pb-[16px] text-[20px] text-[#343A40] leading-[150%] font-semibold">
+                Select a Date:
               </p>
-            )}
+              <Calendar
+                mode="single"
+                selected={date}
+                onSelect={(selectedDate) => {
+                  setDate(selectedDate);
+                  setValue("date", selectedDate); // ✅ Bind to form
+                }}
+                className="rounded-md border mx-auto lg:mx-0 shadow-sm w-full  md:w-1/2 lg:w-[70%] bg-gray-100"
+                captionLayout="dropdown"
+              />
+              {errors.date && (
+                <p className="text-red-500 text-sm">{errors.date.message}</p>
+              )}
+            </div>
+
+            <div className="pt-[24px]">
+              <h2>Available Time</h2>
+              <ul className="flex flex-wrap gap-2">
+                {datas?.availableTime?.map((item: string, id: number) => (
+                  <li
+                    key={id}
+                    onClick={() => {
+                      setSelectedTime(item); // Set selected time
+                      setValue("time", item); // Bind selected time to form
+                    }}
+                    className={` px-5 py-2 cursor-pointer  text-[#68706A] rounded-xl hover:bg-[#28A745] hover:text-white ${
+                      item === selectedTime ? "bg-[#28A745] text-white" : ""
+                    } ${errors.time ? "border-2 border-red-500" : ""}`}
+                  >
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              {errors.time && (
+                <p className="text-red-500 text-sm">{errors.time.message}</p>
+              )}
+            </div>
           </div>
 
-          <div className="flex flex-col gap-2 pb-4">
-            <label>Message</label>
-            <Textarea
-              {...register("message")}
-              placeholder="Write your message"
-              className="border rounded-md p-2 mt-2 w-full"
-            />
-            {errors.message && (
-              <p className="text-red-500 text-sm">{errors.message.message}</p>
-            )}
-          </div>
+          {/* Right Column */}
+          <div className="lg:w-1/2">
+            <p className="text-[20px]  text-[#343A40] leading-[150%] pb-[40px] font-semibold">
+              Your Information:
+            </p>
 
-          {/* ✅ Submit Button with loading */}
-          <Button
-            type="submit"
-            className="mt-8 w-full"
-            disabled={tourCreateMutation.isPending}
-          >
-            {tourCreateMutation.isPending ? "Submitting..." : "Submit"}
-          </Button>
+            <div className="pb-[16px]">
+              <label>Name</label>
+              <Input
+                {...register("name")}
+                placeholder="Name"
+                className="border rounded-md p-2 mt-2 w-full"
+              />
+              {errors.name && (
+                <p className="text-red-500 text-sm">{errors.name.message}</p>
+              )}
+            </div>
+
+            <div className="pb-4">
+              <label>Email Address</label>
+              <Input
+                {...register("email")}
+                type="email"
+                placeholder="Email"
+                className="border rounded-md p-2 mt-2 w-full"
+              />
+              {errors.email && (
+                <p className="text-red-500 text-sm">{errors.email.message}</p>
+              )}
+            </div>
+
+            <div className="pb-4">
+              <label>Phone Number</label>
+              <Input
+                {...register("phone")}
+                type="tel"
+                placeholder="Phone"
+                className="border rounded-md p-2 mt-2 w-full"
+              />
+              {errors.phone && (
+                <p className="text-red-500 text-sm">{errors.phone.message}</p>
+              )}
+            </div>
+
+            <div className="pb-4">
+              <label>Relationship with Resident</label>
+              {/* ✅ Fixed Shadcn Select */}
+              <Select
+                onValueChange={(value) => setValue("relationship", value)}
+              >
+                <SelectTrigger className="mt-2 w-full">
+                  <SelectValue placeholder="Select Relationship" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="family">Family</SelectItem>
+                  <SelectItem value="friend">Friend</SelectItem>
+                  <SelectItem value="caregiver">Caregiver</SelectItem>
+                </SelectContent>
+              </Select>
+              {errors.relationship && (
+                <p className="text-red-500 text-sm">
+                  {errors.relationship.message}
+                </p>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-2 pb-4">
+              <label>Message</label>
+              <Textarea
+                {...register("message")}
+                placeholder="Write your message"
+                className="border rounded-md p-2 mt-2 w-full"
+              />
+              {errors.message && (
+                <p className="text-red-500 text-sm">{errors.message.message}</p>
+              )}
+            </div>
+
+            {/* ✅ Submit Button with loading */}
+            <Button
+              type="submit"
+              className="mt-8 w-full"
+              disabled={tourCreateMutation.isPending}
+            >
+              {tourCreateMutation.isPending ? "Submitting..." : "Submit"}
+            </Button>
+          </div>
         </div>
       </form>
     </section>
