@@ -3,6 +3,7 @@
 import FacilityCard from "../shared/facility-card";
 import { getallFacilities } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
+import { FacilityBooking } from "./details/FacilityBooking";
 
 const FacilitiesBrowse = () => {
   const { data: facilitie } = useQuery({
@@ -30,7 +31,7 @@ const FacilitiesBrowse = () => {
             different needs and preferences.
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1  md:grid-cols-2 lg:grid-cols-3 gap-6">
           {facilities?.map((item) => (
             <FacilityCard
               key={item._id}
@@ -40,6 +41,7 @@ const FacilitiesBrowse = () => {
             />
           ))}
         </div>
+        
       </div>
     </section>
   );

@@ -248,26 +248,30 @@ export async function clearAllNotifications(userId: string): Promise<void> {
   try {
     const res = await api.delete(`/notifications/${userId}/clear`);
     if (!res.data.success) {
-      throw new Error(res.data.message || 'Failed to clear notifications');
+      throw new Error(res.data.message || "Failed to clear notifications");
     }
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(`Error clearing notifications: ${error.message}`);
     }
-    throw new Error('Unknown error occurred');
+    throw new Error("Unknown error occurred");
   }
 }
-export async function markNotificationAsRead(notificationId: string): Promise<void> {
+export async function markNotificationAsRead(
+  notificationId: string
+): Promise<void> {
   try {
     const res = await api.patch(`/notifications/${notificationId}/read`);
     if (!res.data.success) {
-      throw new Error(res.data.message || 'Failed to mark notification as read');
+      throw new Error(
+        res.data.message || "Failed to mark notification as read"
+      );
     }
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(`Error marking notification as read: ${error.message}`);
     }
-    throw new Error('Unknown error occurred');
+    throw new Error("Unknown error occurred");
   }
 }
 
@@ -634,7 +638,7 @@ export interface FacilityCards {
   createdAt?: string;
   updatedAt?: string;
   __v?: number;
-  reviewCount?:number;
+  reviewCount?: number;
 }
 
 // ---------- API Response ----------
@@ -678,6 +682,59 @@ export async function facilitiesLocation(): Promise<{ data: Location[] }> {
   } catch (error) {
     console.error("Error fetching locations:", error);
     return { data: [] };
+  }
+}
+
+//f Booking// api/booking.ts
+export interface BookingType {
+  _id?: string; // Add optional ID for updates
+  facility: string; 
+  userId: string; 
+  startingDate: string; 
+  duration: string; 
+  paymentStatus: "paid" | "unpaid" | "pending"; 
+  residentialInfo: {
+    name: string;
+    dateOfBirth: string; 
+    gender: "male" | "female" | "other";
+    requirements?: string; 
+  }[];
+  totalPrice: number;
+}
+
+// Create booking
+export async function createBooking(userData: BookingType) {
+  try {
+    const res = await api.post(`/bookings`, userData);
+    return res.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Booking Error ${error.message}`);
+    }
+  }
+}
+
+// Update booking
+export async function updateBooking(bookingId: string, userData: Partial<BookingType>) {
+  try {
+    const res = await api.patch(`/bookings/${bookingId}`, userData);
+    return res.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Update Booking Error ${error.message}`);
+    }
+  }
+}
+
+// Get booking by ID
+export async function getBookingById(bookingId: string) {
+  try {
+    const res = await api.get(`/bookings/${bookingId}`);
+    return res.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Get Booking Error ${error.message}`);
+    }
   }
 }
 

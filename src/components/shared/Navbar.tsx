@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
 import { usePathname } from "next/navigation";
 
 const Navbar = () => {
@@ -57,12 +58,12 @@ const Navbar = () => {
   };
 
   const navItems = [
-    "Home",
-    "Facilities",
-    "Search",
-    "About Us",
-    "Blogs",
-    "Contact Us",
+    { name: "Home", path: "/" },
+    { name: "Facilities", path: "/facilities" },
+    { name: "Search", path: "/search" },
+    { name: "About Us", path: "/about-us" },
+    { name: "Blogs", path: "/blogs" },
+    { name: "Contact Us", path: "/contact-us" },
   ];
 
   const LoadingPlaceholder = () => (
@@ -81,6 +82,17 @@ const Navbar = () => {
           {/* Navigation */}
           <div className="hidden md:flex flex-1 justify-center items-center">
             <ul className="flex gap-10 font-poppins">
+              {navItems.map((item) => {
+                const isActive = pathname === item.path;
+                return (
+                  <li
+                    key={item.name}
+                    className={`${isActive ? "text-[#28A745] border-b-2 border-[#28A745]" : "text-gray-700 border-b-2 border-transparent"} hover:text-green-500 hover:border-green-500 transition pb-1`}
+                  >
+                    <Link href={item.path}>{item.name}</Link>
+                  </li>
+                );
+              })}
               {navItems.map((item) => {
                 const link = `/${
                   item === "Home" ? "" : item.toLowerCase().replace(/\s+/g, "-")
@@ -178,6 +190,22 @@ const Navbar = () => {
         >
           <div className="container mx-auto px-4 py-6">
             <ul className="flex flex-col gap-6 font-poppins text-lg">
+              {navItems.map((item) => {
+                const isActive = pathname === item.path;
+                return (
+                  <li
+                    key={item.name}
+                    className={`${isActive ? "text-[#28A745] border-b-2 border-[#28A745]" : "text-gray-700 border-b-2 border-transparent"} hover:text-green-500 hover:border-green-500 transition py-2`}
+                  >
+                    <Link
+                      href={item.path}
+                      onClick={() => setIsOpen(false)}
+                    >
+                      {item.name}
+                    </Link>
+                  </li>
+                );
+              })}
               {navItems.map((item) => (
                 <li
                   key={item}
