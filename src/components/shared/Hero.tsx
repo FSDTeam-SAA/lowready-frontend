@@ -3,7 +3,7 @@ import { SearchBar } from "../customized/searchbar/searchbar";
 
 const Hero = () => {
   return (
-    <section className="min-h-svh">
+    <section className="min-h-svh mt-6">
       <div
         className="container mx-auto h-[calc(100vh-150px)] md:h-[calc(100svh-120px)] sm:h-[calc(100svh-100px)]  rounded-md bg-cover bg-center bg-black/60 bg-blend-overlay"
         style={{ backgroundImage: "url('/images/hero.jpg')" }}

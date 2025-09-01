@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { usePathname } from "next/navigation";
 
 const Navbar = () => {
   const { data: session, status } = useSession();
@@ -22,6 +23,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false); // Mobile menu
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -70,27 +72,34 @@ const Navbar = () => {
   return (
     <header className="sticky top-0 h-20 bg-white z-50 shadow-sm">
       <div className="container mx-auto px-4">
-        <nav className="flex justify-between items-center py-[26px]">
+        <nav className="flex justify-between items-center py-[16px]">
           {/* Logo */}
           <div className="flex-shrink-0">
             <Image src="/images/Logo.png" alt="logo" width={150} height={48} />
           </div>
 
           {/* Navigation */}
-          <div className="hidden md:flex flex-1 justify-center">
+          <div className="hidden md:flex flex-1 justify-center items-center">
             <ul className="flex gap-10 font-poppins">
-              {navItems.map((item) => (
-                <li
-                  key={item}
-                  className="text-gray-700 hover:text-green-500 border-b-2 text-base border-transparent hover:border-green-500 transition"
-                >
-                  <Link
-                    href={`/${item === "Home" ? "" : item.toLowerCase().replace(/\s+/g, "-")}`}
+              {navItems.map((item) => {
+                const link = `/${
+                  item === "Home" ? "" : item.toLowerCase().replace(/\s+/g, "-")
+                }`;
+                const isActive = pathname === link;
+
+                return (
+                  <li
+                    key={item}
+                    className={`text-sm md:text-sm lg:text-base border-b-2 transition ${
+                      isActive
+                        ? "text-green-500 border-green-500"
+                        : "text-gray-700 border-transparent hover:text-green-500 hover:border-green-500"
+                    }`}
                   >
-                    {item}
-                  </Link>
-                </li>
-              ))}
+                    <Link href={link}>{item}</Link>
+                  </li>
+                );
+              })}
             </ul>
           </div>
 
@@ -104,21 +113,33 @@ const Navbar = () => {
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="flex items-center gap-2">
                       <Avatar className="h-10 w-10">
-                        <AvatarImage src={session?.user.image || ""} alt={session?.user.name || ""} />
-                        <AvatarFallback>{getInitials(session?.user.name)}</AvatarFallback>
+                        <AvatarImage
+                          src={session?.user.image || ""}
+                          alt={session?.user.name || ""}
+                        />
+                        <AvatarFallback>
+                          {getInitials(session?.user.name)}
+                        </AvatarFallback>
                       </Avatar>
                       <div className="flex flex-col text-left">
                         <div className="font-medium">{session?.user.name}</div>
-                        <div className="text-sm text-muted-foreground">{session?.user.role}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {session?.user.role}
+                        </div>
                       </div>
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-56" align="end" forceMount>
                     <Link href="/account" passHref>
-                      <DropdownMenuItem className="cursor-pointer">Profile</DropdownMenuItem>
+                      <DropdownMenuItem className="cursor-pointer">
+                        Profile
+                      </DropdownMenuItem>
                     </Link>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="cursor-pointer" onClick={() => signOut()}>
+                    <DropdownMenuItem
+                      className="cursor-pointer"
+                      onClick={() => signOut()}
+                    >
                       Log out
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -163,7 +184,11 @@ const Navbar = () => {
                   className="text-gray-700 hover:text-green-500 border-b-2 border-transparent hover:border-green-500 transition py-2"
                 >
                   <Link
-                    href={`/${item === "Home" ? "" : item.toLowerCase().replace(/\s+/g, "-")}`}
+                    href={`/${
+                      item === "Home"
+                        ? ""
+                        : item.toLowerCase().replace(/\s+/g, "-")
+                    }`}
                     onClick={() => setIsOpen(false)}
                   >
                     {item}
@@ -178,28 +203,57 @@ const Navbar = () => {
               ) : isLoggedIn ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button className="w-full text-primary flex items-center justify-center gap-2" variant="ghost">
+                    <Button
+                      className="w-full text-primary flex items-center justify-center gap-2"
+                      variant="ghost"
+                    >
                       <Avatar className="h-8 w-8">
-                        <AvatarImage src={session?.user.image || ""} alt={session?.user.name || ""} />
-                        <AvatarFallback>{getInitials(session?.user.name)}</AvatarFallback>
+                        <AvatarImage
+                          src={session?.user.image || ""}
+                          alt={session?.user.name || ""}
+                        />
+                        <AvatarFallback>
+                          {getInitials(session?.user.name)}
+                        </AvatarFallback>
                       </Avatar>
                       <div className="flex flex-col text-left">
                         <div className="font-medium">{session?.user.name}</div>
-                        <div className="text-sm text-muted-foreground">{session?.user.role}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {session?.user.role}
+                        </div>
                       </div>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-full" align="end" forceMount>
+                  <DropdownMenuContent
+                    className="w-full"
+                    align="end"
+                    forceMount
+                  >
                     <Link href="/account" passHref>
-                      <DropdownMenuItem className="cursor-pointer" onClick={() => setIsOpen(false)}>Profile</DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="cursor-pointer"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        Profile
+                      </DropdownMenuItem>
                     </Link>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="cursor-pointer" onClick={() => { signOut(); setIsOpen(false); }}>Log out</DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="cursor-pointer"
+                      onClick={() => {
+                        signOut();
+                        setIsOpen(false);
+                      }}
+                    >
+                      Log out
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
                 <Button className="bg-primary w-full">
-                  <Link href="/login" onClick={() => setIsOpen(false)}>Sign in</Link>
+                  <Link href="/login" onClick={() => setIsOpen(false)}>
+                    Sign in
+                  </Link>
                 </Button>
               )}
             </div>
