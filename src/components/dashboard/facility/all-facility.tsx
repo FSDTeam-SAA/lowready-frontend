@@ -99,7 +99,7 @@ const FacilityCard: React.FC<FacilityCardProps> = ({ facility }) => {
           </div>
           <Button
             onClick={handleDetailsClick}
-            className="bg-green-600 hover:bg-green-800 text-white px-4 py-2"
+            className="bg-green-600 cursor-pointer hover:bg-green-800 text-white px-4 py-2"
           >
             Details
           </Button>

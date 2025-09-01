@@ -80,7 +80,7 @@ export function DashboardSidebar() {
           <Button
             key={item.name}
             variant="ghost"
-            className={`w-full justify-start gap-3 h-12 px-4 rounded-lg font-medium transition-all duration-200 ${
+            className={`w-full justify-start gap-3 h-12 px-4 rounded-lg cursor-pointer font-medium transition-all duration-200 ${
               isActive(item.href)
                 ? "bg-[#179649] text-white hover:bg-[#179649] hover:text-white"
                 : "text-[#68706a] hover:bg-[#f8f9fa] hover:text-[#179649]"
@@ -97,7 +97,7 @@ export function DashboardSidebar() {
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
-              className={`w-full justify-start gap-3 h-12 px-4 rounded-lg font-medium transition-all duration-200 ${
+              className={`w-full justify-start gap-3 h-12 px-4 cursor-pointer rounded-lg font-medium transition-all duration-200 ${
                 settingsItems.some((item) => isActive(item.href))
                   ? "bg-[#179649] text-white hover:bg-[#179649]"
                   : "text-[#68706a] hover:bg-[#f8f9fa] hover:text-[#179649]"
@@ -130,7 +130,7 @@ export function DashboardSidebar() {
       <div className="px-4 py-4 mt-auto border-t border-gray-100">
         <Button
           variant="ghost"
-          className="w-full justify-start gap-3 h-12 px-4 rounded-lg font-medium text-[#e5102e] hover:bg-[#feecee] hover:text-[#e5102e] transition-all duration-200"
+          className="w-full justify-start gap-3 h-12 px-4 cursor-pointer rounded-lg font-medium text-[#e5102e] hover:bg-[#feecee] hover:text-[#e5102e] transition-all duration-200"
           onClick={()=>setIsOpen(true)}
         >
           <LogOut className="h-5 w-5" />
@@ -146,10 +146,10 @@ export function DashboardSidebar() {
             Are you sure you want to log out?
           </p>
           <DialogFooter className="mt-4 flex justify-end gap-2">
-            <Button variant="outline" onClick={() => setIsOpen(false)}>
+            <Button variant="outline" className="cursor-pointer" onClick={() => setIsOpen(false)}>
               Cancel
             </Button>
-            <Button variant="destructive" onClick={confirmLogout}>
+            <Button variant="destructive" className="cursor-pointer" onClick={confirmLogout}>
               Log Out
             </Button>
           </DialogFooter>
