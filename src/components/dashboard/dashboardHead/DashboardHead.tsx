@@ -5,15 +5,23 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 
+function capitalizeWords(str: string) {
+  return str
+    .split(" ")
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
 export function DashboardHeader() {
   const { data: session } = useSession();
   const pathname = usePathname();
 
-
-  const currentPage = pathname?.split("/").filter(Boolean).pop() || "Dashboard";
+  const rawPage =
+    pathname?.split("/").filter(Boolean)[0]?.replace(/-/g, " ") || "Dashboard";
+  const currentPage = capitalizeWords(rawPage);
 
   return (
-    <header className="flex w-full items-center justify-between bg-white text-black  p-4 backdrop-blur-xl">
+    <header className="flex w-full items-center justify-between bg-white text-black p-4 backdrop-blur-xl">
       <h1 className="text-[24px] text-[#28A745] font-bold capitalize">
         {currentPage}
       </h1>

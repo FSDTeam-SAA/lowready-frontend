@@ -61,7 +61,7 @@ const totalPlacements = data?.facilityBookings ?? 3
   const year = new Date().getFullYear()
 
   return (
-    <div className="bg-white rounded-lg p-4 pb-0 border h-full border-gray-200">
+    <div className="bg-white rounded-lg p-4 pb-0 border h-[500px] border-gray-200">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold text-gray-900">Visitor Counter</h3>
