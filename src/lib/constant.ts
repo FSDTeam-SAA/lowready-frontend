@@ -81,51 +81,42 @@ export const facilitiesData: Facility[] = [
 
 export const reveiwsData: Review[] = [
   {
-    id:10,
-    user:{
-      name: "Connect Directly",
-      city: "Portland",
-      organization: "or",
-
+    _id: "11",
+    userId: {
+      _id: "u1",
+      firstName: "John",
+      lastName: "Doe",
+      email: "john.doe@example.com",
     },
-    imglink:"/facilitescard.png",
-    rating: 4,
-    comment:"I've been ordering from TABLEFRESH for over year now, and the quality of their organic produce is consistently excellent. The convenience of having fresh, organic food delivered to my door has made healthy eating so much easier for my family."
+    facility: {
+      _id: "f1",
+      name: "Sunny Hills Assisted Living",
+      address: "123 Main Street, City",
+    },
+    star: 5,
+    comment: "Great place, excellent staff and care!",
+    createdAt: "2025-05-12T06:01:00Z",
+    updatedAt: "2025-05-12T06:01:00Z",
+    __v: 1,
   },
   {
-    id:11,
-    user:{
-      name: "Connect Directly",
-      city: "Portland",
-      organization: "or",
-
+    _id: "12",
+    userId: {
+      _id: "u2",
+      firstName: "Jane",
+      lastName: "Smith",
+      email: "jane.smith@example.com",
     },
-    imglink:"/facilitescard.png",
-    rating: 4,
-    comment:"I've been ordering from TABLEFRESH for over year now, and the quality of their organic produce is consistently excellent. The convenience of having fresh, organic food delivered to my door has made healthy eating so much easier for my family."
+    facility: {
+      _id: "f2",
+      name: "Green Valley Nursing Home",
+      address: "456 Park Avenue, City",
+    },
+    star: 4,
+    comment: "Comfortable and friendly environment.",
+    createdAt: "2025-05-12T06:01:00Z",
+    updatedAt: "2025-05-12T06:01:00Z",
+    __v: 1,
   },
-  {
-    id:12,
-    user:{
-      name: "Connect Directly",
-      city: "Portland",
-      organization: "or",
+];
 
-    },
-    imglink:"/facilitescard.png",
-    rating: 4,
-    comment:"I've been ordering from TABLEFRESH for over year now, and the quality of their organic produce is consistently excellent. The convenience of having fresh, organic food delivered to my door has made healthy eating so much easier for my family."
-  },
-  {
-    id:13,
-    user:{
-      name: "Connect Directly",
-      city: "Portland",
-      organization: "or",
-
-    },
-    imglink:"/facilitescard.png",
-    rating: 4,
-    comment:"I've been ordering from TABLEFRESH for over year now, and the quality of their organic produce is consistently excellent. The convenience of having fresh, organic food delivered to my door has made healthy eating so much easier for my family."
-  }
-]

@@ -94,8 +94,8 @@ export default function ManageFacilityPage() {
                 <p className="text-gray-600 mb-8">
                   Currently, you haven&apos;t added any facilities. Start by creating your facility to showcase your service.
                 </p>
-                <Button onClick={handleAddFacility} className="bg-green-600 hover:bg-green-700 text-white px-6 py-2">
-                  <Plus className="h-4 w-4 mr-2" />
+                <Button onClick={handleAddFacility} className="bg-green-600 cursor-pointer hover:bg-green-700 text-white px-6 py-2">
+                  <Plus className="h-4 w-4 mr-2 cursor-pointer" />
                   Add Facility
                 </Button>
               </div>
