@@ -1,7 +1,8 @@
+// components/SearchField.tsx
 "use client";
 
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
@@ -13,6 +14,8 @@ import {
   FacilitySearchData,
   FacilityFilters,
   Facility,
+  BookingType,
+  createBooking,
 } from "@/lib/api";
 
 import {
@@ -24,6 +27,8 @@ import {
 } from "@/components/ui/select";
 
 import Link from "next/link";
+import { ConfirmBookingModal } from "@/components/shared/ConfirmBookingModal";
+import { useSession } from "next-auth/react";
 
 interface Location {
   _id: string;
@@ -43,7 +48,13 @@ export default function SearchField() {
     limit: 6,
   });
 
+  const { data: session } = useSession();
+  const userId = session?.user?.id || "";
   const [isSearching, setIsSearching] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+  const [bookingData, setBookingData] = useState<BookingType | undefined>();
+  const [selectedFacility, setSelectedFacility] = useState<Facility | null>(null);
 
   // Fetch locations
   const { data: locationdata } = useQuery({
@@ -62,9 +73,17 @@ export default function SearchField() {
     queryFn: () => FacilitySearchData(filters),
   });
 
+  const createBookingMutation = useMutation({
+    mutationKey: ["booking"],
+    mutationFn: (values: BookingType) => createBooking(values),
+  });
+
+  async function handleBookingSubmit(values: BookingType, isEdit: boolean) {
+    await createBookingMutation.mutate(values);
+  }
+
   const facilities = facilitie?.data || [];
   const totalPages = facilitie?.totalPages || 1;
-  console.log("facilities", facilities);
 
   // ---------- Handlers ----------
   const handleLocationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,9 +91,38 @@ export default function SearchField() {
     setIsSearching(e.target.value.length > 0);
   };
 
-  // const handelDetailpage=(facility)=>{
+  const handleNewBooking = (facility: Facility) => {
+    setSelectedFacility(facility);
+    
+    // Create booking data with the selected facility information
+    const newBookingData: BookingType = {
+      _id: undefined,
+      facility: facility._id,
+      userId: userId,
+      startingDate: new Date().toISOString(),
+      duration: "1",
+      paymentStatus: "pending",
+      residentialInfo: [
+        {
+          name: "",
+          dateOfBirth: new Date().toISOString().split("T")[0],
+          gender: "male",
+          requirements: "",
+        },
+      ],
+      totalPrice: facility.price || 0,
+    };
+    
+    setBookingData(newBookingData);
+    setIsEdit(false);
+    setModalOpen(true);
+  };
 
-  // }
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setBookingData(undefined);
+    setSelectedFacility(null);
+  };
 
   return (
     <div className="relative container mx-auto w-full min-h-screen bg-white">
@@ -314,13 +362,19 @@ export default function SearchField() {
                           </span>
                           <div className="flex justify-between gap-5 pt-4 pb-6 ">
                             <Button className="w-1/2" variant="outline">
-                              <Link className="w-full h-full cursor-pointer"
+                              <Link
+                                className="w-full h-full cursor-pointer"
                                 href={`/facilities/details/${facility._id}`}
                               >
                                 See Details
                               </Link>
                             </Button>
-                            <Button className="w-1/2">Book a Tour</Button>
+                            <Button
+                              onClick={() => handleNewBooking(facility)}
+                              className="w-1/2"
+                            >
+                              Book a Tour
+                            </Button>
                           </div>
                         </div>
                       </CardContent>
@@ -348,6 +402,14 @@ export default function SearchField() {
           </main>
         </div>
       </div>
+      {/* Booking Modal */}
+      <ConfirmBookingModal
+        open={modalOpen}
+        onClose={handleCloseModal}
+        onSubmitBooking={handleBookingSubmit}
+        isEdit={isEdit}
+        apiData={bookingData}
+      />
     </div>
   );
 }

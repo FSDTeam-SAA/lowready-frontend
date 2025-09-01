@@ -8,8 +8,9 @@ import {
   BookingType,
   createBooking,
   Facility,
-  updateBooking,
+  
 } from "@/lib/api";
+import { useMutation } from "@tanstack/react-query";
 import { MapPin } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
@@ -38,20 +39,13 @@ export function FacilityGallery({ data }: FacilityTourProps) {
     }
   }, [datas.amenitiesServices]);
 
-  async function handleBookingSubmit(values: BookingType, isEditMode: boolean) {
-    try {
-      console.log("booking data", values);
+  const createBookingMutation = useMutation({
+    mutationKey: ["booking"],
+    mutationFn: (values: BookingType) => createBooking(values),
+  });
 
-      if (isEditMode && values._id) {
-        const updatedBooking = await updateBooking(values._id, values);
-        console.log("Booking updated:", updatedBooking);
-      } else {
-        const newBooking = await createBooking(values);
-        console.log("Booking created:", newBooking);
-      }
-    } catch (error) {
-      console.error("Booking failed:", error);
-    }
+  async function handleBookingSubmit(values: BookingType) {
+    await createBookingMutation.mutate(values);
   }
 
   // const handleEditBooking = (booking: BookingType) => {
