@@ -1,12 +1,13 @@
 "use client";
 
-import { Star, MapPin } from "lucide-react";
+import { Star, MapPin, Dot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
 import Image from "next/image";
 import { FacilityCards } from "@/lib/api";
 import Link from "next/link";
+import { Badge } from "../ui/badge";
 
 interface FacilityCardProps {
   facility: FacilityCards;
@@ -22,7 +23,7 @@ export default function FacilityCard({
   console.log("facility asa", facility);
 
   return (
-    <Card className="w-full overflow-hidden bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 py-0 ">
+    <Card className="w-full overflow-hidden items-stretch bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 py-0 ">
       <div className="relative ">
         <Image
           src={facility?.images?.[0]?.url || "/search.png"}
@@ -36,7 +37,7 @@ export default function FacilityCard({
       <CardContent className="p-4 space-y-4">
         {/* Header */}
         <div className="space-y-2">
-          <div className="flex justify-between">
+          <div className="flex justify-between ">
             <h3 className="font-semibold text-lg text-gray-900 leading-tight">
               {facility?.name}
             </h3>
@@ -61,11 +62,11 @@ export default function FacilityCard({
         </div>
 
         {/* Categories */}
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 items-stretch">
+            <Badge className={`${facility.availability ? 'bg-[#9CE7AD] text-[#28A745] ' : 'bg-red-300 text-white'} text-[12px] px-4 py-1 rounded-sm`} ><Dot className="w-[14px] h-[14px]" /> {facility.availability ? ' Available' :'unavailable'}</Badge>
+
           {facility.amenities?.map((category) => (
-            <p className="px-4 py-2 rounded-sm" key={category}>
-              {category}
-            </p>
+            <Badge className="bg-[#E6E7E6] text-[#68706A] text-[12px]  px-4 py-1 rounded-sm" key={category}>{category}</Badge>
           ))}
         </div>
 

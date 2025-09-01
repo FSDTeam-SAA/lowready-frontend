@@ -35,6 +35,7 @@ import {
   TimeSelector,
 } from "@/hooks/FormSection";
 import { useCreateFacility } from "@/hooks/useFacilityMutations";
+import { toast } from "sonner";
 
 // Types
 type NewAmenityService = { name: string; photo: File | null };
@@ -164,7 +165,7 @@ export default function AddFacilityPage() {
   };
 
   const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("Video upload triggered", e.target.files);
+    
     const file = e.target.files?.[0];
     if (file) {
       console.log("Video file selected:", file.name, file.type, file.size);
@@ -188,7 +189,7 @@ export default function AddFacilityPage() {
       console.log("Video file valid, setting state");
       setSelectedVideo(file);
     } else {
-      console.log("No file selected");
+      toast.error('somting error handelvideo upload')
     }
     // Reset input value to allow selecting the same file again
     e.target.value = "";
