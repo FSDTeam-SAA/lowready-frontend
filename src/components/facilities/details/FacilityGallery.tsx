@@ -1,34 +1,82 @@
+// components/FacilityGallery.tsx
 "use client";
-import { Button } from "@/components/ui/button";
-import { AmenityService, Facility } from "@/lib/api";
 
+import { ConfirmBookingModal } from "@/components/shared/ConfirmBookingModal";
+import { Button } from "@/components/ui/button";
+import {
+  AmenityService,
+  BookingType,
+  createBooking,
+  Facility,
+  updateBooking,
+} from "@/lib/api";
 import { MapPin } from "lucide-react";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useState, useEffect } from "react";
+
 interface FacilityTourProps {
   data: { data: Facility };
 }
-export function FacilityGallery({ data }: FacilityTourProps) {
-  const datas = data?.data || [];
 
-  // Initialize preview image state with the first image from amenitiesServices if available
+export function FacilityGallery({ data }: FacilityTourProps) {
+  const datas = data?.data || {};
+  const { data: session } = useSession();
+  const userId = session?.user?.id || "";
   const [previewImage, setPreviewImage] = useState(
-    datas?.images?.[0]?.url|| "/default-image.png"
+    datas?.images?.[0]?.url || "/default-image.png"
   );
+  const [modalOpen, setModalOpen] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+  const [bookingData, setBookingData] = useState<BookingType | undefined>();
 
   useEffect(() => {
     if ((datas?.amenitiesServices ?? []).length > 0) {
-      setPreviewImage(datas.amenitiesServices?.[0]?.image?.url || "/default-image.png");
+      setPreviewImage(
+        datas.amenitiesServices?.[0]?.image?.url || "/default-image.png"
+      );
     }
   }, [datas.amenitiesServices]);
 
-  console.log(datas.amenities); // Log the data for debugging
+  async function handleBookingSubmit(values: BookingType, isEditMode: boolean) {
+    try {
+      console.log("booking data", values);
+
+      if (isEditMode && values._id) {
+        const updatedBooking = await updateBooking(values._id, values);
+        console.log("Booking updated:", updatedBooking);
+      } else {
+        const newBooking = await createBooking(values);
+        console.log("Booking created:", newBooking);
+      }
+    } catch (error) {
+      console.error("Booking failed:", error);
+    }
+  }
+
+  // const handleEditBooking = (booking: BookingType) => {
+  //   setBookingData(booking);
+  //   setIsEdit(true);
+  //   setModalOpen(true);
+  // };
+
+  const handleNewBooking = () => {
+    setBookingData(undefined);
+    setIsEdit(false);
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setBookingData(undefined);
+  };
 
   return (
     <section className="py-[80px]">
       <div className="lg:flex items-center gap-[48px] mx-auto">
+        {/* Images */}
         <div className="flex gap-2 items-center mx-auto">
-          {/* Image Thumbnails */}
+          {/* Thumbnails */}
           <div className="flex gap-3 flex-col">
             {datas?.amenitiesServices?.map(
               (img: AmenityService, id: number) => (
@@ -45,7 +93,7 @@ export function FacilityGallery({ data }: FacilityTourProps) {
             )}
           </div>
 
-          {/* Main Image Preview */}
+          {/* Main Preview */}
           <div className="col-span-3 row-span-2">
             <Image
               src={previewImage}
@@ -73,42 +121,69 @@ export function FacilityGallery({ data }: FacilityTourProps) {
             {datas?.description}
           </p>
 
-          {/* Amenities Section */}
+          {/* Amenities */}
           <div className="pt-[40px] pb-[60px]">
             <h3 className="text-[20px] text-[#343A40] pb-[6px]">Amenities</h3>
             <div>
               <ul className="flex items-center gap-3 flex-wrap">
-                {datas?.amenities?.map((item: string, id: number) => {
-                  return (
-                    <li
-                      className="text-[12px] px-4 rounded-sm border-1 py-1  inline-block font-medium bg-[#F7F8F8] text-[#68706A]"
-                      key={id}
-                    >
-                      {item}
-                    </li>
-                  );
-                })}
+                {datas?.amenities?.map((item: string, id: number) => (
+                  <li
+                    key={id}
+                    className="text-[12px] px-4 rounded-sm border-1 py-1 inline-block font-medium bg-[#F7F8F8] text-[#68706A]"
+                  >
+                    {item}
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
 
-          {/* Price and Actions */}
+          {/* Price + Actions */}
           <div className="mt-6">
             <p className="text-[20px] font-semibold text-[#343A40]">Pricing</p>
-            <div className=" ">
-              <p className="text-2xl font-semibold text-green-600">
-                $2,200 / month
-              </p>
-              <div className="space-x-2 pt-[80px] flex cursor-pointer justify-between">
-                <Button className="w-1/2" variant="outline">
-                  Request Info
-                </Button>
-                <Button className="w-1/2 cursor-pointer">Book a Tour</Button>
-              </div>
+            <p className="text-2xl font-semibold text-green-600">
+              ${datas?.price || 2200} / month
+            </p>
+            <div className="space-x-2 pt-[80px] flex cursor-pointer justify-between">
+              <Button className="w-1/2" variant="outline">
+                Request Info
+              </Button>
+              <Button
+                className="w-1/2 cursor-pointer"
+                onClick={handleNewBooking}
+              >
+                Book a Tour
+              </Button>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Booking Modal */}
+      <ConfirmBookingModal
+        open={modalOpen}
+        onClose={handleCloseModal}
+        onSubmitBooking={handleBookingSubmit}
+        isEdit={isEdit}
+        apiData={
+          bookingData || {
+            facility: datas?._id,
+            userId: userId,
+            startingDate: new Date().toISOString(),
+            duration: "2",
+            paymentStatus: "pending",
+            residentialInfo: [
+              {
+                name: "",
+                dateOfBirth: new Date().toISOString().split("T")[0],
+                gender: "male",
+                requirements: "",
+              },
+            ],
+            totalPrice: datas?.price || 2200,
+          }
+        }
+      />
     </section>
   );
 }

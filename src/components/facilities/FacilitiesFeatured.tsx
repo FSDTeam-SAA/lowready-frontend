@@ -24,7 +24,7 @@ const {
   };
  
   if(facilitiesLoading){
-    <h2>Loading..............</h2>
+    <h2>Loading.........</h2>
   }
   
 const facilities = facilitie?.data || [];
