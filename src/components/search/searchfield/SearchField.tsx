@@ -265,7 +265,7 @@ export default function SearchField() {
                 </div>
                 {facilities.map((facility: Facility) => (
                   <Card key={facility._id} className="overflow-hidden py-0">
-                    <div className="grid md:grid-cols-3 gap-4">
+                    <div className="grid md:grid-cols-3 pb-0 gap-4">
                       <Image
                         src={facility.images[0]?.url || "/search.png"}
                         alt={facility.name}

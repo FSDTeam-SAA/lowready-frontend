@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
-import { Star } from "lucide-react"
-import { useQuery } from "@tanstack/react-query"
-import { useSession } from "next-auth/react"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Star } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
 
 interface Review {
   id: string;
@@ -44,14 +44,20 @@ interface RecentReviewsProps {
 }
 
 // Fetch function
-const fetchFacilityReviews = async (facilityId: string, token: string): Promise<ApiReview[]> => {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/review-rating/facility/${facilityId}`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-  });
+const fetchFacilityReviews = async (
+  facilityId: string,
+  token: string
+): Promise<ApiReview[]> => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/review-rating/facility/${facilityId}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
@@ -62,7 +68,7 @@ const fetchFacilityReviews = async (facilityId: string, token: string): Promise<
   if (data.success) {
     return data.data;
   } else {
-    throw new Error(data.message || 'Failed to fetch reviews');
+    throw new Error(data.message || "Failed to fetch reviews");
   }
 };
 
@@ -72,11 +78,11 @@ const transformReviews = (apiReviews: ApiReview[]): Review[] => {
     user: {
       name: `${apiReview.userId.firstName} ${apiReview.userId.lastName}`,
       email: apiReview.userId.email,
-      avatar: "/placeholder.svg" // Default avatar
+      avatar: "/placeholder.svg", // Default avatar
     },
     rating: apiReview.star || 0,
     comment: apiReview.comment || "No comment available",
-    location: apiReview.facility.address || "Unknown location"
+    location: apiReview.facility.address || "Unknown location",
   }));
 };
 
@@ -85,9 +91,9 @@ export function RecentReviews({ facilityId }: RecentReviewsProps) {
   const token = session?.accessToken as string | undefined;
 
   const { data: apiReviews, isLoading } = useQuery({
-    queryKey: ['reviews', facilityId, token],
+    queryKey: ["reviews", facilityId, token],
     queryFn: () => {
-      if (!token) throw new Error('No access token found');
+      if (!token) throw new Error("No access token found");
       return fetchFacilityReviews(facilityId, token);
     },
     enabled: !!token && !!facilityId,
@@ -95,6 +101,23 @@ export function RecentReviews({ facilityId }: RecentReviewsProps) {
     staleTime: 5 * 60 * 1000,
   });
 
+  if (isLoading) {
+    <div className="mx-auto w-full max-w-sm rounded-md border border-blue-300 p-4">
+      <div className="flex animate-pulse space-x-4">
+        <div className="size-10 rounded-full bg-gray-200"></div>
+        <div className="flex-1 space-y-6 py-1">
+          <div className="h-2 rounded bg-gray-200"></div>
+          <div className="space-y-3">
+            <div className="grid grid-cols-3 gap-4">
+              <div className="col-span-2 h-2 rounded bg-gray-200"></div>
+              <div className="col-span-1 h-2 rounded bg-gray-200"></div>
+            </div>
+            <div className="h-2 rounded bg-gray-200"></div>
+          </div>
+        </div>
+      </div>
+    </div>;
+  }
   const reviews = apiReviews ? transformReviews(apiReviews) : [];
 
   return (
@@ -102,7 +125,10 @@ export function RecentReviews({ facilityId }: RecentReviewsProps) {
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-900">Recent Reviews</h3>
-        <Button variant="link" className="text-green-600 text-sm font-medium p-0 h-auto">
+        <Button
+          variant="link"
+          className="text-green-600 text-sm font-medium p-0 h-auto"
+        >
           See all
         </Button>
       </div>
@@ -124,13 +150,17 @@ export function RecentReviews({ facilityId }: RecentReviewsProps) {
                 </Avatar>
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-1">
-                    <p className="font-semibold text-gray-900">{review.user.name}</p>
+                    <p className="font-semibold text-gray-900">
+                      {review.user.name}
+                    </p>
                     <div className="flex items-center">
                       {[...Array(5)].map((_, i) => (
                         <Star
                           key={i}
                           className={`h-4 w-4 ${
-                            i < review.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
+                            i < review.rating
+                              ? "text-yellow-400 fill-yellow-400"
+                              : "text-gray-300"
                           }`}
                         />
                       ))}
@@ -139,12 +169,16 @@ export function RecentReviews({ facilityId }: RecentReviewsProps) {
                   <p className="text-sm text-gray-500">{review.location}</p>
                 </div>
               </div>
-              <p className="text-sm text-gray-700 mt-2 line-clamp-1">{review.comment}</p>
+              <p className="text-sm text-gray-700 mt-2 line-clamp-1">
+                {review.comment}
+              </p>
               {index < reviews.length - 1 && <Separator className="my-4" />}
             </div>
           ))
         ) : (
-          <p className="text-gray-500 text-center py-6 text-sm">No reviews yet</p>
+          <p className="text-gray-500 text-center py-6 text-sm">
+            No reviews yet
+          </p>
         )}
       </div>
     </div>

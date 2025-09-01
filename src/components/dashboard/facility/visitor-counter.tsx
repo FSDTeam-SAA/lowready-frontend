@@ -32,23 +32,23 @@ export function VisitorCounter({ facilityId }: VisitorCounterProps) {
     enabled: !!token, // Fetch only when token exists
   })
 
-  // if (isLoading) {
-  //   return (
-  //     <div className="bg-white rounded-lg p-6 border border-gray-200">
-  //       <p>Loading visitor summary...</p>
-  //     </div>
-  //   )
-  // }
+  if (isLoading) {
+    return (
+      <div className="bg-white rounded-lg p-6 border border-gray-200">
+        <p>Loading visitor summary...</p>
+      </div>
+    )
+  }
 
-  // if (isError || !data) {
-  //   return (
-  //     <div className="bg-white rounded-lg p-6 border border-gray-200">
-  //       <p>Failed to load visitor summary</p>
-  //     </div>
-  //   )
-  // }
+  if (isError || !data) {
+    return (
+      <div className="bg-white rounded-lg p-6 border border-gray-200">
+        <p>Failed to load visitor summary</p>
+      </div>
+    )
+  }
 
-  // ✅ Safe to access after loading
+
  const totalVisitors = data?.visitTour ?? 6
 const totalPlacements = data?.facilityBookings ?? 3
 

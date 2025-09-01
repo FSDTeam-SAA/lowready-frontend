@@ -3,6 +3,7 @@
 import { BellDot } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 function capitalizeWords(str: string) {
@@ -16,9 +17,7 @@ export function DashboardHeader() {
   const { data: session } = useSession();
   const pathname = usePathname();
 
-  const rawPage =
-    pathname?.split("/").filter(Boolean)[0]?.replace(/-/g, " ") || "Dashboard";
-  const currentPage = capitalizeWords(rawPage);
+  const currentPage = pathname?.split("/").filter(Boolean).pop() || "Dashboard";
 
   return (
     <header className="flex w-full items-center justify-between bg-white text-black p-4 backdrop-blur-xl">
@@ -27,7 +26,9 @@ export function DashboardHeader() {
       </h1>
 
       <div className="flex items-center gap-6">
-        <BellDot className="h-6 w-6 text-gray-600 cursor-pointer" />
+        <Link href={`/dashboard/notifications`}>
+          <BellDot className="h-6 w-6 text-gray-600 cursor-pointer" />
+        </Link>
 
         <div className="flex items-center gap-4">
           <Image

@@ -244,6 +244,33 @@ export async function getNotifications(userId: string) {
   }
 }
 
+export async function clearAllNotifications(userId: string): Promise<void> {
+  try {
+    const res = await api.delete(`/notifications/${userId}/clear`);
+    if (!res.data.success) {
+      throw new Error(res.data.message || 'Failed to clear notifications');
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error clearing notifications: ${error.message}`);
+    }
+    throw new Error('Unknown error occurred');
+  }
+}
+export async function markNotificationAsRead(notificationId: string): Promise<void> {
+  try {
+    const res = await api.patch(`/notifications/${notificationId}/read`);
+    if (!res.data.success) {
+      throw new Error(res.data.message || 'Failed to mark notification as read');
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error marking notification as read: ${error.message}`);
+    }
+    throw new Error('Unknown error occurred');
+  }
+}
+
 // -------------------------------
 // Tour Requests
 // -------------------------------
