@@ -1,24 +1,28 @@
-// "use client";
+"use client";
 
-// import { useState } from "react";
-// import { Button } from "@/components/ui/button";
-// import { ConfirmBookingModal } from "../shared/ConfirmBookingModal";
+import { useState } from "react";
+// import { ConfirmBookingModal, BookingFormValues } from "@/components/ConfirmBookingModal";
+import { Button } from "@/components/ui/button";
+import { BookingFormValues, ConfirmBookingModal } from "../shared/ConfirmBookingModal";
 
-// export function BookingPage() {
-//   const [isModalOpen, setIsModalOpen] = useState(false);
+export default function BookingPage() {
+  const [modalOpen, setModalOpen] = useState(false);
 
-//   return (
-//     <div className="p-6">
-//       <h1 className="text-xl font-bold">Book a Facility</h1>
-//       <p className="mb-4 text-gray-500">Click below to start your booking.</p>
+  function handleBookingSubmit(values: BookingFormValues) {
+    console.log("Received Booking Data:", values);
+    // TODO: send values to API
+  }
 
-//       <Button onClick={() => setIsModalOpen(true)}>Book Now</Button>
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-4">Booking Page</h1>
+      <Button onClick={() => setModalOpen(true)}>Open Booking Modal</Button>
 
-//       {/* ✅ Use modal */}
-//       <ConfirmBookingModal
-//         open={isModalOpen}
-//         onOpenChange={setIsModalOpen}
-//       />
-//     </div>
-//   );
-// }
+      <ConfirmBookingModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSubmitBooking={handleBookingSubmit}
+      />
+    </div>
+  );
+}
