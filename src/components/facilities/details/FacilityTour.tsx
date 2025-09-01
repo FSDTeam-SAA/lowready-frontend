@@ -1,0 +1,36 @@
+"use client";
+import { Facility } from "@/lib/api";
+
+interface FacilityTourProps {
+  data: { data: Facility };
+}
+
+export function FacilityTour({ data }: FacilityTourProps) {
+  if (!data) return null;
+
+  const datas = data.data || [];
+
+  return (
+    <section className="my-[80px]">
+      {/* Tour Title */}
+      <h2 className="text-xl text-[32px] font-semibold">
+        {datas?.videoTitle} <span className="text-green-400">Tour</span>
+      </h2>
+
+      {/* Video Description */}
+      <p className="text-[16px] text-[#8E938F]">{datas?.videoDescription}</p>
+
+      {/* Video Section */}
+      <div className="mt-4 rounded-xl overflow-hidden">
+        {/* Video tag to display the tour video */}
+        <video
+          controls
+          src={datas?.uploadVideo}
+          width={800}
+          height={400}
+          className="w-full h-auto rounded-b-sm pt-[40px] object-cover"
+        />
+      </div>
+    </section>
+  );
+}

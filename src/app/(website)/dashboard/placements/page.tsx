@@ -4,7 +4,7 @@ import React from 'react'
 const page = () => {
   return (
     <div>
-        <div className="space-y-6">
+        <div className="p-6 space-y-6">
        
 
         <BookingsTable />

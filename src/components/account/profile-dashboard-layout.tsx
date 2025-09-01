@@ -56,9 +56,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
           )}
         >
-          <div className="flex h-full flex-col">
+          <div className="flex flex-col h-full">
             {/* Navigation */}
-            <nav className="flex-1 px-4 py-6 space-y-1">
+            <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
               {navigation.map((item) => {
                 const isActive = pathname === item.href;
                 return (
@@ -83,8 +83,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               })}
             </nav>
 
-            {/* Logout */}
-            <div className="p-4">
+            {/* Logout at bottom */}
+            <div className="px-4 py-4 mt-auto border-t border-gray-100">
               <Button
                 variant="ghost"
                 className="w-full justify-start gap-3 h-12 px-4 rounded-lg font-medium text-[#e5102e] hover:bg-[#feecee] hover:text-[#e5102e] transition-all duration-200"

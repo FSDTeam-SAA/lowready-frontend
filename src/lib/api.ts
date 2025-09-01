@@ -6,8 +6,6 @@ import {
   RebookData,
   RebookResponse,
   ReviewData,
-  ReviewResponse,
-  User,
   VisitBooking,
 } from "@/types/account";
 import axios from "axios";
@@ -95,7 +93,7 @@ export interface Facility {
   name: string;
   location: string;
   price: number;
-  images: string[];
+  images: ImageType[];
 }
 
 export interface Avatar {
@@ -108,28 +106,28 @@ export interface VerificationInfo {
   verified: boolean;
 }
 
-// export interface User {
-//   _id: string;
-//   firstName: string;
-//   lastName: string;
-//   email: string;
-//   role?: string;
+export interface User {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role?: string;
 
-//   // optional fields
-//   avatar?: Avatar;
-//   avatars?: string;
-//   bio?: string;
-//   street?: string;
-//   postCode?: string | null;
-//   phoneNum?: string;
-//   verificationInfo?: VerificationInfo;
+  // optional fields
+  avatar?: Avatar;
+  avatars?: string;
+  bio?: string;
+  street?: string;
+  postCode?: string | null;
+  phoneNum?: string;
+  verificationInfo?: VerificationInfo;
 
-//   // timestamps
-//   createdAt?: string;
-//   updatedAt?: string;
+  // timestamps
+  createdAt?: string;
+  updatedAt?: string;
 
-//   onboardingStatus?: boolean;
-// }
+  onboardingStatus?: boolean;
+}
 
 export interface ApiBooking {
   _id: string;
@@ -246,12 +244,43 @@ export async function getNotifications(userId: string) {
   }
 }
 
+export async function clearAllNotifications(userId: string): Promise<void> {
+  try {
+    const res = await api.delete(`/notifications/${userId}/clear`);
+    if (!res.data.success) {
+      throw new Error(res.data.message || "Failed to clear notifications");
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error clearing notifications: ${error.message}`);
+    }
+    throw new Error("Unknown error occurred");
+  }
+}
+export async function markNotificationAsRead(
+  notificationId: string
+): Promise<void> {
+  try {
+    const res = await api.patch(`/notifications/${notificationId}/read`);
+    if (!res.data.success) {
+      throw new Error(
+        res.data.message || "Failed to mark notification as read"
+      );
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error marking notification as read: ${error.message}`);
+    }
+    throw new Error("Unknown error occurred");
+  }
+}
+
 // -------------------------------
 // Tour Requests
 // -------------------------------
 export interface FacilityImage {
   public_id: string;
-  url: string;
+  url: ImageType;
   _id: string;
 }
 
@@ -294,6 +323,56 @@ export async function getTourRequest(): Promise<TourRequestResponse> {
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(`Error fetching tour requests: ${error.message}`);
+    }
+    throw error;
+  }
+}
+
+// tour status update
+export async function statusTourRequest(bookingId: string) {
+  try {
+    const res = await api.put(`/visit-booking/status/${bookingId}`);
+    return res.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error rescheduling tour: ${error.message}`);
+    }
+    throw error;
+  }
+}
+export async function statusCancelTourRequest(bookingId: string) {
+  try {
+    const res = await api.put(`/visit-booking/status-cancel/${bookingId}`);
+    return res.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error rescheduling tour: ${error.message}`);
+    }
+    throw error;
+  }
+}
+
+interface CreateBookingData {
+  name: string;
+  email: string;
+  phoneNumber: string;
+  relationWith: string;
+  message: string;
+  facility: string;
+  visitDate: string; // Date formatted as "YYYY-MM-DD"
+  visitTime: string;
+}
+export async function CreateBookingTour(data: CreateBookingData) {
+  try {
+    const response = await api.post("/visit-booking/create", data, {
+      headers: {
+        "Content-Type": "application/json", // Ensure the correct content type
+      },
+    });
+    return response.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error creating booking: ${error.message}`);
     }
     throw error;
   }
@@ -366,6 +445,297 @@ export async function rebookFacility(
 ): Promise<ApiResponse<RebookResponse>> {
   const res = await api.post(`/bookings/rebook/${facilityId}`, bookingData);
   return res.data;
+}
+
+// review Ratings
+export interface Review {
+  _id: string;
+  comment: string;
+  star: number;
+  createdAt: string;
+  updatedAt: string;
+  userId: {
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+  facility: {
+    _id: string;
+    name: string;
+  };
+}
+
+export interface ReviewResponse {
+  success: boolean;
+  total: number;
+  data: Review[];
+}
+
+export async function getReviewRating(id: string) {
+  try {
+    const res = await api.get(`/review-rating/facility/${id}`);
+    return res.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error fetching review and ratings: ${error.message}`);
+    }
+  }
+}
+
+// Review Delete
+
+export async function DeleteReview(id: string) {
+  try {
+    const res = await api.delete(`/reviews/${id}`);
+    return res.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error Deleted you Review: ${error.message}`);
+    }
+  }
+}
+
+// create review
+interface CreateReviewRequest {
+  userId: string;
+  facility: string;
+  star: number;
+  comment: string;
+}
+export const createReview = async (
+  reviewData: CreateReviewRequest
+): Promise<Review> => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/review-rating`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(reviewData),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to create review");
+  }
+
+  return response.json();
+};
+
+//fetch review data
+
+export async function fetchReviews(facilityId: string) {
+  try {
+    const response = await api.get(`/review-rating/facility/${facilityId}`);
+    const data = response.data;
+    return data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error Deleted you Review: ${error.message}`);
+    }
+  }
+}
+
+//get facilities review by facilites
+
+export async function getbySigleFacilities(id: string) {
+  try {
+    console.log("ides", id);
+
+    const res = await api.get(`/facility/${id}`);
+    return res.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error Deleted you Review: ${error.message}`);
+    }
+  }
+}
+
+export interface FacilityFilters {
+  location?: string;
+  careServices?: string[];
+  amenities?: string[];
+  page?: number;
+  limit?: number;
+  rating?: number;
+  minPrice?: number;
+  maxPrice?: number;
+  availability?: boolean;
+}
+
+// ---------- Sub-types ----------
+export interface ImageType {
+  public_id: string;
+  url: string;
+  _id?: string;
+}
+
+export interface AmenityService {
+  name: string;
+  image: ImageType;
+}
+
+export interface MedicaidProgram {
+  public_id: string;
+  url: string;
+  _id?: string;
+}
+
+export interface User {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
+// ---------- Facility ----------
+export interface Facility {
+  _id: string;
+  name: string;
+  location: string;
+  description?: string;
+  about?: string;
+  images: ImageType[];
+  amenities: string[];
+  amenitiesServices?: AmenityService[];
+  careServices?: string[];
+  medicaidPrograms?: MedicaidProgram[];
+  rating?: number;
+  price: number;
+  base?: string; // e.g. "monthly"
+  availability?: boolean;
+  availableTime?: string[];
+  uploadVideo?: string;
+  videoTitle?: string;
+  videoDescription?: string;
+  userId?: User;
+  createdAt?: string;
+  updatedAt?: string;
+  __v?: number;
+}
+
+export interface FacilityCards {
+  _id: string;
+  name: string;
+  location: string;
+  description?: string;
+  about?: string;
+  images: ImageType[];
+  amenities: string[];
+  amenitiesServices?: AmenityService[];
+  careServices?: string[];
+  medicaidPrograms?: MedicaidProgram[];
+  rating?: number;
+  price: number;
+  base?: string; // e.g. "monthly"
+  availability?: boolean;
+  availableTime?: string[];
+  uploadVideo?: string;
+  videoTitle?: string;
+  videoDescription?: string;
+  userId?: User;
+  createdAt?: string;
+  updatedAt?: string;
+  __v?: number;
+  reviewCount?: number;
+}
+
+// ---------- API Response ----------
+export interface FacilitySearchResponse {
+  data: Facility[];
+  totalPages?: number;
+}
+
+// ---------- API Function ----------
+export async function FacilitySearchData(
+  filters: FacilityFilters
+): Promise<FacilitySearchResponse> {
+  try {
+    const res = await api.get(`/facility/all`, { params: filters });
+    return res.data as FacilitySearchResponse;
+  } catch (error) {
+    console.error("Error fetching facilities:", error);
+    return { data: [], totalPages: 1 };
+  }
+}
+export async function getallFacilities(): Promise<FacilitySearchResponse> {
+  try {
+    const res = await api.get(`/facility/all`);
+    return res.data as FacilitySearchResponse;
+  } catch (error) {
+    console.error("Error fetching facilities:", error);
+    return { data: [], totalPages: 1 };
+  }
+}
+
+// Locations API
+export interface Location {
+  _id: string;
+  location: string;
+}
+
+export async function facilitiesLocation(): Promise<{ data: Location[] }> {
+  try {
+    const res = await api.get(`/facility/locations`);
+    return res.data as { data: Location[] };
+  } catch (error) {
+    console.error("Error fetching locations:", error);
+    return { data: [] };
+  }
+}
+
+//f Booking// api/booking.ts
+export interface BookingType {
+  _id?: string; // Add optional ID for updates
+  facility: string; 
+  userId: string; 
+  startingDate: string; 
+  duration: string; 
+  paymentStatus: "paid" | "unpaid" | "pending"; 
+  residentialInfo: {
+    name: string;
+    dateOfBirth: string; 
+    gender: "male" | "female" | "other";
+    requirements?: string; 
+  }[];
+  totalPrice: number;
+}
+
+// Create booking
+export async function createBooking(userData: BookingType) {
+  try {
+    const res = await api.post(`/bookings`, userData);
+    return res.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Booking Error ${error.message}`);
+    }
+  }
+}
+
+// Update booking
+export async function updateBooking(bookingId: string, userData: Partial<BookingType>) {
+  try {
+    const res = await api.patch(`/bookings/${bookingId}`, userData);
+    return res.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Update Booking Error ${error.message}`);
+    }
+  }
+}
+
+// Get booking by ID
+export async function getBookingById(bookingId: string) {
+  try {
+    const res = await api.get(`/bookings/${bookingId}`);
+    return res.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Get Booking Error ${error.message}`);
+    }
+  }
 }
 
 export const getBookingHistory = getUserBookings;

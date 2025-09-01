@@ -14,8 +14,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import { Button } from "@/components/ui/button";
 import { Check, ChevronLeft, ChevronRight, Eye, X } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { getTourRequest, TourRequest } from "@/lib/api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  getTourRequest,
+  statusCancelTourRequest,
+  statusTourRequest,
+  TourRequest,
+} from "@/lib/api";
+import { toast } from "sonner";
 
 const ToureRequest = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -24,16 +30,49 @@ const ToureRequest = () => {
   );
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-
+  const queryClient = useQueryClient();
   const { data, isLoading, error } = useQuery({
     queryKey: ["tourrequest"],
     queryFn: getTourRequest,
+  });
+
+  const statusMutation = useMutation({
+    mutationKey: ["status"],
+    mutationFn: (id: string) => statusTourRequest(id),
+    onSuccess: () => {
+      // Invalidate and refetch
+      toast.success("Status updated successfully");
+      queryClient.invalidateQueries({ queryKey: ["tourrequest"] });
+    },
+    onError: () => {
+      toast.error("Failed to update status");
+    },
+  });
+  const statusCancelMutation = useMutation({
+    mutationKey: ["status"],
+    mutationFn: (id: string) => statusCancelTourRequest(id),
+    onSuccess: () => {
+      // Invalidate and refetch
+      toast.success("Status Cancel successfully");
+      queryClient.invalidateQueries({ queryKey: ["tourrequest"] });
+    },
+    onError: () => {
+      toast.error("Failed to update status Cancel");
+    },
   });
 
   // Ensure bookings is always an array
   const tourbookings: TourRequest[] = data?.data?.bookings || [];
   const totalResults = data?.data?.pagination?.total || tourbookings.length;
   const totalPages = data?.data?.pagination?.totalPages || 1;
+
+  const handelstatusChange = (bookingring: TourRequest) => {
+    statusMutation.mutate(bookingring?._id);
+  };
+
+  const handelstatusCancel = (bookingring: TourRequest) => {
+    statusCancelMutation.mutate(bookingring?._id);
+  };
 
   const handleDetailsClick = (booking: TourRequest) => {
     setSelectedBooking(booking);
@@ -43,10 +82,17 @@ const ToureRequest = () => {
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error loading bookings</p>;
+  if (!tourbookings || tourbookings.length === 0) {
+  return (
+    <div className="flex items-center justify-center h-64 text-8xl text-muted-foreground">
+      No Data available
+    </div>
+  );
+}
 
   return (
     <section>
-      <div className="space-y-4">
+      <div className="space-y-4 p-6">
         <div className="border rounded-lg">
           <Table>
             <TableHeader>
@@ -86,11 +132,7 @@ const ToureRequest = () => {
                     </div>
                   </TableCell>
                   <TableCell>{booking.facility.name}</TableCell>
-                  <TableCell>
-                    
-                        {booking.visitTime}
-                    
-                  </TableCell>
+                  <TableCell>{booking.visitTime}</TableCell>
                   <TableCell>
                     {new Date(booking.visitDate).toLocaleDateString()}
                   </TableCell>
@@ -100,17 +142,17 @@ const ToureRequest = () => {
                         className="bg-[#E6F9EB] text-[#1F9854]  hover:bg-green-100 cursor-pointer"
                         variant="ghost"
                         size="sm"
-                        onClick={() => handleDetailsClick(booking)}
+                        onClick={() => handelstatusChange(booking)}
                       >
-                        <Check  />
+                        <Check />
                       </Button>
                       <Button
                         className="bg-[#FEECEE] text-[#E5102E] hover:bg-green-100 cursor-pointer"
                         variant="ghost"
                         size="sm"
-                        onClick={() => handleDetailsClick(booking)}
+                        onClick={() => handelstatusCancel(booking)}
                       >
-                        <X  />
+                        <X />
                       </Button>
 
                       <Button

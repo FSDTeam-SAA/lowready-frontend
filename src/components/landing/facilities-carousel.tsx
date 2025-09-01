@@ -1,21 +1,22 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import type { Facility } from "@/types/facility";
-import { facilitiesData } from "@/lib/constant";
+
+
 import FacilityCard from "../shared/facility-card";
 import { CarouselNavigation } from "../shared/carousel-navigation";
+import { getallFacilities } from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
 
-interface FacilitiesCarouselProps {
-  facilities?: Facility[];
-}
-
-export function FacilitiesCarousel({
-  facilities = facilitiesData,
-}: FacilitiesCarouselProps) {
+export function FacilitiesCarousel() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [slidesToShow, setSlidesToShow] = useState(1);
 
+  const { data: facilitie  } = useQuery({
+    queryKey: ["facilitiescard"],
+    queryFn: () => getallFacilities(),
+  });
+  const facilities = facilitie?.data || [];
   // Responsive slides calculation
   useEffect(() => {
     const updateSlidesToShow = () => {
@@ -85,16 +86,16 @@ export function FacilitiesCarousel({
             transform: `translateX(-${currentSlide * (100 / slidesToShow)}%)`,
           }}
         >
-          {facilities.map((facility) => (
+          {facilities.map((item) => (
             <div
-              key={facility.id}
+              key={item._id}
               className="flex-shrink-0 px-2"
               style={{ width: `${100 / slidesToShow}%` }}
             >
               <FacilityCard
-                facility={facility}
-                onSeeDetails={handleSeeDetails}
-                onBookTour={handleBookTour}
+                facility={item}
+                onSeeDetails={() => handleSeeDetails(item._id)}
+                onBookTour={() => handleBookTour(item._id)}
               />
             </div>
           ))}

@@ -1,78 +1,72 @@
 "use client";
 
-import { Star, MapPin } from "lucide-react";
+import { Star, MapPin, Dot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+
 import Image from "next/image";
-import { Facility } from "@/types/facility";
+import { FacilityCards } from "@/lib/api";
+import Link from "next/link";
+import { Badge } from "../ui/badge";
 
 interface FacilityCardProps {
-  facility: Facility;
+  facility: FacilityCards;
   onSeeDetails: (facilityId: string) => void;
   onBookTour: (facilityId: string) => void;
 }
 
 export default function FacilityCard({
   facility,
-  onSeeDetails,
+
   onBookTour,
 }: FacilityCardProps) {
+  console.log("facility asa", facility);
+
   return (
-    <Card className="w-full overflow-hidden bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 py-0 ">
+    <Card className="w-full overflow-hidden items-stretch bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 py-0 ">
       <div className="relative ">
         <Image
-          src={facility.image || "/placeholder.svg"}
-          alt={facility.name}
+          src={facility?.images?.[0]?.url || "/search.png"}
+          alt={facility?.name}
           width={490}
           height={321}
-          className="object-cover "
-          
+          className="object-cover h-[321px] "
         />
       </div>
 
       <CardContent className="p-4 space-y-4">
         {/* Header */}
         <div className="space-y-2">
-          <div className="flex justify-between">
+          <div className="flex justify-between ">
+            <h3 className="font-semibold text-lg text-gray-900 leading-tight">
+              {facility?.name}
+            </h3>
 
-          <h3 className="font-semibold text-lg text-gray-900 leading-tight">
-            {facility.name}
-          </h3>
-
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1">
-              <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-              <span className="text-sm font-medium text-gray-900">
-                {facility.rating}
-              </span>
-              <span className="text-sm text-gray-500">
-                ({facility.reviewCount} reviews)
-              </span>
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
+                <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                <span className="text-sm font-medium text-gray-900">
+                  {facility?.rating ?? 0}
+                </span>
+                <span className="text-sm text-gray-500">
+                  ({facility?.reviewCount} reviews)
+                </span>
+              </div>
             </div>
-          </div>
           </div>
 
           <div className="flex items-center gap-1 text-gray-600">
             <MapPin className="w-4 h-4" />
-            <span className="text-sm">{facility.description}</span>
+            <span className="text-sm">{facility?.location}</span>
           </div>
         </div>
 
         {/* Categories */}
-        <div className="flex flex-wrap gap-2">
-          {facility.categories.map((category) => (
-            <Badge
-              key={category.id}
-              variant={category.type === "available" ? "default" : "secondary"}
-              className={`text-xs px-2 py-1 ${
-                category.type === "available"
-                  ? "bg-green-100 text-green-800 hover:bg-green-200"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
-            >
-              {category.name}
-            </Badge>
+        <div className="flex flex-wrap gap-2 items-stretch">
+            <Badge className={`${facility.availability ? 'bg-[#9CE7AD] text-[#28A745] ' : 'bg-red-300 text-white'} text-[12px] px-4 py-1 rounded-sm`} ><Dot className="w-[14px] h-[14px]" /> {facility.availability ? ' Available' :'unavailable'}</Badge>
+
+          {facility.amenities?.map((category) => (
+            <Badge className="bg-[#E6E7E6] text-[#68706A] text-[12px]  px-4 py-1 rounded-sm" key={category}>{category}</Badge>
           ))}
         </div>
 
@@ -80,7 +74,7 @@ export default function FacilityCard({
         <div className="pt-2">
           <div className="flex items-baseline gap-1">
             <span className="text-2xl font-bold text-gray-900">
-              ${facility.price.toLocaleString()}
+              ${facility?.price?.toLocaleString()}
             </span>
             <span className="text-sm text-gray-500">/ Month</span>
           </div>
@@ -88,16 +82,17 @@ export default function FacilityCard({
 
         {/* Action Buttons */}
         <div className="flex gap-2 pt-2">
-          <Button
-            variant="outline"
-            className="flex-1 text-green-600 border-green-600 hover:bg-green-50 bg-transparent"
-            onClick={() => onSeeDetails(facility.id)}
-          >
-            See Details
+          <Button className="w-1/2" variant="outline">
+            <Link
+              className="w-full h-full cursor-pointer"
+              href={`/facilities/details/${facility?._id}`}
+            >
+              See Details
+            </Link>
           </Button>
           <Button
-            className="flex-1 bg-green-600 hover:bg-green-700 text-white"
-            onClick={() => onBookTour(facility.id)}
+            className="flex-1 cursor-pointer bg-green-600 hover:bg-green-700 text-white"
+            onClick={() => onBookTour(facility?._id)}
           >
             Book a Tour
           </Button>

@@ -1,179 +1,161 @@
 "use client";
 
-import type * as React from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
+import * as React from "react";
+import { usePathname, useRouter } from "next/navigation";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { signOut } from "next-auth/react";
 import {
-   LayoutDashboard,
+  LayoutDashboard,
   CalendarCheck,
   PlaneTakeoff,
   Users,
   Building2,
   Wallet,
-  Percent,
   Star,
   LogOut,
-
+  Settings,
+  BadgePercent,
 } from "lucide-react";
 
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar";
-import { signOut } from "next-auth/react";
-import Image from "next/image";
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const menuItems = [
-   {
-    title: "Dashboard",
-    url: "/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    title: "Placements",
-    url: "/dashboard/placements",
-    icon: CalendarCheck,
-  },
-  {
-    title: "Tour Requests",
-    url: "/dashboard/tourrequest",
-    icon: PlaneTakeoff,
-  },
-  {
-    title: "Customers",
-    url: "/dashboard/customers",
-    icon: Users,
-  },
-  {
-    title: "Manage Facility",
-    url: "/dashboard/ManageFacility",
-    icon: Building2,
-  },
-  {
-    title: "Earnings Summary",
-    url: "/dashboard/EarningSummary",
-    icon: Wallet,
-  },
-  {
-    title: "Commissions",
-    url: "/dashboard/Commissions",
-    icon: Percent,
-  },
-  {
-    title: "Reviews & Ratings",
-    url: "/dashboard/ReviewsRatings",
-    icon: Star,
-  },
-  
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Placements", href: "/dashboard/placements", icon: CalendarCheck },
+  { name: "Tour Requests", href: "/dashboard/tourrequest", icon: PlaneTakeoff },
+  { name: "Customers", href: "/dashboard/customers", icon: Users },
+  { name: "Manage Facility", href: "/dashboard/facility", icon: Building2 },
+  { name: "Earnings Summary", href: "/dashboard/earningsummary", icon: Wallet },
+  { name: "Referral Fee", href: "/dashboard/referralfee", icon: BadgePercent },
+  { name: "Reviews & Ratings", href: "/dashboard/reviewratings", icon: Star },
 ];
 
-export function DashboardSidebar({
-  ...props
-}: React.ComponentProps<typeof Sidebar>) {
+const settingsItems = [
+  { name: "Profile", href: "/dashboard/profile" },
+  { name: "Change Password", href: "/dashboard/change-password" },
+  { name: "Document", href: "/dashboard/document" },
+  { name: "Subscription", href: "/dashboard/Subscription" },
+];
+
+export function DashboardSidebar() {
+  const [isOpen, setIsOpen] = React.useState(false);
+
+
   const pathname = usePathname();
-  const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
+  const router = useRouter();
 
-  const isActive = (path: string) => pathname === path;
-
-  const handleLogout = async () => {
+  const isActive = (href: string) => pathname === href;
+   const handleLogout = async () => {
     await signOut({ callbackUrl: "/" });
   };
+  const confirmLogout = () => {
+    handleLogout();
+    setIsOpen(false);
+  };
+ 
 
   return (
-    <>
-      <Sidebar className="border-r-0 w-[312px] shadow-2xl text-[#68706A]" collapsible="none" {...props}>
-        <SidebarContent className="p-4 bg-[#FFFFFF]">
-          <Link href={"/dashboard"} className="text-white">
-            <Image
-              src="/dashboard/dashboardlogo.png"
-              alt="Logo"
-              width={150}
-              height={80}
-              className="mx-auto h-[80px] font-bold w-[150px] object-contain mb-4"
-            />
-          </Link>
-          <SidebarMenu className="space-y-2 ">
-            {menuItems.map((item) => (
-              <SidebarMenuItem key={item.title} className="">
-                <SidebarMenuButton
-                  isActive={isActive(item.url)}
-                  className="group py-8 flex  hover:bg-[#28A745] data-[active=true]:bg-[#28A745]"
-                >
-                  <Link href={item.url} className="flex gap-2 items-center">
-                    <item.icon
-                      className={`h-5 w-5 ${
-                        isActive(item.url)
-                          ? "text-white"
-                          : "text-[#68706A] group-hover:text-white"
-                      }`}
-                    />
-                    <span
-                      className={`text-[12px] font-medium text-center ${
-                        isActive(item.url)
-                          ? "text-white"
-                          : "text-[#68706A] group-hover:text-white"
-                      }`}
-                    >
-                      {item.title}
-                    </span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+    <div className="flex flex-col h-screen w-[312px] fixed shadow-2xl border-r-0 bg-white">
+      {/* Logo */}
+      <div className="px-4 py-6">
+        <Image
+          src="/images/Logo.png"
+          alt="Logo"
+          width={150}
+          height={80}
+          className="mx-auto h-[80px] w-[150px] object-contain mb-4"
+        />
+      </div>
+
+      {/* Navigation */}
+      <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+        {menuItems.map((item) => (
+          <Button
+            key={item.name}
+            variant="ghost"
+            className={`w-full justify-start gap-3 h-12 px-4 rounded-lg font-medium transition-all duration-200 ${
+              isActive(item.href)
+                ? "bg-[#179649] text-white hover:bg-[#179649]"
+                : "text-[#68706a] hover:bg-[#f8f9fa] hover:text-[#179649]"
+            }`}
+            onClick={() => router.push(item.href)}
+          >
+            <item.icon className="h-5 w-5" />
+            {item.name}
+          </Button>
+        ))}
+
+        {/* Settings Dropdown using ShadCN UI */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              className={`w-full justify-start gap-3 h-12 px-4 rounded-lg font-medium transition-all duration-200 ${
+                settingsItems.some((item) => isActive(item.href))
+                  ? "bg-[#179649] text-white hover:bg-[#179649]"
+                  : "text-[#68706a] hover:bg-[#f8f9fa] hover:text-[#179649]"
+              }`}
+            >
+              <Settings className="h-5 w-5" />
+              Settings
+            </Button>
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent className="ml-6 flex flex-col space-y-1 bg-white p-2 border border-gray-200 shadow-md">
+            {settingsItems.map((item) => (
+              <DropdownMenuItem
+                key={item.name}
+                className={`text-[12px] py-2 px-4 rounded cursor-pointer ${
+                  isActive(item.href)
+                    ? "bg-[#179649] text-white"
+                    : "text-[#68706a] hover:bg-gray-100"
+                }`}
+                onClick={() => router.push(item.href)}
+              >
+                {item.name}
+              </DropdownMenuItem>
             ))}
-          </SidebarMenu>
-        </SidebarContent>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </nav>
 
-        <div className="absolute bottom-[100px] -left-20 w-[312px] ">
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                onClick={() => setIsLogoutDialogOpen(true)}
-                className="group py-8 flex justify-center hover:bg-[#ffffff]"
-              >
-                <div className="flex gap-2 items-center">
-                  <LogOut className=" text-gray-400 group-hover:text-[#212121]" />
-                  <span className="text-[12px] font-medium text-gray group-hover:text-[#212121]">
-                    Logout
-                  </span>
-                </div>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </div>
-      </Sidebar>
-
-      {/* LogOutModal component would go here */}
-      {isLogoutDialogOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg">
-            <h3 className="text-lg font-medium mb-4">Confirm Logout</h3>
-            <p className="text-gray-600 mb-6">
-              Are you sure you want to logout?
-            </p>
-            <div className="flex gap-4">
-              <button
-                onClick={() => setIsLogoutDialogOpen(false)}
-                className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => {
-                  handleLogout();
-                  setIsLogoutDialogOpen(false);
-                }}
-                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
+      {/* Logout at bottom */}
+      <div className="px-4 py-4 mt-auto border-t border-gray-100">
+        <Button
+          variant="ghost"
+          className="w-full justify-start gap-3 h-12 px-4 rounded-lg font-medium text-[#e5102e] hover:bg-[#feecee] hover:text-[#e5102e] transition-all duration-200"
+          onClick={()=>setIsOpen(true)}
+        >
+          <LogOut className="h-5 w-5" />
+          Log Out
+        </Button>
+        {/* Confirmation Modal */}
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Logout</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-gray-600 mt-2">
+            Are you sure you want to log out?
+          </p>
+          <DialogFooter className="mt-4 flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setIsOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={confirmLogout}>
+              Log Out
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      </div>
+    </div>
   );
 }

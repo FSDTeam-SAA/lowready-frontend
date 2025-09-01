@@ -33,13 +33,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body
+       <body
         className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} antialiased`}
       >
-        <TanstackProvider>
-          <LayoutVisibilityWrapper>{children}</LayoutVisibilityWrapper>
-          <Toaster position="top-right" />
-        </TanstackProvider>
+        
+          
+          <TanstackProvider>
+            <LayoutVisibilityWrapper>{children}</LayoutVisibilityWrapper>
+            <Toaster position="top-right" />
+          </TanstackProvider>
+        
       </body>
     </html>
   );

@@ -1,12 +1,15 @@
 "use client";
 
-import { facilitiesData } from "@/lib/constant";
-import React from "react";
 import FacilityCard from "../shared/facility-card";
+import { getallFacilities } from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
+import { FacilityBooking } from "./details/FacilityBooking";
 
 const FacilitiesBrowse = () => {
-  const facilities = facilitiesData || [];
-
+  const { data: facilitie } = useQuery({
+    queryKey: ["facilitiescard"],
+    queryFn: () => getallFacilities(),
+  });
   const handleSeeDetails = (id: string) => {
     console.log("See details clicked for", id);
   };
@@ -14,6 +17,8 @@ const FacilitiesBrowse = () => {
   const handleBookTour = (id: string) => {
     console.log("Book tour clicked for", id);
   };
+
+  const facilities = facilitie?.data || [];
   return (
     <section>
       <div className="container mx-auto py-8 lg:py-20">
@@ -26,16 +31,17 @@ const FacilitiesBrowse = () => {
             different needs and preferences.
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {facilities.map((item) => (
+        <div className="grid grid-cols-1  md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {facilities?.map((item) => (
             <FacilityCard
-              key={item.id}
+              key={item._id}
               facility={item}
-              onSeeDetails={() => handleSeeDetails(item.id)}
-              onBookTour={() => handleBookTour(item.id)}
+              onSeeDetails={() => handleSeeDetails(item._id)}
+              onBookTour={() => handleBookTour(item._id)}
             />
           ))}
         </div>
+        
       </div>
     </section>
   );
