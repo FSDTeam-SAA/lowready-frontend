@@ -6,6 +6,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+function capitalizeWords(str: string) {
+  return str
+    .split(" ")
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
 export function DashboardHeader() {
   const { data: session } = useSession();
   const pathname = usePathname();
@@ -13,7 +20,7 @@ export function DashboardHeader() {
   const currentPage = pathname?.split("/").filter(Boolean).pop() || "Dashboard";
 
   return (
-    <header className="flex w-full items-center justify-between bg-white text-black  p-4 backdrop-blur-xl">
+    <header className="flex w-full items-center justify-between bg-white text-black p-4 backdrop-blur-xl">
       <h1 className="text-[24px] text-[#28A745] font-bold capitalize">
         {currentPage}
       </h1>

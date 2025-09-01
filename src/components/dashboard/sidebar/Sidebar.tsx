@@ -82,7 +82,7 @@ export function DashboardSidebar() {
             variant="ghost"
             className={`w-full justify-start gap-3 h-12 px-4 rounded-lg font-medium transition-all duration-200 ${
               isActive(item.href)
-                ? "bg-[#179649] text-white hover:bg-[#179649]"
+                ? "bg-[#179649] text-white hover:bg-[#179649] hover:text-white"
                 : "text-[#68706a] hover:bg-[#f8f9fa] hover:text-[#179649]"
             }`}
             onClick={() => router.push(item.href)}

@@ -75,7 +75,7 @@ const FamiliesSaying = ({ reviews = reveiwsData }: ReviewFamilyCarouselProps) =>
           >
             {reviews.map((review: Review) => (
               <div
-                key={review.id}
+                key={review._id}
                 className="flex-shrink-0 px-2"
                 style={{ width: `${100 / slidesToShow}%` }}
               >

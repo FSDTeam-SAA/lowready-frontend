@@ -1,3 +1,4 @@
+import { ReviewFamilyCarousel } from '@/components/landing/FamilyReview'
 import FamiliesSay from '@/components/search/FamiliesSay/FamiliesSay'
 import SearchField from '@/components/search/searchfield/SearchField'
 import SearchHero from '@/components/search/searchHero/SearchHero'
@@ -8,7 +9,10 @@ const page = () => {
     <div>
         <SearchField />
         <SearchHero />
-        <FamiliesSay />
+        <div className="bg-[#F8F9FA]">
+
+        <ReviewFamilyCarousel />
+        </div>
     </div>
   )
 }
