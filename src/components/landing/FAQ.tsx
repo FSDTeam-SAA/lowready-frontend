@@ -45,8 +45,8 @@ const FAQ = () => {
         <div className="">
           <div className="text-center mb-8 sm:mb-10 md:mb-12">
             <h1
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6x md:mb-8 font-bold leading-tight   text-gray-900 mb-4"
-              style={{ fontFamily: "var(--font-playfair)" }}
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl xl:text-6x md:mb-8 font-bold leading-tight  font-playfair text-gray-900 mb-4"
+               
             >
               Frequently <span className="text-green-600">Asked Questions</span>
             </h1>
@@ -105,7 +105,7 @@ const FAQ = () => {
             </p>
 
             <div className="mt-6 sm:mt-8">
-              <Button size="lg" className="w-full sm:w-[200px] cursor-pointer">
+              <Button size="lg" className="w-full text-[16px] sm:w-[200px] cursor-pointer">
                 Contact Us
               </Button>
             </div>

@@ -1,7 +1,8 @@
+// components/SearchField.tsx
 "use client";
 
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
@@ -13,6 +14,9 @@ import {
   FacilitySearchData,
   FacilityFilters,
   Facility,
+  BookingType,
+  createBooking,
+  FacilityCards,
 } from "@/lib/api";
 
 import {
@@ -24,6 +28,8 @@ import {
 } from "@/components/ui/select";
 
 import Link from "next/link";
+import { ConfirmBookingModal } from "@/components/shared/ConfirmBookingModal";
+import { useSession } from "next-auth/react";
 
 interface Location {
   _id: string;
@@ -43,7 +49,13 @@ export default function SearchField() {
     limit: 6,
   });
 
+  const { data: session } = useSession();
+  const userId = session?.user?.id || "";
   const [isSearching, setIsSearching] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+  const [bookingData, setBookingData] = useState<BookingType | undefined>();
+  const [selectedFacility, setSelectedFacility] = useState<Facility | null>(null);
 
   // Fetch locations
   const { data: locationdata } = useQuery({
@@ -62,9 +74,17 @@ export default function SearchField() {
     queryFn: () => FacilitySearchData(filters),
   });
 
+  const createBookingMutation = useMutation({
+    mutationKey: ["booking"],
+    mutationFn: (values: BookingType) => createBooking(values),
+  });
+
+  async function handleBookingSubmit(values: BookingType, isEdit: boolean) {
+    await createBookingMutation.mutate(values);
+  }
+
   const facilities = facilitie?.data || [];
   const totalPages = facilitie?.totalPages || 1;
-  console.log("facilities", facilities);
 
   // ---------- Handlers ----------
   const handleLocationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,9 +92,41 @@ export default function SearchField() {
     setIsSearching(e.target.value.length > 0);
   };
 
-  // const handelDetailpage=(facility)=>{
+  const handleNewBooking = (facility: Facility) => {
+    setSelectedFacility(facility);
+    
+    // Create booking data with the selected facility information
+    const newBookingData: BookingType = {
+      _id: undefined,
+      facility: facility._id,
+      userId: userId,
+      startingDate: new Date().toISOString(),
+      duration: "1",
+      paymentStatus: "pending",
+      residentialInfo: [
+        {
+          name: "",
+          dateOfBirth: new Date().toISOString().split("T")[0],
+          gender: "male",
+          requirements: "",
+        },
+      ],
+      totalPrice: facility.price || 0,
+    };
+    
+    setBookingData(newBookingData);
+    setIsEdit(false);
+    setModalOpen(true);
+  };
 
-  // }
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setBookingData(undefined);
+    setSelectedFacility(null);
+  };
+ 
+ 
+  
 
   return (
     <div className="relative container mx-auto w-full min-h-screen bg-white">
@@ -86,7 +138,7 @@ export default function SearchField() {
           onChange={handleLocationChange}
           className=" border-none w-[70%] outline-none shadow-none"
         />
-        <Button onClick={() => refetch()}>Search</Button>
+        <Button className="cursor-pointer" onClick={() => refetch()}>Search</Button>
       </div>
 
       {/* Body with dim effect */}
@@ -125,7 +177,7 @@ export default function SearchField() {
             <div>
               <h3 className="font-semibold mb-2">Availability</h3>
               <div className="flex items-center gap-2">
-                <Checkbox
+                <Checkbox className="cursor-pointer"
                   checked={filters.availability ?? true}
                   onCheckedChange={(val) =>
                     setFilters({ ...filters, availability: !!val })
@@ -138,18 +190,18 @@ export default function SearchField() {
             {/* Locations */}
             <div>
               <h3 className="font-semibold mb-2">Location</h3>
-              <Select
+              <Select 
                 value={filters.location}
                 onValueChange={(val) =>
                   setFilters({ ...filters, location: val })
                 }
               >
-                <SelectTrigger className="w-full h-[44px] px-3 ">
+                <SelectTrigger className="w-full cursor-pointer h-[44px] px-3 ">
                   <SelectValue placeholder="Select Location" />
                 </SelectTrigger>
                 <SelectContent>
                   {locations.map((loc) => (
-                    <SelectItem key={loc._id} value={loc.location}>
+                    <SelectItem className="cursor-pointer" key={loc._id} value={loc.location}>
                       {loc.location}
                     </SelectItem>
                   ))}
@@ -162,7 +214,7 @@ export default function SearchField() {
               <h3 className="font-semibold mb-2">Ratings</h3>
               {[5, 4, 3, 2, 1].map((star) => (
                 <div key={star} className="flex items-center space-x-2">
-                  <Checkbox
+                  <Checkbox className="cursor-pointer"
                     checked={filters.rating === star}
                     onCheckedChange={() =>
                       setFilters({ ...filters, rating: star })
@@ -181,7 +233,7 @@ export default function SearchField() {
               {["Personal Care", "Medical Support", "Housekeeping"].map(
                 (service) => (
                   <div key={service} className="flex items-center space-x-2">
-                    <Checkbox
+                    <Checkbox className="cursor-pointer"
                       checked={filters.careServices?.includes(service)}
                       onCheckedChange={(val) =>
                         setFilters({
@@ -205,8 +257,8 @@ export default function SearchField() {
               <h3 className="font-semibold mb-2">Amenities</h3>
               {["Transportation", "WiFi", "Garden"].map((amenity) => (
                 <div key={amenity} className="flex items-center space-x-2">
-                  <Checkbox
-                    checked={filters.amenities?.includes(amenity)}
+                  <Checkbox className="cursor-pointer"
+                    checked={filters?.amenities?.includes(amenity)}
                     onCheckedChange={(val) =>
                       setFilters({
                         ...filters,
@@ -239,7 +291,7 @@ export default function SearchField() {
                   limit: 6,
                 })
               }
-              className="w-full text-red-500 border-red-500"
+              className="w-full text-red-500 cursor-pointer border-red-500"
             >
               Clear All Filters
             </Button>
@@ -263,8 +315,13 @@ export default function SearchField() {
                     New York to find the perfect match for your loved one.
                   </p>
                 </div>
-                {facilities.map((facility: Facility) => (
+                {facilities.map((facility:FacilityCards) => (
+                  
+               
+                  
                   <Card key={facility._id} className="overflow-hidden py-0">
+                    <div>
+                    </div>
                     <div className="grid md:grid-cols-3 pb-0 gap-4">
                       <Image
                         src={facility.images[0]?.url || "/search.png"}
@@ -277,24 +334,24 @@ export default function SearchField() {
                         <div>
                           <CardTitle className="flex items-center justify-between">
                             <h2 className="text-xl font-semibold leading-[150%] text-[#343A40] pt-[24px]">
-                              {facility.name}
+                              {facility?.name}
                             </h2>
                             <span className="flex items-center text-sm text-yellow-500">
                               <Star className="w-4 h-4 mr-1" />{" "}
-                              {facility.rating ?? 0} (reviews)
+                              {facility?.rating} ({facility?.ratingCount}reviews)
                             </span>
                           </CardTitle>
                           <p className="text-sm flex items-center gap-2  leading-[150%] text-[#68706A] pt-[8px]">
                             <MapPin className="w-4 h-4 " />
-                            {facility.description ?? "No description available"}
+                            {facility?.description ?? "No description available"}
                           </p>
                           <div className="flex flex-wrap gap-2 pt-[16px]">
-                            {facility.amenities && (
+                            {facility?.amenities && (
                               <button className="text-green-400 hover:text-white hover:bg-green-400 border-green-300 px-3 py-1 border rounded-xl text-xs bg-green-200">
                                 Available
                               </button>
                             )}
-                            {facility.amenities?.map((a) => (
+                            {facility?.amenities?.map((a) => (
                               <span
                                 key={a}
                                 className="px-3 py-1 border rounded-xl text-xs hover:text-white hover:bg-green-400"
@@ -307,20 +364,26 @@ export default function SearchField() {
 
                         <div className="items-center justify-between py-[16px]">
                           <span className="text-[32px] font-semibold">
-                            ${facility.price ?? 0}{" "}
+                            ${facility?.price ?? 0}{" "}
                             <span className="text-[16px] font-medium leading-[150%]">
                               /Month
                             </span>
                           </span>
                           <div className="flex justify-between gap-5 pt-4 pb-6 ">
-                            <Button className="w-1/2" variant="outline">
-                              <Link className="w-full h-full cursor-pointer"
-                                href={`/facilities/details/${facility._id}`}
+                            <Button className="w-1/2 cursor-pointer" variant="outline">
+                              <Link
+                                className="w-full h-full cursor-pointer"
+                                href={`/facilities/details/${facility?._id}`}
                               >
                                 See Details
                               </Link>
                             </Button>
-                            <Button className="w-1/2">Book a Tour</Button>
+                            <Button
+                              onClick={() => handleNewBooking(facility)}
+                              className="w-1/2 cursor-pointer"
+                            >
+                              Book a Tour
+                            </Button>
                           </div>
                         </div>
                       </CardContent>
@@ -334,6 +397,7 @@ export default function SearchField() {
                     <Button
                       key={idx}
                       size="sm"
+
                       variant={filters.page === idx + 1 ? "default" : "outline"}
                       onClick={() => setFilters({ ...filters, page: idx + 1 })}
                     >
@@ -348,6 +412,14 @@ export default function SearchField() {
           </main>
         </div>
       </div>
+      {/* Booking Modal */}
+      <ConfirmBookingModal
+        open={modalOpen}
+        onClose={handleCloseModal}
+        onSubmitBooking={handleBookingSubmit}
+        isEdit={isEdit}
+        apiData={bookingData}
+      />
     </div>
   );
 }

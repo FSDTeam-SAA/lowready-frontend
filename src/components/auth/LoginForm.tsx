@@ -84,7 +84,7 @@ const LoginForm = () => {
       {/* back to home  */}
       <button
         onClick={() => router.push("/")}
-        className="absolute top-24 right-28 md:right-48 text-green-600 hover:underline cursor-pointer"
+        className="absolute top-8 md:top-16 right-16 md:right-48  text-[#6C757D] hover:underline cursor-pointer"
       >
         Back to Home
       </button>
@@ -103,7 +103,7 @@ const LoginForm = () => {
           className="h-full w-full object-cover"
         />
         <div className="absolute top-6 left-6 text-white text-2xl font-bold">
-          ALH Hub
+          <Image src='/login.png' alt="logo" width={155} height={48}  />
         </div>
       </motion.div>
 
@@ -158,7 +158,7 @@ const LoginForm = () => {
                         <button
                           type="button"
                           onClick={() => setShowPassword((prev) => !prev)}
-                          className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
+                          className="absolute cursor-pointer inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
                         >
                           {showPassword ? (
                             <EyeOff className="h-5 w-5" />
@@ -174,14 +174,14 @@ const LoginForm = () => {
               />
 
               {/* Remember + Forgot */}
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between cursor-pointer items-center">
                 <FormField
                   control={form.control}
                   name="remember"
                   render={({ field }) => (
                     <FormItem className="flex items-center space-x-2">
                       <FormControl>
-                        <Checkbox
+                        <Checkbox className="cursor-pointer"
                           checked={field.value}
                           onCheckedChange={field.onChange}
                         />

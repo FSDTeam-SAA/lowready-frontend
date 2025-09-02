@@ -11,10 +11,10 @@ const HowWorks = () => {
     <div className="container mx-auto my-20"> 
         {/* Header */}
         <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-4xl font-bold font-playfair text-gray-900 mb-4">
             How It <span className="text-green-600">Works</span>
             </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-gray-600   mx-auto leading-relaxed">
             A simple, step-by-step process to help families find, connect with, and book trusted assisted living facilities with ease.
             </p>
       </div>

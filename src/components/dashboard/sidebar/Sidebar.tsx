@@ -53,7 +53,7 @@ export function DashboardSidebar() {
 
   const isActive = (href: string) => pathname === href;
    const handleLogout = async () => {
-    await signOut({ callbackUrl: "/" });
+    await signOut({ callbackUrl: "/login" });
   };
   const confirmLogout = () => {
     handleLogout();

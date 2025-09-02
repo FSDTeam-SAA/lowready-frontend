@@ -14,6 +14,7 @@ const HIDDEN_ROUTES = [
   "/verify-otp",
   "/dashboard",
   '/signinaspage',
+  
 ];
 
 const LayoutVisibilityWrapper = ({

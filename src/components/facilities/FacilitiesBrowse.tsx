@@ -3,7 +3,6 @@
 import FacilityCard from "../shared/facility-card";
 import { getallFacilities } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
-import { FacilityBooking } from "./details/FacilityBooking";
 
 const FacilitiesBrowse = () => {
   const { data: facilitie } = useQuery({

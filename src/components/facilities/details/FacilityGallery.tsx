@@ -8,8 +8,9 @@ import {
   BookingType,
   createBooking,
   Facility,
-  updateBooking,
+  
 } from "@/lib/api";
+import { useMutation } from "@tanstack/react-query";
 import { MapPin } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
@@ -37,21 +38,15 @@ export function FacilityGallery({ data }: FacilityTourProps) {
       );
     }
   }, [datas.amenitiesServices]);
+   
+  // console.log('hey bro how ',datas.images[0])
+  const createBookingMutation = useMutation({
+    mutationKey: ["booking"],
+    mutationFn: (values: BookingType) => createBooking(values),
+  });
 
-  async function handleBookingSubmit(values: BookingType, isEditMode: boolean) {
-    try {
-      console.log("booking data", values);
-
-      if (isEditMode && values._id) {
-        const updatedBooking = await updateBooking(values._id, values);
-        console.log("Booking updated:", updatedBooking);
-      } else {
-        const newBooking = await createBooking(values);
-        console.log("Booking created:", newBooking);
-      }
-    } catch (error) {
-      console.error("Booking failed:", error);
-    }
+  async function handleBookingSubmit(values: BookingType) {
+    await createBookingMutation.mutate(values);
   }
 
   // const handleEditBooking = (booking: BookingType) => {
@@ -75,9 +70,9 @@ export function FacilityGallery({ data }: FacilityTourProps) {
     <section className="py-[80px]">
       <div className="lg:flex items-center gap-[48px] mx-auto">
         {/* Images */}
-        <div className="flex gap-2 items-center mx-auto">
+        <div className="flex flex-col-reverse md:flex-row gap-2 items-center mx-auto">
           {/* Thumbnails */}
-          <div className="flex gap-3 flex-col">
+          <div className="flex overflow-hidden gap-3 md:flex-col">
             {datas?.amenitiesServices?.map(
               (img: AmenityService, id: number) => (
                 <Image
@@ -107,7 +102,7 @@ export function FacilityGallery({ data }: FacilityTourProps) {
 
         {/* Facility Info */}
         <div>
-          <Button className="text-green-300 border-1 border-green-300">
+          <Button className="text-green-300 border-1 mt-5 border-green-300">
             Available
           </Button>
           <h1 className="text-2xl font-bold pt-[24px] text-[#343A40]">
