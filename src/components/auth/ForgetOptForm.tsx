@@ -72,7 +72,7 @@ const ForgetOptForm = () => {
       }
 
       toast.success("Email verified successfully!");
-      router.push(`/forget-password?email=${email}&token=${data?.data}`);
+      router.push(`/reset-password?email=${email}&token=${data?.data}`);
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);

@@ -14,6 +14,8 @@ const HIDDEN_ROUTES = [
   "/verify-otp",
   "/dashboard",
   '/signinaspage',
+  '/forget-otp',
+  '/forget-password',
   
 ];
 
