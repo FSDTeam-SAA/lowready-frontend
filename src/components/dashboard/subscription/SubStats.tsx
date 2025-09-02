@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Check, Calendar, Clock, CreditCard, DollarSign } from "lucide-react";
+import { Check, Calendar, Clock, CreditCard } from "lucide-react";
 import { useSubscriptionStats } from "@/hooks/useSubscriptionStats";
 
 const SubStats = () => {
