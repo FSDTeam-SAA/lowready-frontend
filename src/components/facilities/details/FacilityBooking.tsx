@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/select";
 interface FacilityTourProps {
   data: { data: Facility };
+  facilityId: string;
 }
 
 // ✅ Validation schema
@@ -34,9 +35,9 @@ const bookingSchema = z.object({
 
 type BookingFormData = z.infer<typeof bookingSchema>;
 
-export function FacilityBooking({ data }: FacilityTourProps) {
+export function FacilityBooking({ data,facilityId }: FacilityTourProps) {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
-  const [selectedTime, setSelectedTime] = React.useState<string | null>(null); // Track selected time
+  const [selectedTime, setSelectedTime] = React.useState<string | null>(null); 
 
   const {
     register,
@@ -47,6 +48,7 @@ export function FacilityBooking({ data }: FacilityTourProps) {
     resolver: zodResolver(bookingSchema),
   });
 
+  
   // ✅ API mutation
   const tourCreateMutation = useMutation({
     mutationKey: ["create"],
@@ -57,17 +59,17 @@ export function FacilityBooking({ data }: FacilityTourProps) {
         phoneNumber: formData.phone,
         relationWith: formData.relationship,
         message: formData.message,
-        facility: "68ae03455f33292a0f0b049d", // Replace with actual facility ID
+        facility: facilityId, 
         visitDate: formData.date?.toISOString().split("T")[0] || "",
         visitTime: formData.time,
       };
       return CreateBookingTour(payload);
     },
-    onError: () => {
-      toast.error("Something went wrong");
+    onError: (error) => {
+      toast.error(error.message);
     },
-    onSuccess: () => {
-      toast.success("Tour successfully booked!");
+    onSuccess: (data) => {
+      toast.success(data.message);
     },
   });
 
@@ -78,7 +80,7 @@ export function FacilityBooking({ data }: FacilityTourProps) {
   const datas = data?.data || [];
 
   return (
-    <section className="my-6">
+    <section className="my-6" id="requestACall">
       <h2 className="text-xl font-semibold">
         Book a tour at
         <span className="text-green-400"> Sunny Hills Assisted Living</span>
@@ -219,7 +221,7 @@ export function FacilityBooking({ data }: FacilityTourProps) {
             {/* ✅ Submit Button with loading */}
             <Button
               type="submit"
-              className="mt-8 w-full"
+              className="mt-8 w-full cursor-pointer"
               disabled={tourCreateMutation.isPending}
             >
               {tourCreateMutation.isPending ? "Submitting..." : "Submit"}

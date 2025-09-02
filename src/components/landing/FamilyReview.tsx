@@ -42,7 +42,7 @@ export function ReviewFamilyCarousel({
           
           const data: ApiResponse = await response.json();
           
-          console.log('API Response:', data); // Debug log
+          
           
           if (data.success && data.data && Array.isArray(data.data)) {
             setReviews(data.data);

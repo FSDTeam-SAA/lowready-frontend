@@ -35,7 +35,7 @@ const AllReviewCard = () => {
       <h2>Error</h2>
     </div>;
   }
-  console.log('reviewssss',reviews);
+  // console.log('reviewssss',reviews);
   
   return (
     <section>
@@ -50,7 +50,7 @@ const AllReviewCard = () => {
           </p>
         </div>
         {reviews.map((item: Review, id:number) => (
-          <Card key={id} className="mt-[40px] lg:mt-[80px]">
+          <Card key={id} className="mt-[24px] lg:mt-[24px]">
             <CardHeader className="flex justify-between">
               <div className="flex items-center">
                 <Image
@@ -73,7 +73,7 @@ const AllReviewCard = () => {
                     className={`w-4 h-4 ${
                       idx < item.star
                         ? "text-yellow-500 fill-yellow-500"
-                        : "text-gray-300"
+                        : "text-[#C0C3C1] fill-[#C0C3C1]"
                     }`}
                   />
                 ))}

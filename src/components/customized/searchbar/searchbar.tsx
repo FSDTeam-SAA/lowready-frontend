@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -11,42 +11,77 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { MapPin, Search } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import { facilitiesLocation, Location } from "@/lib/api";
 
 interface SearchBarProps {
-  locations?: string[];
   placeholder?: string;
   onSearch?: (location: string, query: string) => void;
 }
 
 export const SearchBar: React.FC<SearchBarProps> = ({
-  locations = ["Melbourn", "Sydney", "Adelaid"],
   placeholder = "Find assisted living homes near you...",
   onSearch,
 }) => {
-  const [selectedLocation, setSelectedLocation] = useState(locations[0]);
   const [query, setQuery] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState("");
+  const router = useRouter();
+
+  // Fetch locations
+  const { data: locationdata } = useQuery({
+    queryKey: ["locationdata"],
+    queryFn: facilitiesLocation,
+  });
+  const locations: Location[] = useMemo(
+    () => locationdata?.data || [],
+    [locationdata]
+  );
+
+  // initialize location once data is available
+  useEffect(() => {
+    if (locations.length > 0 && !selectedLocation) {
+      setSelectedLocation(locations[0].location);
+      setQuery(locations[0].location); // ✅ sync with query
+    }
+  }, [locations, selectedLocation]);
 
   const handleSearch = () => {
     if (onSearch) onSearch(selectedLocation, query);
+
+    router.push(
+      `/search?location=${encodeURIComponent(
+        selectedLocation
+      )}&q=${encodeURIComponent(query)}`
+    );
+  };
+
+  // ✅ when location changes, also set query
+  const handleLocationChange = (val: string) => {
+    setSelectedLocation(val);
+    setQuery(val);
   };
 
   return (
     <div className="flex items-center py-3 px-3 w-full bg-white rounded-md overflow-hidden">
-      {/* MapPin with right border */}
+      {/* Location Selector */}
       <div className="flex items-center px-3 border-r">
         <MapPin className="h-6 w-6 text-primary cursor-pointer" />
-        <Select value={selectedLocation} onValueChange={setSelectedLocation}>
-          <SelectTrigger className="p-0 border-none bg-transparent cursor-pointer  shadow-none">
-            <SelectValue placeholder="Location" />
+        <Select value={selectedLocation} onValueChange={handleLocationChange}>
+          <SelectTrigger className="p-0 border-none bg-transparent cursor-pointer shadow-none">
+            <SelectValue
+              placeholder={`${selectedLocation} || Location`}
+              className="focus-visible:ring-[0px] outline-none border-none"
+            />
           </SelectTrigger>
           <SelectContent className="shadow-none cursor-pointer border-none">
             {locations.map((loc) => (
               <SelectItem
-                key={loc}
-                value={loc}
+                key={loc._id}
+                value={loc.location}
                 className="shadow-none cursor-pointer border-none"
               >
-                {loc}
+                {loc.location}
               </SelectItem>
             ))}
           </SelectContent>
@@ -55,12 +90,11 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
       {/* Search Input */}
       <Input
-        className="flex px-3 rounded-none focus:ring-0 shadow-none h-full border-none"
+        className="flex px-3 rounded-none  focus-visible:ring-[0px] shadow-none text-[#8E938F] outline-none h-full border-none"
         placeholder={placeholder}
         value={query}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-          setQuery(e.target.value)
-        }
+        onChange={(e) => setQuery(e.target.value)}
+        onKeyDown={(e) => e.key === "Enter" && handleSearch()}
       />
 
       {/* Search Button */}

@@ -8,12 +8,12 @@ import {
   BookingType,
   createBooking,
   Facility,
-  
 } from "@/lib/api";
 import { useMutation } from "@tanstack/react-query";
 import { MapPin } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
+import Link from "next/link";
 import { useState, useEffect } from "react";
 
 interface FacilityTourProps {
@@ -38,7 +38,7 @@ export function FacilityGallery({ data }: FacilityTourProps) {
       );
     }
   }, [datas.amenitiesServices]);
-   
+
   // console.log('hey bro how ',datas.images[0])
   const createBookingMutation = useMutation({
     mutationKey: ["booking"],
@@ -140,9 +140,14 @@ export function FacilityGallery({ data }: FacilityTourProps) {
               ${datas?.price || 2200} / month
             </p>
             <div className="space-x-2 pt-[80px] flex cursor-pointer justify-between">
-              <Button className="w-1/2" variant="outline">
-                Request Info
-              </Button>
+              <Link
+                className="w-1/2 cursor-pointer text-[#28A745]"
+                href={"#requestACall"}
+              >
+                <Button className="w-full" variant="outline">
+                  Request a Call
+                </Button>
+              </Link>
               <Button
                 className="w-1/2 cursor-pointer"
                 onClick={handleNewBooking}

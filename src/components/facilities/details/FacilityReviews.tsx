@@ -69,7 +69,8 @@ export function FacilityReviews({ facilityId, userId }: FacilityReviewsProps) {
       queryClient.invalidateQueries({ queryKey: ["reviews", facilityId] });
       setRating(0);
       setReviewText("");
-      toast.success("Successfully created review");
+      toast.success(`Review created successfully
+`);
     },
     onError: (err) => {
       toast.error(err?.message || "Failed to create review");
