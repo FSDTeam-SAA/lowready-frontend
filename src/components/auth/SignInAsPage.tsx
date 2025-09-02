@@ -21,7 +21,7 @@ const SignInAsPage = () => {
             <h1 className="text-2xl font-bold text-green-600">Alh Hub</h1>
             <Button
               variant="default"
-              className="bg-green-600 hover:bg-green-700"
+              className="bg-green-600  cursor-pointer hover:bg-green-700"
               onClick={() => router.push("/")}
             >
               Back To Home
@@ -53,7 +53,7 @@ const SignInAsPage = () => {
                 </ul>
                 <Button
                   variant="outline"
-                  className="w-full border-green-600 text-green-600 hover:bg-green-600 hover:text-white"
+                  className="w-full border-green-600 text-green-600 cursor-pointer hover:bg-green-600 hover:text-white"
                   onClick={() => router.push("/signup?role=organization")}
                 >
                   Continue as Provider
@@ -80,7 +80,7 @@ const SignInAsPage = () => {
                   <li>Manage your profile and saved addresses</li>
                 </ul>
                 <Button
-                  className="w-full bg-green-600 hover:bg-green-700"
+                  className="w-full bg-green-600 cursor-pointer hover:bg-green-700"
                   onClick={() => router.push("/signup?role=user")}
                 >
                   Continue as User

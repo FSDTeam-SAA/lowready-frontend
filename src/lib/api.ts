@@ -627,6 +627,7 @@ export interface FacilityCards {
   careServices?: string[];
   medicaidPrograms?: MedicaidProgram[];
   rating?: number;
+  ratingCount?:number;
   price: number;
   base?: string; // e.g. "monthly"
   availability?: boolean;
