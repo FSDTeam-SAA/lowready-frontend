@@ -70,10 +70,10 @@ export function FacilitiesCarousel() {
     <div className="container mx-auto py-8 lg:py-20">
       {/* Header */}
       <div className="text-center mb-12">
-        <h2 className="text-4xl font-bold text-gray-900 mb-4">
+        <h2 className="text-4xl font-bold font-playfair text-gray-900 mb-4">
           Featured <span className="text-green-600">Facilities</span>
         </h2>
-        <p className="text-gray-600 max-w-2xl mx-auto leading-relaxed">
+        <p className="text-gray-600   mx-auto leading-relaxed">
           Discover highlighted senior living options carefully tailored to meet
           the needs of families and their loved ones.
         </p>

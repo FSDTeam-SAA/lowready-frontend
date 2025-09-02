@@ -6,11 +6,11 @@ const ResidentialFacility = () => {
     <section>
       <div className="container mx-auto">
         <CallToAction
-          title="Want to promote your facility?"
+          title="Own or manage a residential facility? "
           title1=" Join ALH Hub to connect"
           title2="with families directly."
-          description="Connect with families and showcase your services easily."
-          buttonText="Get Started"
+          description="Showcase your residential facility, manage tour bookings seamlessly, and build direct, meaningful connections with families looking for trusted assisted living care for their loved ones."
+          buttonText="List Your Facility"
         />
       </div>
     </section>

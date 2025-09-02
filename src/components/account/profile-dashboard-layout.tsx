@@ -66,7 +66,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                     key={item.name}
                     variant="ghost"
                     className={cn(
-                      "w-full justify-start gap-3 h-12 px-4 rounded-lg font-medium transition-all duration-200",
+                      "w-full justify-start gap-3 h-12 px-4 cursor-pointer rounded-lg font-medium transition-all duration-200",
                       isActive
                         ? "bg-[#179649] text-white hover:bg-[#179649]"
                         : "text-[#68706a] hover:bg-[#f8f9fa] hover:text-[#179649]"
@@ -87,10 +87,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             <div className="px-4 py-4 mt-auto border-t border-gray-100">
               <Button
                 variant="ghost"
-                className="w-full justify-start gap-3 h-12 px-4 rounded-lg font-medium text-[#e5102e] hover:bg-[#feecee] hover:text-[#e5102e] transition-all duration-200"
+                className="w-full cursor-pointer justify-start gap-3 h-12 px-4 rounded-lg font-medium text-[#e5102e] hover:bg-[#feecee] hover:text-[#e5102e] transition-all duration-200"
                 onClick={() => setLogoutModalOpen(true)}
               >
-                <LogOut className="h-5 w-5" />
+                <LogOut className="h-5 w-5 cursor-pointer" />
                 Log Out
               </Button>
             </div>
@@ -140,21 +140,19 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             <DialogTitle className="text-center text-[#343a40]">
               Are You Sure?
             </DialogTitle>
-            <DialogDescription className="text-center text-[#68706a]">
-              Are you sure you want to log out?
-            </DialogDescription>
+             
           </DialogHeader>
           <DialogFooter className="flex gap-3 sm:gap-3">
             <Button
               variant="outline"
               onClick={() => setLogoutModalOpen(false)}
-              className="flex-1 border-[#e6e7e6] text-[#68706a] hover:bg-[#f8f9fa]"
+              className="flex-1 border-[#e6e7e6] cursor-pointer text-[#68706a] hover:bg-[#f8f9fa]"
             >
               Cancel
             </Button>
             <Button
               onClick={handleLogout}
-              className="flex-1 bg-[#e5102e] hover:bg-[#c50e29] text-white"
+              className="flex-1 bg-[#e5102e] cursor-pointer hover:bg-[#c50e29] text-white"
             >
               Log Out
             </Button>
