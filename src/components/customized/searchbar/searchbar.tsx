@@ -19,7 +19,7 @@ interface SearchBarProps {
 }
 
 export const SearchBar: React.FC<SearchBarProps> = ({
-  locations = ["Location 1", "Location 2", "Location 3"],
+  locations = ["Melbourn", "Sydney", "Adelaid"],
   placeholder = "Find assisted living homes near you...",
   onSearch,
 }) => {
@@ -34,17 +34,17 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     <div className="flex items-center py-3 px-3 w-full bg-white rounded-md overflow-hidden">
       {/* MapPin with right border */}
       <div className="flex items-center px-3 border-r">
-        <MapPin className="h-6 w-6 text-primary" />
+        <MapPin className="h-6 w-6 text-primary cursor-pointer" />
         <Select value={selectedLocation} onValueChange={setSelectedLocation}>
-          <SelectTrigger className="p-0 border-none bg-transparent  shadow-none">
+          <SelectTrigger className="p-0 border-none bg-transparent cursor-pointer  shadow-none">
             <SelectValue placeholder="Location" />
           </SelectTrigger>
-          <SelectContent className="shadow-none border-none">
+          <SelectContent className="shadow-none cursor-pointer border-none">
             {locations.map((loc) => (
               <SelectItem
                 key={loc}
                 value={loc}
-                className="shadow-none border-none"
+                className="shadow-none cursor-pointer border-none"
               >
                 {loc}
               </SelectItem>
@@ -66,7 +66,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       {/* Search Button */}
       <Button
         onClick={handleSearch}
-        className="bg-green-600 hover:bg-green-700 text-white px-4 flex items-center gap-1"
+        className="bg-green-600 cursor-pointer hover:bg-green-700 text-white px-4 flex items-center gap-1"
       >
         <Search className="h-4 w-4" /> Search
       </Button>

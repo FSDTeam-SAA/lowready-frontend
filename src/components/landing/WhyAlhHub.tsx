@@ -8,8 +8,7 @@ const WhyAlhHub = () => {
         <div className="">
           <div className="text-center mb-8 sm:mb-10 md:mb-12">
             <h1
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 sm:mb-5 md:mb-6"
-              style={{ fontFamily: "var(--font-playfair)" }}
+              className="text-2xl  font-playfair  sm:text-3xl md:text-4xl lg:text-4xl font-bold text-gray-900 mb-4 sm:mb-5 md:mb-6"
             >
               Why Choose <span className="text-green-600">ALH Hub</span>
             </h1>

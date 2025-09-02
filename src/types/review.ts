@@ -1,14 +1,24 @@
-
+// Updated types to match API response
 interface User {
-    name: string
-    city: string
-    organization: string
+    _id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
 }
 
-export interface Review{
-    id: number
-    user: User
-    imglink:string
-    rating: number
-    comment: string
+interface Facility {
+    _id: string;
+    name: string;
+    address?: string;
+}
+
+export interface Review {
+    _id: string;
+    userId: User;
+    facility: Facility;
+    star: number;
+    comment: string;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
 }

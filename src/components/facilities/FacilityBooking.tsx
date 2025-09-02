@@ -18,11 +18,11 @@ export default function BookingPage() {
       <h1 className="text-2xl font-bold mb-4">Booking Page</h1>
       <Button onClick={() => setModalOpen(true)}>Open Booking Modal</Button>
 
-      <ConfirmBookingModal
+      {/* <ConfirmBookingModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-        onSubmitBooking={handleBookingSubmit}
-      />
+        onSubmitBooking={handleBookingSubmit()}
+      /> */}
     </div>
   );
 }

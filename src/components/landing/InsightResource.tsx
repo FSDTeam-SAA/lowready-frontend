@@ -80,7 +80,7 @@ export function InsightResourceCarousel({
         >
           {reveiws.map((reveiw:Review) => (
             <div
-              key={reveiw.id}
+              key={reveiw._id}
               className="flex-shrink-0 px-2"
               style={{ width: `${100 / slidesToShow}%` }}
             >

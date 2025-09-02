@@ -742,3 +742,15 @@ export async function getBookingById(bookingId: string) {
 export const getBookingHistory = getUserBookings;
 export const getTourHistory = getUserTourHistory;
 export const rebookTour = rebookFacility;
+
+
+//Subscription
+
+// ✅ Fetch subscriptions
+
+export async function fetchSubscription() {
+  const res = await api.get(`/payment/user/all?type=subscription`);
+  // if (!res.ok) throw new Error("Failed to fetch subscription");
+  const json = await res.data;
+  return json.data[0]; // Take the first subscription only
+}
