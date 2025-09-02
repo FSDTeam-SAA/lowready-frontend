@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
 import Image from "next/image";
-import { BookingType, createBooking, Facility, FacilityCards } from "@/lib/api";
+import { BookingType, createBooking, FacilityCards } from "@/lib/api";
 import Link from "next/link";
 import { Badge } from "../ui/badge";
 import { ConfirmBookingModal } from "./ConfirmBookingModal";
@@ -26,9 +26,9 @@ export default function FacilityCard({ facility }: FacilityCardProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [bookingData, setBookingData] = useState<BookingType | undefined>();
-  const [selectedFacility, setSelectedFacility] = useState<Facility | null>(
-    null
-  );
+  // const [selectedFacility, setSelectedFacility] = useState<Facility | null>(
+  //   null
+  // );
 
   const createBookingMutation = useMutation({
     mutationKey: ["booking"],
@@ -47,7 +47,7 @@ export default function FacilityCard({ facility }: FacilityCardProps) {
   }
 
   const handleNewBooking = (facility: FacilityCards) => {
-    setSelectedFacility(facility as Facility);
+    // setSelectedFacility(facility as Facility);
 
     // Create booking data with the selected facility information
     const newBookingData: BookingType = {
@@ -76,9 +76,8 @@ export default function FacilityCard({ facility }: FacilityCardProps) {
   const handleCloseModal = () => {
     setModalOpen(false);
     setBookingData(undefined);
-    setSelectedFacility(null);
+    // setSelectedFacility(null);
   };
-  console.log("hey", facility);
 
   return (
     <section>

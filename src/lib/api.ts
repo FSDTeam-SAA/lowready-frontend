@@ -559,8 +559,8 @@ export interface FacilityFilters {
   page?: number;
   limit?: number;
   rating?: number;
-  minPrice?: number;
-  maxPrice?: number;
+  minPrice?: number | string;
+  maxPrice?: number | string;
   availability?: boolean;
 }
 
@@ -627,7 +627,7 @@ export interface FacilityCards {
   careServices?: string[];
   medicaidPrograms?: MedicaidProgram[];
   rating?: number;
-  ratingCount?:number;
+  ratingCount?: number;
   price: number;
   base?: string; // e.g. "monthly"
   availability?: boolean;
@@ -689,16 +689,16 @@ export async function facilitiesLocation(): Promise<{ data: Location[] }> {
 //f Booking// api/booking.ts
 export interface BookingType {
   _id?: string; // Add optional ID for updates
-  facility: string; 
-  userId: string; 
-  startingDate: string; 
-  duration: string; 
-  paymentStatus: "paid" | "unpaid" | "pending"; 
+  facility: string;
+  userId: string;
+  startingDate: string;
+  duration: string;
+  paymentStatus: "paid" | "unpaid" | "pending";
   residentialInfo: {
     name: string;
-    dateOfBirth: string; 
+    dateOfBirth: string;
     gender: "male" | "female" | "other";
-    requirements?: string; 
+    requirements?: string;
   }[];
   totalPrice: number;
 }
@@ -716,7 +716,10 @@ export async function createBooking(userData: BookingType) {
 }
 
 // Update booking
-export async function updateBooking(bookingId: string, userData: Partial<BookingType>) {
+export async function updateBooking(
+  bookingId: string,
+  userData: Partial<BookingType>
+) {
   try {
     const res = await api.patch(`/bookings/${bookingId}`, userData);
     return res.data;
@@ -743,7 +746,6 @@ export const getBookingHistory = getUserBookings;
 export const getTourHistory = getUserTourHistory;
 export const rebookTour = rebookFacility;
 
-
 //Subscription
 
 // ✅ Fetch subscriptions
@@ -753,4 +755,15 @@ export async function fetchSubscription() {
   // if (!res.ok) throw new Error("Failed to fetch subscription");
   const json = await res.data;
   return json.data[0]; // Take the first subscription only
+}
+
+export async function reviewratinSummery(id: string) {
+  try {
+    const res = await api.get(`review-rating/summary/${id}`);
+    return res.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Get Booking Error ${error.message}`);
+    }
+  }
 }
