@@ -16,6 +16,7 @@ import {
   Facility,
   BookingType,
   createBooking,
+  FacilityCards,
 } from "@/lib/api";
 
 import {
@@ -123,6 +124,9 @@ export default function SearchField() {
     setBookingData(undefined);
     setSelectedFacility(null);
   };
+ 
+ 
+  
 
   return (
     <div className="relative container mx-auto w-full min-h-screen bg-white">
@@ -254,7 +258,7 @@ export default function SearchField() {
               {["Transportation", "WiFi", "Garden"].map((amenity) => (
                 <div key={amenity} className="flex items-center space-x-2">
                   <Checkbox className="cursor-pointer"
-                    checked={filters.amenities?.includes(amenity)}
+                    checked={filters?.amenities?.includes(amenity)}
                     onCheckedChange={(val) =>
                       setFilters({
                         ...filters,
@@ -311,8 +315,13 @@ export default function SearchField() {
                     New York to find the perfect match for your loved one.
                   </p>
                 </div>
-                {facilities.map((facility: Facility) => (
+                {facilities.map((facility:FacilityCards) => (
+                  
+               
+                  
                   <Card key={facility._id} className="overflow-hidden py-0">
+                    <div>
+                    </div>
                     <div className="grid md:grid-cols-3 pb-0 gap-4">
                       <Image
                         src={facility.images[0]?.url || "/search.png"}
@@ -325,24 +334,24 @@ export default function SearchField() {
                         <div>
                           <CardTitle className="flex items-center justify-between">
                             <h2 className="text-xl font-semibold leading-[150%] text-[#343A40] pt-[24px]">
-                              {facility.name}
+                              {facility?.name}
                             </h2>
                             <span className="flex items-center text-sm text-yellow-500">
                               <Star className="w-4 h-4 mr-1" />{" "}
-                              {facility.rating ?? 0} (reviews)
+                              {facility?.rating} ({facility?.ratingCount}reviews)
                             </span>
                           </CardTitle>
                           <p className="text-sm flex items-center gap-2  leading-[150%] text-[#68706A] pt-[8px]">
                             <MapPin className="w-4 h-4 " />
-                            {facility.description ?? "No description available"}
+                            {facility?.description ?? "No description available"}
                           </p>
                           <div className="flex flex-wrap gap-2 pt-[16px]">
-                            {facility.amenities && (
+                            {facility?.amenities && (
                               <button className="text-green-400 hover:text-white hover:bg-green-400 border-green-300 px-3 py-1 border rounded-xl text-xs bg-green-200">
                                 Available
                               </button>
                             )}
-                            {facility.amenities?.map((a) => (
+                            {facility?.amenities?.map((a) => (
                               <span
                                 key={a}
                                 className="px-3 py-1 border rounded-xl text-xs hover:text-white hover:bg-green-400"
@@ -355,7 +364,7 @@ export default function SearchField() {
 
                         <div className="items-center justify-between py-[16px]">
                           <span className="text-[32px] font-semibold">
-                            ${facility.price ?? 0}{" "}
+                            ${facility?.price ?? 0}{" "}
                             <span className="text-[16px] font-medium leading-[150%]">
                               /Month
                             </span>
@@ -364,7 +373,7 @@ export default function SearchField() {
                             <Button className="w-1/2 cursor-pointer" variant="outline">
                               <Link
                                 className="w-full h-full cursor-pointer"
-                                href={`/facilities/details/${facility._id}`}
+                                href={`/facilities/details/${facility?._id}`}
                               >
                                 See Details
                               </Link>
