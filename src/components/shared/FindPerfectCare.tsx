@@ -27,7 +27,7 @@ const FindCare = ({
           </p>
           {showButton && (
             <div className="mt-8">
-              <Button size="lg" className="w-[200px] cursor-pointer">
+              <Button size="lg" className="w-[200px] text-[16px] cursor-pointer">
                 {buttonText}
               </Button>
             </div>

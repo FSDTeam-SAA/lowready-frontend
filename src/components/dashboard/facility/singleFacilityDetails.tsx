@@ -203,11 +203,11 @@ const SingleFacilityDetails: React.FC<SingleFacilityDetailsProps> = ({
 
  
 return (
-  <div className="bg-gray-50 h-[400px]">
-    <div className="mx-auto px-3 sm:px-4 lg:px-8">
+  <div className="bg-gray-50 ">
+    <div className="mx-auto px-3 sm:px-4  lg:px-8">
       {/* Main Card - Horizontal Layout */}
       <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-        <div className="flex flex-col lg:flex-row">
+        <div className="flex flex-col h-[500px] lg:flex-row">
           {/* Left Column - Image */}
           <div className="lg:w-2/5">
             <div className="relative h-64 lg:h-full">
@@ -225,7 +225,7 @@ return (
           </div>
 
           {/* Right Column - Details */}
-          <div className="lg:w-3/5 p-6 space-y-4">
+          <div className="lg:w-3/5 p-6 flex flex-col justify-between space-y-4">
             <h1 className="text-3xl font-bold text-gray-900">
               {facilityData.name}
             </h1>

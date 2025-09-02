@@ -15,15 +15,15 @@ export default function Home() {
       {/* <TopBanner />
       <Navbar /> */}
       <Hero />
-      <FacilitiesCarousel />
       <HowWorks />
+      <FacilitiesCarousel />
       <WhyAlhHub />
       <ReviewFamilyCarousel />
       <FindCare
         imageSrc="/images/findcare.jpg"
-        heading="Looking for the best care for your loved ones?"
-        subHeading="We help you find the safest and most comfortable assisted living facilities."
-        buttonText="Get Started"
+        heading="Ready to find the perfect care for your loved one?"
+        subHeading="Easily search, compare, and connect with trusted assisted living facilities, helping your loved ones find a safe, comfortable, and supportive environment while giving you peace of mind every step of the way."
+        buttonText="Book a Tour Now"
         showButton={true}
       />
       <FAQ />
