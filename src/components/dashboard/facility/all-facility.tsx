@@ -3,6 +3,7 @@ import { Star, MapPin, Dot, Wifi, Trees, Plus } from 'lucide-react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
+import { getSession } from 'next-auth/react';
 
 interface Facility {
   _id: string;
@@ -119,27 +120,43 @@ const FacilityListing: React.FC = () => {
   const BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}`;
 
   useEffect(() => {
-    fetchFacilities();
+    fetchMyFacilities();
   }, []);
 
-  const fetchFacilities = async () => {
+  const fetchMyFacilities = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${BASE_URL}/facility/all?limit=10`);
+      
+      // Get the session to access the token
+      const session = await getSession();
+      
+      if (!session?.accessToken) {
+        throw new Error('No access token found. Please log in.');
+      }
+
+      const response = await fetch(`${BASE_URL}/facility/my-facilities`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${session.accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json();
-      const facilitiesData: Facility[] = Array.isArray(data)
-        ? data
-        : data.data || data.facilities || [];
+      const result = await response.json();
+      
+      if (!result.success) {
+        throw new Error(result.message || 'Failed to fetch facilities');
+      }
 
+      const facilitiesData: Facility[] = result.data || [];
       setFacilities(facilitiesData);
       setError(null);
     } catch (err) {
-      console.error('Error fetching facilities:', err);
+      console.error('Error fetching my facilities:', err);
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
       setLoading(false);
@@ -183,7 +200,7 @@ const FacilityListing: React.FC = () => {
         {loading ? (
           <div className="flex items-center justify-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <span className="ml-3 text-gray-600">Loading facilities...</span>
+            <span className="ml-3 text-gray-600">Loading your facilities...</span>
           </div>
         ) : error ? (
           <div className="text-center py-12">
@@ -203,12 +220,12 @@ const FacilityListing: React.FC = () => {
               </svg>
             </div>
             <h3 className="text-lg font-medium text-gray-900 mb-2">
-              Error Loading Facilities
+              Error Loading Your Facilities
             </h3>
             <p className="text-gray-600 mb-4">{error}</p>
             <p className="text-sm text-gray-500 mb-4">Try again later.</p>
             <button
-              onClick={fetchFacilities}
+              onClick={fetchMyFacilities}
               className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
             >
               Try Again
@@ -234,7 +251,14 @@ const FacilityListing: React.FC = () => {
             <h3 className="text-lg font-medium text-gray-900 mb-2">
               No Facilities Found
             </h3>
-            <p className="text-gray-600">No facilities are available at the moment.</p>
+            <p className="text-gray-600">You haven&apos;t added any facilities yet.</p>
+            <Button
+              onClick={handleAddFacility}
+              className="mt-4 bg-green-600 hover:bg-green-700 text-white px-6 py-2"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add Your First Facility
+            </Button>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

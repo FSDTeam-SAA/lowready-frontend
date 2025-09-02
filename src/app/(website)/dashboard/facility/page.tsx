@@ -3,16 +3,27 @@
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { PricingModal } from "@/components/dashboard/facility/pricing-modal"
-import { Search, Plus } from "lucide-react"
+import { Search, Plus, Loader2 } from "lucide-react"
 import type { Facility, SubscriptionPlan } from "@/types/servicefacility"
 import { useRouter } from "next/navigation"
 import FacilityListing from "@/components/dashboard/facility/all-facility"
+import { useSubscriptionStatus } from "@/hooks/useSubscriptionStatus"
+import { useSession } from "next-auth/react"
 
 export default function ManageFacilityPage() {
   const router = useRouter()
-  const [showPricingModal, setShowPricingModal] = useState(false)
-  const [isSubscribed, setIsSubscribed] = useState(false)
+  const { data: session, status: sessionStatus } = useSession()
   const [facilities, setFacilities] = useState<Facility[]>([])
+  
+  const {
+    isSubscriptionActive,
+    showPricingModal,
+    loading,
+    error,
+    closePricingModal,
+    openPricingModal,
+    setShowPricingModal,
+  } = useSubscriptionStatus()
 
   const sampleFacility: Facility = {
     id: "1",
@@ -47,24 +58,17 @@ export default function ManageFacilityPage() {
     availableTimes: [],
   }
 
-  const isSubscriptionActive = false;
-
-  useEffect(()=>{
-    setShowPricingModal(!isSubscriptionActive)
-  }, [])
-
-
-
   const handleAddFacility = () => {
-    if (!isSubscribed) {
-      setShowPricingModal(true)
+    if (!isSubscriptionActive) {
+      openPricingModal()
     } else {
       router.push("/dashboard/facility/add")
     }
   }
 
   const handleSubscribe = (plan: SubscriptionPlan) => {
-    setIsSubscribed(true)
+    // Close the pricing modal
+    closePricingModal()
     // Simulate subscription process
     setTimeout(() => {
       router.push("/dashboard/facility/add")
@@ -75,28 +79,51 @@ export default function ManageFacilityPage() {
     router.push("/dashboard/facility/add")
   }
 
- 
+  // Show loading state while session or subscription status is loading
+  if (sessionStatus === 'loading' || loading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-50">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-green-600" />
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Show error state if there's an error fetching subscription status
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-50">
+        <div className="text-center max-w-md">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+            <Search className="h-8 w-8 text-red-400" />
+          </div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">Error Loading Data</h3>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <Button onClick={() => window.location.reload()} className="bg-green-600 hover:bg-green-700">
+            Retry
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  // Redirect to login if not authenticated
+  if (sessionStatus === 'unauthenticated') {
+    router.push('/login')
+    return null
+  }
 
   const hasFacilities =
     facilities.length > 0 || (typeof window !== "undefined" && window.location.search.includes("demo=true"))
   const displayFacilities = facilities.length > 0 ? facilities : [sampleFacility]
 
-
-
-  // if(isSubscriptionActiv ){
-    
-  // }
-
   return (
-    <div className="flex  bg-gray-50">
-       
-
+    <div className="flex bg-gray-50">
       <div className="flex-1 flex flex-col overflow-hidden">
-         
-
         <main className="flex-1 overflow-auto p-8">
-          
-          {hasFacilities  ? (
+          {hasFacilities ? (
             // Empty State
             <div className="flex flex-col items-center justify-center h-full max-w-md mx-auto text-center">
               <div className="mb-8">
@@ -115,14 +142,18 @@ export default function ManageFacilityPage() {
             </div>
           ) : (
             // Facilities View
-           <div className="space-y-6">
-                <FacilityListing/>
+            <div className="space-y-6">
+              <FacilityListing />
             </div>
           )}
         </main>
       </div>
 
-      <PricingModal open={showPricingModal} onOpenChange={setShowPricingModal} onSubscribe={handleSubscribe} />
+      <PricingModal 
+        open={showPricingModal} 
+        onOpenChange={setShowPricingModal} 
+        onSubscribe={handleSubscribe} 
+      />
     </div>
   )
 }
