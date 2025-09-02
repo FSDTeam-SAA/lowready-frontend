@@ -20,7 +20,7 @@ import Image from "next/image";
 import { useMutation } from "@tanstack/react-query";
 import { resetPassword } from "@/lib/auth";
 import { toast } from "sonner";
-import { Eye, EyeOff } from "lucide-react"; // 👁️ icons
+import { ArrowBigLeft, Eye, EyeOff } from "lucide-react"; // 👁️ icons
 
 // ✅ Zod Schema for validation
 const signupSchema = z
@@ -72,9 +72,9 @@ const ResetPassword = () => {
         {/* back to home  */}
         <button
           onClick={() => router.push("/")}
-          className="absolute top-24 right-28 md:right-48 text-[#6C757D] hover:underline cursor-pointer"
+          className="absolute flex gap-2 items-center top-24 right-28 md:right-48 text-[#6C757D] hover:border-b border-gray-500 cursor-pointer"
         >
-          Back to Home
+          <ArrowBigLeft /> Back to Home
         </button>
 
         <div className="grid md:grid-cols-2 items-center h-svh">
@@ -95,10 +95,10 @@ const ResetPassword = () => {
           {/* Right side - form */}
           <div className="flex items-center justify-center">
             <div className="w-full max-w-md">
-              <h2 className="text-2xl font-bold text-green-600">
-                Create Your Account
+              <h2 className="text-2xl mg:text-[40px] leading-[150%] font-bold text-green-600">
+                Forgot Password
               </h2>
-              <p className="text-sm text-gray-500 mb-6">
+              <p className="text-sm md:-[16px] text-[#6C757D] mb-6 md:mb-[40px]">
                 Connect families with trusted care join ALH Hub today.
               </p>
 
@@ -113,7 +113,7 @@ const ResetPassword = () => {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Create Password</FormLabel>
+                        <FormLabel className="text-[16px] leading-[150%] font-medium text-[#343A40]">Create New Password</FormLabel>
                         <FormControl>
                           <div className="relative">
                             <Input
@@ -145,7 +145,7 @@ const ResetPassword = () => {
                     name="confirmPassword"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Confirm Password</FormLabel>
+                        <FormLabel className="text-[16px] leading-[150%] font-medium text-[#343A40]">Confirm New Password</FormLabel>
                         <FormControl>
                           <div className="relative">
                             <Input
