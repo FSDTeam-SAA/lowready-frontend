@@ -369,9 +369,9 @@ export default function AddFacilityPage() {
             </div>
             
             <form onSubmit={handleSubmit} className="container mx-auto">
-              <div className="grid grid-cols-1 lg:grid-cols-3 space-y-2 gap-8">
+              <div className="grid grid-cols-1 lg:grid-cols-3  gap-8">
                 {/* Left Column - Form Fields */}
-                <div className="lg:col-span-2 space-y-8">
+                <div className="lg:col-span-2  ">
                   {/* Basic Information */}
                   <FormSection title="Basic Information">
                     <div className="space-y-6">
@@ -553,7 +553,7 @@ export default function AddFacilityPage() {
                   </FormSection>
 
                   {/* Amenities */}
-                  <FormSection title="Amenities">
+                  <FormSection title="Amenities"   >
                     <AmenityManager
                       amenities={formData.amenities}
                       onAmenitiesChange={(amenities) =>

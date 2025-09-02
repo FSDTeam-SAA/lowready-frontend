@@ -21,7 +21,7 @@ const FacilitiesDetails = () => {
 
   // Extract the last segment from the pathname
   const lastSegment = pathName?.split("/").filter(Boolean).pop() || "";
-  console.log(lastSegment);
+  
   const { data, isLoading } = useQuery({
     queryKey: ["facilities"],
     queryFn: () => getbySigleFacilities(lastSegment),
@@ -39,7 +39,7 @@ const FacilitiesDetails = () => {
       <FacilityCare data={data} />
       <FacilityAbout />
       <FacilityTour data={data} />
-      <FacilityBooking data={data} />
+      <FacilityBooking data={data} facilityId={lastSegment || ""} />
       <FacilityReviews
         userId={session?.user.id || ""}
         facilityId={lastSegment}

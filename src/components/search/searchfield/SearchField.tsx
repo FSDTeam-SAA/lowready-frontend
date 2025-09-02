@@ -1,4 +1,3 @@
-// components/SearchField.tsx
 "use client";
 
 import { useState } from "react";
@@ -30,6 +29,7 @@ import {
 import Link from "next/link";
 import { ConfirmBookingModal } from "@/components/shared/ConfirmBookingModal";
 import { useSession } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 
 interface Location {
   _id: string;
@@ -37,10 +37,13 @@ interface Location {
 }
 
 export default function SearchField() {
+  const searchParams = useSearchParams();
+
+  const initialLocation = searchParams.get("location") || "Dhaka";
   const [filters, setFilters] = useState<FacilityFilters>({
     minPrice: 0,
     maxPrice: 1000000,
-    location: "Dhaka",
+    location: initialLocation,
     availability: true,
     rating: undefined,
     careServices: [],
@@ -55,11 +58,34 @@ export default function SearchField() {
   const [modalOpen, setModalOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [bookingData, setBookingData] = useState<BookingType | undefined>();
-  const [selectedFacility, setSelectedFacility] = useState<Facility | null>(null);
+  // const [selectedFacility, setSelectedFacility] = useState<Facility | null>(
+  //   null
+  // );
+  const [minPriceInput, setMinPriceInput] = useState(
+    (filters.minPrice ?? 0).toString()
+  );
+  const [maxPriceInput, setMaxPriceInput] = useState(
+    (filters.maxPrice ?? 1000000).toString()
+  );
+
+  // handler for min price
+  const handleMinPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value.replace(/^0+(?=\d)/, ""); // remove leading zeros
+    setMinPriceInput(val);
+    setFilters({ ...filters, minPrice: Number(val) || 0 });
+  };
+
+  // handler for max price
+  const handleMaxPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value.replace(/^0+(?=\d)/, ""); // remove leading zeros
+    setMaxPriceInput(val);
+    setFilters({ ...filters, maxPrice: Number(val) || 0 });
+  };
 
   // Fetch locations
   const { data: locationdata } = useQuery({
     queryKey: ["locationdata"],
+
     queryFn: facilitiesLocation,
   });
   
@@ -80,7 +106,7 @@ export default function SearchField() {
     mutationFn: (values: BookingType) => createBooking(values),
   });
 
-  async function handleBookingSubmit(values: BookingType, isEdit: boolean) {
+  async function handleBookingSubmit(values: BookingType) {
     await createBookingMutation.mutate(values);
   }
 
@@ -94,8 +120,8 @@ export default function SearchField() {
   };
 
   const handleNewBooking = (facility: Facility) => {
-    setSelectedFacility(facility);
-    
+    // setSelectedFacility(facility);
+
     // Create booking data with the selected facility information
     const newBookingData: BookingType = {
       _id: undefined,
@@ -114,7 +140,7 @@ export default function SearchField() {
       ],
       totalPrice: facility.price || 0,
     };
-    
+
     setBookingData(newBookingData);
     setIsEdit(false);
     setModalOpen(true);
@@ -123,11 +149,8 @@ export default function SearchField() {
   const handleCloseModal = () => {
     setModalOpen(false);
     setBookingData(undefined);
-    setSelectedFacility(null);
+    // setSelectedFacility(null);
   };
- 
- 
-  
 
   return (
     <div className="relative container mx-auto w-full min-h-screen bg-white">
@@ -139,7 +162,9 @@ export default function SearchField() {
           onChange={handleLocationChange}
           className=" border-none w-[70%] outline-none shadow-none"
         />
-        <Button className="cursor-pointer" onClick={() => refetch()}>Search</Button>
+        <Button className="cursor-pointer" onClick={() => refetch()}>
+          Search
+        </Button>
       </div>
 
       {/* Body with dim effect */}
@@ -158,18 +183,14 @@ export default function SearchField() {
                 <Input
                   type="number"
                   placeholder="Min"
-                  value={filters.minPrice ?? ""}
-                  onChange={(e) =>
-                    setFilters({ ...filters, minPrice: Number(e.target.value) })
-                  }
+                  value={minPriceInput}
+                  onChange={handleMinPriceChange}
                 />
                 <Input
                   type="number"
                   placeholder="Max"
-                  value={filters.maxPrice ?? ""}
-                  onChange={(e) =>
-                    setFilters({ ...filters, maxPrice: Number(e.target.value) })
-                  }
+                  value={maxPriceInput}
+                  onChange={handleMaxPriceChange}
                 />
               </div>
             </div>
@@ -178,7 +199,8 @@ export default function SearchField() {
             <div>
               <h3 className="font-semibold mb-2">Availability</h3>
               <div className="flex items-center gap-2">
-                <Checkbox className="cursor-pointer"
+                <Checkbox
+                  className="cursor-pointer"
                   checked={filters.availability ?? true}
                   onCheckedChange={(val) =>
                     setFilters({ ...filters, availability: !!val })
@@ -191,7 +213,7 @@ export default function SearchField() {
             {/* Locations */}
             <div>
               <h3 className="font-semibold mb-2">Location</h3>
-              <Select 
+              <Select
                 value={filters.location}
                 onValueChange={(val) =>
                   setFilters({ ...filters, location: val })
@@ -202,7 +224,11 @@ export default function SearchField() {
                 </SelectTrigger>
                 <SelectContent>
                   {locations.map((loc) => (
-                    <SelectItem className="cursor-pointer" key={loc._id} value={loc.location}>
+                    <SelectItem
+                      className="cursor-pointer"
+                      key={loc._id}
+                      value={loc.location}
+                    >
                       {loc.location}
                     </SelectItem>
                   ))}
@@ -215,7 +241,8 @@ export default function SearchField() {
               <h3 className="font-semibold mb-2">Ratings</h3>
               {[5, 4, 3, 2, 1].map((star) => (
                 <div key={star} className="flex items-center space-x-2">
-                  <Checkbox className="cursor-pointer"
+                  <Checkbox
+                    className="cursor-pointer"
                     checked={filters.rating === star}
                     onCheckedChange={() =>
                       setFilters({ ...filters, rating: star })
@@ -234,7 +261,8 @@ export default function SearchField() {
               {["Personal Care", "Medical Support", "Housekeeping"].map(
                 (service) => (
                   <div key={service} className="flex items-center space-x-2">
-                    <Checkbox className="cursor-pointer"
+                    <Checkbox
+                      className="cursor-pointer"
                       checked={filters.careServices?.includes(service)}
                       onCheckedChange={(val) =>
                         setFilters({
@@ -258,7 +286,8 @@ export default function SearchField() {
               <h3 className="font-semibold mb-2">Amenities</h3>
               {["Transportation", "WiFi", "Garden"].map((amenity) => (
                 <div key={amenity} className="flex items-center space-x-2">
-                  <Checkbox className="cursor-pointer"
+                  <Checkbox
+                    className="cursor-pointer"
                     checked={filters?.amenities?.includes(amenity)}
                     onCheckedChange={(val) =>
                       setFilters({
@@ -316,13 +345,9 @@ export default function SearchField() {
                     New York to find the perfect match for your loved one.
                   </p>
                 </div>
-                {facilities.map((facility:FacilityCards) => (
-                  
-               
-                  
+                {facilities.map((facility: FacilityCards) => (
                   <Card key={facility._id} className="overflow-hidden py-0">
-                    <div>
-                    </div>
+                    <div></div>
                     <div className="grid md:grid-cols-3 pb-0 gap-4">
                       <Image
                         src={facility.images[0]?.url || "/search.png"}
@@ -339,12 +364,14 @@ export default function SearchField() {
                             </h2>
                             <span className="flex items-center text-sm text-yellow-500">
                               <Star className="w-4 h-4 mr-1" />{" "}
-                              {facility?.rating} ({facility?.ratingCount}reviews)
+                              {facility?.rating} ({facility?.ratingCount}
+                              reviews)
                             </span>
                           </CardTitle>
                           <p className="text-sm flex items-center gap-2  leading-[150%] text-[#68706A] pt-[8px]">
                             <MapPin className="w-4 h-4 " />
-                            {facility?.description ?? "No description available"}
+                            {facility?.description ??
+                              "No description available"}
                           </p>
                           <div className="flex flex-wrap gap-2 pt-[16px]">
                             {facility?.amenities && (
@@ -371,7 +398,10 @@ export default function SearchField() {
                             </span>
                           </span>
                           <div className="flex justify-between gap-5 pt-4 pb-6 ">
-                            <Button className="w-1/2 cursor-pointer" variant="outline">
+                            <Button
+                              className="w-1/2 cursor-pointer"
+                              variant="outline"
+                            >
                               <Link
                                 className="w-full h-full cursor-pointer"
                                 href={`/facilities/details/${facility?._id}`}
@@ -398,7 +428,6 @@ export default function SearchField() {
                     <Button
                       key={idx}
                       size="sm"
-
                       variant={filters.page === idx + 1 ? "default" : "outline"}
                       onClick={() => setFilters({ ...filters, page: idx + 1 })}
                     >
