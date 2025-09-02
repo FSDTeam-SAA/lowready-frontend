@@ -70,7 +70,7 @@ const VerifyEmail = () => {
       }
 
       toast.success("Email verified successfully!");
-      router.push("/login"); 
+      router.push("/login");
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
@@ -116,7 +116,7 @@ const VerifyEmail = () => {
             className="h-svh w-full object-cover"
           />
           <div className="absolute top-6 left-6 text-white text-2xl font-bold">
-            AIn Hub
+            <Image src="/login.png" alt="logo" width={155} height={48} />
           </div>
         </div>
 

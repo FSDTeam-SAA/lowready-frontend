@@ -134,7 +134,7 @@ export default function SearchField() {
           onChange={handleLocationChange}
           className=" border-none w-[70%] outline-none shadow-none"
         />
-        <Button onClick={() => refetch()}>Search</Button>
+        <Button className="cursor-pointer" onClick={() => refetch()}>Search</Button>
       </div>
 
       {/* Body with dim effect */}
@@ -173,7 +173,7 @@ export default function SearchField() {
             <div>
               <h3 className="font-semibold mb-2">Availability</h3>
               <div className="flex items-center gap-2">
-                <Checkbox
+                <Checkbox className="cursor-pointer"
                   checked={filters.availability ?? true}
                   onCheckedChange={(val) =>
                     setFilters({ ...filters, availability: !!val })
@@ -186,18 +186,18 @@ export default function SearchField() {
             {/* Locations */}
             <div>
               <h3 className="font-semibold mb-2">Location</h3>
-              <Select
+              <Select 
                 value={filters.location}
                 onValueChange={(val) =>
                   setFilters({ ...filters, location: val })
                 }
               >
-                <SelectTrigger className="w-full h-[44px] px-3 ">
+                <SelectTrigger className="w-full cursor-pointer h-[44px] px-3 ">
                   <SelectValue placeholder="Select Location" />
                 </SelectTrigger>
                 <SelectContent>
                   {locations.map((loc) => (
-                    <SelectItem key={loc._id} value={loc.location}>
+                    <SelectItem className="cursor-pointer" key={loc._id} value={loc.location}>
                       {loc.location}
                     </SelectItem>
                   ))}
@@ -210,7 +210,7 @@ export default function SearchField() {
               <h3 className="font-semibold mb-2">Ratings</h3>
               {[5, 4, 3, 2, 1].map((star) => (
                 <div key={star} className="flex items-center space-x-2">
-                  <Checkbox
+                  <Checkbox className="cursor-pointer"
                     checked={filters.rating === star}
                     onCheckedChange={() =>
                       setFilters({ ...filters, rating: star })
@@ -229,7 +229,7 @@ export default function SearchField() {
               {["Personal Care", "Medical Support", "Housekeeping"].map(
                 (service) => (
                   <div key={service} className="flex items-center space-x-2">
-                    <Checkbox
+                    <Checkbox className="cursor-pointer"
                       checked={filters.careServices?.includes(service)}
                       onCheckedChange={(val) =>
                         setFilters({
@@ -253,7 +253,7 @@ export default function SearchField() {
               <h3 className="font-semibold mb-2">Amenities</h3>
               {["Transportation", "WiFi", "Garden"].map((amenity) => (
                 <div key={amenity} className="flex items-center space-x-2">
-                  <Checkbox
+                  <Checkbox className="cursor-pointer"
                     checked={filters.amenities?.includes(amenity)}
                     onCheckedChange={(val) =>
                       setFilters({
@@ -287,7 +287,7 @@ export default function SearchField() {
                   limit: 6,
                 })
               }
-              className="w-full text-red-500 border-red-500"
+              className="w-full text-red-500 cursor-pointer border-red-500"
             >
               Clear All Filters
             </Button>
@@ -361,7 +361,7 @@ export default function SearchField() {
                             </span>
                           </span>
                           <div className="flex justify-between gap-5 pt-4 pb-6 ">
-                            <Button className="w-1/2" variant="outline">
+                            <Button className="w-1/2 cursor-pointer" variant="outline">
                               <Link
                                 className="w-full h-full cursor-pointer"
                                 href={`/facilities/details/${facility._id}`}
@@ -371,7 +371,7 @@ export default function SearchField() {
                             </Button>
                             <Button
                               onClick={() => handleNewBooking(facility)}
-                              className="w-1/2"
+                              className="w-1/2 cursor-pointer"
                             >
                               Book a Tour
                             </Button>
@@ -388,6 +388,7 @@ export default function SearchField() {
                     <Button
                       key={idx}
                       size="sm"
+
                       variant={filters.page === idx + 1 ? "default" : "outline"}
                       onClick={() => setFilters({ ...filters, page: idx + 1 })}
                     >

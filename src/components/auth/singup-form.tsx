@@ -99,7 +99,7 @@ const SingupForm = () => {
         {/* back to home */}
         <button
           onClick={() => router.push("/")}
-          className="absolute top-24 right-28 md:right-48 text-green-600 hover:underline cursor-pointer"
+          className="absolute top-8 md:top-16 right-16 md:right-48  text-[#6C757D]  hover:underline cursor-pointer"
         >
           Back to Home
         </button>
@@ -114,12 +114,15 @@ const SingupForm = () => {
               height={600}
               className="h-svh w-full object-cover"
             />
+            <div className="absolute top-6 left-6 text-white text-2xl font-bold">
+              <Image src="/login.png" alt="logo" width={155} height={48} />
+            </div>
           </div>
 
           {/* Right side - form */}
           <div className="flex items-center justify-center">
             <div className="w-full max-w-lg px-2 md:px-3 lg:px-0">
-              <h2 className="text-2xl font-bold text-green-600">
+              <h2 className="text-2xl lg:text-[40px] font-playfair mb-2  font-bold text-green-600">
                 Create Your Account
               </h2>
               <p className="text-sm text-gray-500 mb-6">
@@ -131,15 +134,15 @@ const SingupForm = () => {
                   onSubmit={form.handleSubmit(onsubmit)}
                   className="space-y-4"
                 >
-                  <div className="flex gap-2">
-                    <FormField
+                  <div className="flex flex-col md:flex-row gap-2">
+                    <FormField 
                       control={form.control}
                       name="firstName"
                       render={({ field }) => (
-                        <FormItem className="w-1/2">
+                        <FormItem className="md:w-1/2">
                           <FormLabel>First Name</FormLabel>
                           <FormControl>
-                            <Input placeholder="Name Here" {...field} />
+                            <Input className="" placeholder="Name Here" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -149,7 +152,7 @@ const SingupForm = () => {
                       control={form.control}
                       name="lastName"
                       render={({ field }) => (
-                        <FormItem className="w-1/2">
+                        <FormItem className="md:w-1/2">
                           <FormLabel>Last Name</FormLabel>
                           <FormControl>
                             <Input placeholder="Name Here" {...field} />
@@ -246,9 +249,9 @@ const SingupForm = () => {
                     control={form.control}
                     name="terms"
                     render={({ field }) => (
-                      <FormItem className="flex items-center space-x-2">
+                      <FormItem className="flex cursor-pointer items-center space-x-2">
                         <FormControl>
-                          <Checkbox
+                          <Checkbox className="cursor-pointer"
                             checked={field.value}
                             onCheckedChange={field.onChange}
                           />
@@ -273,7 +276,7 @@ const SingupForm = () => {
 
                   <Button
                     type="submit"
-                    className="w-full bg-green-600 hover:bg-green-700"
+                    className="w-full bg-green-600 cursor-pointer  hover:bg-green-700"
                     disabled={registerMutation.isPending}
                   >
                     {registerMutation.isPending ? "Signing Up..." : "Sign Up"}
