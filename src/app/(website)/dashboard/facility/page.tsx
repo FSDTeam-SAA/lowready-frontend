@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { PricingModal } from "@/components/dashboard/facility/pricing-modal"
 import { Search, Plus } from "lucide-react"
@@ -47,6 +47,12 @@ export default function ManageFacilityPage() {
     availableTimes: [],
   }
 
+  const isSubscriptionActive = false;
+
+  useEffect(()=>{
+    setShowPricingModal(!isSubscriptionActive)
+  }, [])
+
 
 
   const handleAddFacility = () => {
@@ -75,6 +81,12 @@ export default function ManageFacilityPage() {
     facilities.length > 0 || (typeof window !== "undefined" && window.location.search.includes("demo=true"))
   const displayFacilities = facilities.length > 0 ? facilities : [sampleFacility]
 
+
+
+  // if(isSubscriptionActiv ){
+    
+  // }
+
   return (
     <div className="flex  bg-gray-50">
        
@@ -83,7 +95,8 @@ export default function ManageFacilityPage() {
          
 
         <main className="flex-1 overflow-auto p-8">
-          {hasFacilities ? (
+          
+          {hasFacilities  ? (
             // Empty State
             <div className="flex flex-col items-center justify-center h-full max-w-md mx-auto text-center">
               <div className="mb-8">

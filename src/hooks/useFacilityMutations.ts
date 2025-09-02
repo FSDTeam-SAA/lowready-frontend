@@ -7,6 +7,7 @@ interface CreateFacilityData {
   name: string
   location: string
   description: string
+  address:string
   price: number
   base: string
   availability: boolean
@@ -31,6 +32,7 @@ interface CreateFacilityResponse {
     _id: string
     name: string
     location: string
+    address: string
     description: string
     price: number
     availability: boolean
@@ -70,6 +72,7 @@ const createFacility = async (data: CreateFacilityData, token: string): Promise<
   // Append basic fields
   formData.append('name', data.name)
   formData.append('location', data.location)
+  formData.append('address', data.address)
   formData.append('description', data.description)
   formData.append('price', data.price.toString())
   formData.append('base', data.base.toLowerCase())

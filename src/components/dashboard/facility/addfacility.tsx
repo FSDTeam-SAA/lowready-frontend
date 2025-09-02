@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -36,6 +36,8 @@ import {
 } from "@/hooks/FormSection";
 import { useCreateFacility } from "@/hooks/useFacilityMutations";
 import { toast } from "sonner";
+import { PricingModal } from "./pricing-modal";
+import { SubscriptionPlan } from "@/types/servicefacility";
 
 // Types
 type NewAmenityService = { name: string; photo: File | null };
@@ -60,9 +62,27 @@ type FacilityFormData = {
 };
 
 export default function AddFacilityPage() {
+
+  const [showPricingModal, setShowPricingModal] = useState(false)
+  const [isSubscribed, setIsSubscribed] = useState(false)
   const router = useRouter();
   const { status } = useSession();
   const createFacilityMutation = useCreateFacility();
+
+  const isSubscriptionActive = false;
+  
+    useEffect(()=>{
+      setShowPricingModal(!isSubscriptionActive)
+    }, [])
+  
+    const handleSubscribe = (plan: SubscriptionPlan) => {
+        setIsSubscribed(true)
+        // Simulate subscription process
+        setTimeout(() => {
+          router.push("/dashboard/facility/add")
+        }, 500)
+      }
+    
 
   const [formData, setFormData] = useState<FacilityFormData>({
     availability: "Available",
@@ -285,9 +305,11 @@ export default function AddFacilityPage() {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col justify-between overflow-hidden">
         <main className="flex-1 overflow-auto">
           <div className="p-8">
+            <div>{!isSubscriptionActive ? "Your Subscription has ended, subscribe to add new facility": ""}</div>
+
             <div className="flex items-center mb-6">
               <Button
                 variant="ghost"
@@ -300,16 +322,16 @@ export default function AddFacilityPage() {
                 Add Facility
               </h1>
             </div>
-
+            
             <form onSubmit={handleSubmit} className="container mx-auto">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 lg:grid-cols-3 space-y-2 gap-8">
                 {/* Left Column - Form Fields */}
                 <div className="lg:col-span-2 space-y-8">
                   {/* Basic Information */}
                   <FormSection title="Basic Information">
                     <div className="space-y-6">
                       {/* Availability */}
-                      <div>
+                      <div className="">
                         <Label htmlFor="availability">Availability</Label>
                         <div className="flex items-center space-x-4 mt-2">
                           <div className="flex items-center space-x-2">
@@ -341,7 +363,7 @@ export default function AddFacilityPage() {
                       </div>
 
                       {/* Name */}
-                      <div>
+                      <div className="">
                         <Label htmlFor="name">Name</Label>
                         <Input
                           id="name"
@@ -935,7 +957,13 @@ export default function AddFacilityPage() {
             </form>
           </div>
         </main>
+              <PricingModal open={showPricingModal} onOpenChange={setShowPricingModal} onSubscribe={handleSubscribe} />
+        
       </div>
+
+      
     </div>
+
+
   );
 }

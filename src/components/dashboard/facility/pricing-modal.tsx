@@ -33,12 +33,12 @@ export function PricingModal({ open, onOpenChange, onSubscribe }: PricingModalPr
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md p-0 overflow-hidden">
         <div className="relative">
-          <button
+          {/* <button
             onClick={() => onOpenChange(false)}
             className="absolute right-4 top-4 z-10 p-2 hover:bg-gray-100 rounded-full"
           >
             <X className="h-5 w-5" />
-          </button>
+          </button> */}
 
           <div className="px-8 py-8 text-center">
             <h2 className="text-2xl font-semibold text-gray-900 mb-2">

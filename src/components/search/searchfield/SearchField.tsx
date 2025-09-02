@@ -62,6 +62,7 @@ export default function SearchField() {
     queryKey: ["locationdata"],
     queryFn: facilitiesLocation,
   });
+  
   const locations: Location[] = locationdata?.data || [];
 
   // Fetch facilities
