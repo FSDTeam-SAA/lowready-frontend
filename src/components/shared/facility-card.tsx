@@ -14,33 +14,31 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-
 interface FacilityCardProps {
   facility: FacilityCards;
   onSeeDetails: (facilityId: string) => void;
   onBookTour: (facilityId: string) => void;
 }
 
-export default function FacilityCard({
-  facility,
- 
-}: FacilityCardProps) {
+export default function FacilityCard({ facility }: FacilityCardProps) {
   const { data: session } = useSession();
   const userId = session?.user?.id || "";
   const [modalOpen, setModalOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [bookingData, setBookingData] = useState<BookingType | undefined>();
-  const [selectedFacility, setSelectedFacility] = useState<Facility | null>(null);
+  const [selectedFacility, setSelectedFacility] = useState<Facility | null>(
+    null
+  );
 
   const createBookingMutation = useMutation({
     mutationKey: ["booking"],
     mutationFn: (values: BookingType) => createBooking(values),
-    onSuccess:(data)=> {
-      toast.success(`${data.message}`)
+    onSuccess: (data) => {
+      toast.success(`${data.message}`);
     },
-    onError:(error)=>{
-      toast.error(`${error.message}`)
-    }
+    onError: (error) => {
+      toast.error(`${error.message}`);
+    },
   });
 
   async function handleBookingSubmit(values: BookingType) {
@@ -50,7 +48,7 @@ export default function FacilityCard({
 
   const handleNewBooking = (facility: FacilityCards) => {
     setSelectedFacility(facility as Facility);
-    
+
     // Create booking data with the selected facility information
     const newBookingData: BookingType = {
       _id: undefined,
@@ -69,7 +67,7 @@ export default function FacilityCard({
       ],
       totalPrice: facility.price || 0,
     };
-    
+
     setBookingData(newBookingData);
     setIsEdit(false);
     setModalOpen(true);
@@ -80,6 +78,7 @@ export default function FacilityCard({
     setBookingData(undefined);
     setSelectedFacility(null);
   };
+  console.log("hey", facility);
 
   return (
     <section>
@@ -109,7 +108,7 @@ export default function FacilityCard({
                     {facility?.rating ?? 0}
                   </span>
                   <span className="text-sm text-gray-500">
-                    ({facility?.reviewCount} reviews)
+                    ({facility?.ratingCount} reviews)
                   </span>
                 </div>
               </div>

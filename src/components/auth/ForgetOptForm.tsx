@@ -109,7 +109,7 @@ const ForgetOptForm = () => {
       {/* back to home  */}
       <button
         onClick={() => router.push("/")}
-        className="absolute top-24 right-28 md:right-48 text-green-600 hover:underline cursor-pointer"
+        className="absolute top-24 md:top-24 right-16 md:right-48 text-[#6C757D]  hover:underline cursor-pointer"
       >
         Back to Home
       </button>
@@ -125,7 +125,7 @@ const ForgetOptForm = () => {
             className="h-svh w-full object-cover"
           />
           <div className="absolute top-6 left-6 text-white text-2xl font-bold">
-            AIn Hub
+            <Image src="/login.png" alt="logo" width={155} height={48} />
           </div>
         </div>
 
