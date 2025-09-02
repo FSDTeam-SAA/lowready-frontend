@@ -1,12 +1,12 @@
 import ManageFacilityPage from '@/components/dashboard/facility/addfacility'
-import React from 'react'
+import React, { Suspense } from 'react'
 
 const page = () => {
   return (
-    <div>
+    <Suspense fallback={<div>Loading </div>}>
         <ManageFacilityPage />
         
-    </div>
+    </Suspense>
   )
 }
 

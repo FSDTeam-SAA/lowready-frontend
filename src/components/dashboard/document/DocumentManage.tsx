@@ -157,7 +157,7 @@ export function DocumentManager() {
             lastModified: response.headers.get('last-modified') || undefined,
             accessible: response.ok
           };
-        } catch (error) {
+        } catch {
           return { accessible: true };
         }
       },
@@ -561,7 +561,7 @@ export function DocumentManager() {
                         />
                         
                         {/* Fallback for PDF */}
-                        <div className="w-full h-full flex flex-col items-center justify-center p-8 text-center hidden">
+                        <div className="w-full h-full  flex-col items-center justify-center p-8 text-center hidden">
                           <FileText className="h-16 w-16 text-muted-foreground mb-4" />
                           <p className="text-lg font-medium mb-2">PDF Preview Unavailable</p>
                           <p className="text-muted-foreground mb-4">

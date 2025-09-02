@@ -1,20 +1,21 @@
-
 "use client"
 
-import { useEffect, useState } from "react"
+import {  useState } from "react"
 import { Button } from "@/components/ui/button"
 import { PricingModal } from "@/components/dashboard/facility/pricing-modal"
 import { Search, Plus, Loader2 } from "lucide-react"
-import type { Facility, SubscriptionPlan } from "@/types/servicefacility"
+import type { Facility } from "@/types/servicefacility"
+
 import { useRouter } from "next/navigation"
 import FacilityListing from "@/components/dashboard/facility/all-facility"
 import { useSubscriptionStatus } from "@/hooks/useSubscriptionStatus"
 import { useSession } from "next-auth/react"
 
+
 export default function ManageFacilityPage() {
   const router = useRouter()
-  const { data: session, status: sessionStatus } = useSession()
-  const [facilities, setFacilities] = useState<Facility[]>([])
+  const { status: sessionStatus } = useSession()
+  const [facilities] = useState<Facility[]>([])
   
   // Add search state
   const [searchFilters, setSearchFilters] = useState({
@@ -32,38 +33,6 @@ export default function ManageFacilityPage() {
     setShowPricingModal,
   } = useSubscriptionStatus()
 
-  const sampleFacility: Facility = {
-    id: "1",
-    name: "Sunny Hills Assisted Living",
-    location: "1322 North Main Street, North Port, FL 34286",
-    description:
-      "Sunny Hills Assisted Living offers a warm and welcoming environment for seniors, providing personalized care, comfortable accommodations, and a variety of daily activities. With 24/7 professional support, nutritious meals, and engaging social programs",
-    price: 2200,
-    priceType: "Monthly",
-    availability: "Available",
-    image:
-      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Manage%20Facility-HXab6F2NKa2yiDUhJRCgm6HUQIhU1S.png",
-    amenities: [
-      "Ameni...",
-      "Ameni...",
-      "Ameni...",
-      "Ameni...",
-      "Ameni...",
-      "Ameni...",
-      "Ameni...",
-      "Ameni...",
-      "Ameni...",
-      "Ameni...",
-      "Ameni...",
-      "Ameni...",
-    ],
-    careServices: [],
-    amenityServices: [],
-    about: {
-      description: "",
-    },
-    availableTimes: [],
-  }
 
   const handleAddFacility = () => {
     if (!isSubscriptionActive) {
@@ -73,7 +42,7 @@ export default function ManageFacilityPage() {
     }
   };
 
-  const handleSubscribe = (plan: SubscriptionPlan) => {
+  const handleSubscribe = () => {
     // Close the pricing modal
     closePricingModal()
     // Simulate subscription process
@@ -82,9 +51,7 @@ export default function ManageFacilityPage() {
     }, 500);
   };
 
-  const handleEditFacility = () => {
-    router.push("/dashboard/facility/add")
-  }
+
 
   // Show loading state while session or subscription status is loading
   if (sessionStatus === 'loading' || loading) {

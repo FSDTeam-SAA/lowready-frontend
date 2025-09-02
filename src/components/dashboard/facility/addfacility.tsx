@@ -36,8 +36,7 @@ import {
 } from "@/hooks/FormSection";
 import { useCreateFacility } from "@/hooks/useFacilityMutations";
 import { toast } from "sonner";
-import { PricingModal } from "./pricing-modal";
-import { SubscriptionPlan } from "@/types/servicefacility";
+import { PricingModal, SubscriptionPlan } from "./pricing-modal";
 import { useSubscriptionStatus } from "@/hooks/useSubscriptionStatus";
 
 
@@ -142,7 +141,7 @@ export default function AddFacilityPage() {
   ];
 
   // Show loading spinner while session is loading
-  if (status === "loading") {
+  if (sessionStatus === "loading") {
     return <LoadingSpinner text="Initializing..." />;
   }
 
@@ -306,10 +305,7 @@ export default function AddFacilityPage() {
   };
 
 
-  // Show loading spinner while session or subscription is loading
-  if (sessionStatus === "loading" || subscriptionLoading) {
-    return <LoadingSpinner text="Loading..." />;
-  }
+  
 
   // Redirect to login if not authenticated
   if (sessionStatus === "unauthenticated") {

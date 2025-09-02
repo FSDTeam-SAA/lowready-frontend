@@ -193,7 +193,7 @@ const SingleFacilityDetails: React.FC<SingleFacilityDetailsProps> = ({
       ) {
         try {
           return JSON.parse(item);
-        } catch (e) {
+        } catch  {
           return [item];
         }
       }

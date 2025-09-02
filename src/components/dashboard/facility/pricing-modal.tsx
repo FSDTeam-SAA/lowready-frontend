@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button"
 import { Check, Loader2 } from "lucide-react"
 import { useSession } from "next-auth/react"
 
-interface SubscriptionPlan {
+
+export interface SubscriptionPlan {
   _id: string
   name: string
   description: string
@@ -28,10 +29,11 @@ interface ApiResponse<T> {
 interface PricingModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onSubscribe?: (plan: SubscriptionPlan) => void
+  onSubscribe?: (plan: SubscriptionPlan) => void | Promise<void>
+
 }
 
-export function PricingModal({ open, onOpenChange, onSubscribe }: PricingModalProps) {
+export function PricingModal({ open, onOpenChange }: PricingModalProps) {
   const { data: session } = useSession()
   const [plan, setPlan] = useState<SubscriptionPlan | null>(null)
   const [isLoading, setIsLoading] = useState(false)
