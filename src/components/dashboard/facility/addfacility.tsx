@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -25,7 +25,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-import { ChevronLeft, Upload, X, Plus, MapPin, ImageIcon } from "lucide-react";
+import { ChevronLeft, Upload, X, Plus, MapPin, ImageIcon, AlertCircle } from "lucide-react";
 import { useSession } from "next-auth/react";
 import {
   AmenityManager,
@@ -36,6 +36,9 @@ import {
 } from "@/hooks/FormSection";
 import { useCreateFacility } from "@/hooks/useFacilityMutations";
 import { toast } from "sonner";
+import { PricingModal, SubscriptionPlan } from "./pricing-modal";
+import { useSubscriptionStatus } from "@/hooks/useSubscriptionStatus";
+
 
 // Types
 type NewAmenityService = { name: string; photo: File | null };
@@ -60,9 +63,27 @@ type FacilityFormData = {
 };
 
 export default function AddFacilityPage() {
+
   const router = useRouter();
-  const { status } = useSession();
+   const { status: sessionStatus } = useSession();
   const createFacilityMutation = useCreateFacility();
+
+  // Use the subscription hook for all subscription-related state
+  const {
+    isSubscriptionActive,
+    showPricingModal,
+    loading: subscriptionLoading,
+    error: subscriptionError,
+    closePricingModal,
+    openPricingModal,
+  } = useSubscriptionStatus();
+    
+  useEffect(() => {
+    // Show pricing modal if user is authenticated but doesn't have active subscription
+    if (sessionStatus === 'authenticated' && !isSubscriptionActive && !subscriptionLoading) {
+      openPricingModal();
+    }
+  }, [sessionStatus, isSubscriptionActive, subscriptionLoading, openPricingModal]);
 
   const [formData, setFormData] = useState<FacilityFormData>({
     availability: "Available",
@@ -120,7 +141,7 @@ export default function AddFacilityPage() {
   ];
 
   // Show loading spinner while session is loading
-  if (status === "loading") {
+  if (sessionStatus === "loading") {
     return <LoadingSpinner text="Initializing..." />;
   }
 
@@ -283,11 +304,53 @@ export default function AddFacilityPage() {
     createFacilityMutation.mutate(facilityData);
   };
 
+
+  
+
+  // Redirect to login if not authenticated
+  if (sessionStatus === "unauthenticated") {
+    router.push("/login");
+    return null;
+  }
+
+  if (subscriptionError) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-50">
+        <div className="text-center max-w-md">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+            <AlertCircle className="h-8 w-8 text-red-500" />
+          </div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">Unable to Load Subscription Status</h3>
+          <p className="text-gray-600 mb-4">{subscriptionError}</p>
+          <Button onClick={() => window.location.reload()} className="bg-green-600 hover:bg-green-700">
+            Try Again
+          </Button>
+        </div>
+      </div>
+    );
+  }
+  const handleSubscribe = async (plan: SubscriptionPlan) => {
+    try {
+      // Your subscription logic here
+      console.log('Subscribing to plan:', plan);
+      
+      closePricingModal();
+      toast.success('Subscription activated! You can now add facilities.');
+    } catch (error) {
+      console.error('Subscription error:', error);
+      toast.error('Failed to activate subscription. Please try again.');
+    }
+  };
+  
+
+
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col justify-between overflow-hidden">
         <main className="flex-1 overflow-auto">
           <div className="p-8">
+            <div>{!isSubscriptionActive ? "Your Subscription has ended, subscribe to add new facility": ""}</div>
+
             <div className="flex items-center mb-6">
               <Button
                 variant="ghost"
@@ -300,16 +363,16 @@ export default function AddFacilityPage() {
                 Add Facility
               </h1>
             </div>
-
+            
             <form onSubmit={handleSubmit} className="container mx-auto">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 lg:grid-cols-3  gap-8">
                 {/* Left Column - Form Fields */}
-                <div className="lg:col-span-2 space-y-8">
+                <div className="lg:col-span-2  ">
                   {/* Basic Information */}
                   <FormSection title="Basic Information">
                     <div className="space-y-6">
                       {/* Availability */}
-                      <div>
+                      <div className="">
                         <Label htmlFor="availability">Availability</Label>
                         <div className="flex items-center space-x-4 mt-2">
                           <div className="flex items-center space-x-2">
@@ -341,7 +404,7 @@ export default function AddFacilityPage() {
                       </div>
 
                       {/* Name */}
-                      <div>
+                      <div className="">
                         <Label htmlFor="name">Name</Label>
                         <Input
                           id="name"
@@ -486,7 +549,7 @@ export default function AddFacilityPage() {
                   </FormSection>
 
                   {/* Amenities */}
-                  <FormSection title="Amenities">
+                  <FormSection title="Amenities"   >
                     <AmenityManager
                       amenities={formData.amenities}
                       onAmenitiesChange={(amenities) =>
@@ -935,7 +998,28 @@ export default function AddFacilityPage() {
             </form>
           </div>
         </main>
+              {/* Pricing Modal */}
+        <PricingModal 
+          open={showPricingModal} 
+          onOpenChange={(open) => {
+            if (!open && !isSubscriptionActive) {
+              // Prevent closing if subscription is required
+              return;
+            }
+            if (open) {
+              openPricingModal();
+            } else {
+              closePricingModal();
+            }
+          }}
+          onSubscribe={handleSubscribe} 
+        />
+        
       </div>
+
+      
     </div>
+
+
   );
 }

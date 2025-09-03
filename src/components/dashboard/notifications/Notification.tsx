@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getNotifications, clearAllNotifications, markNotificationAsRead } from "@/lib/api";
+import { getNotifications, clearAllNotifications } from "@/lib/api";
 import { useSession } from "next-auth/react";
 
 import { formatDistanceToNow } from "date-fns";
@@ -34,13 +34,7 @@ export default function Notifications() {
     enabled: !!userId, // Only run query if userId exists
   });
 
-  // Mark as read mutation
-  const markAsReadMutation = useMutation({
-    mutationFn: (notificationId: string) => markNotificationAsRead(notificationId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notifications", userId] });
-    },
-  });
+
 
   // Clear all mutation
   const clearAllMutation = useMutation({
