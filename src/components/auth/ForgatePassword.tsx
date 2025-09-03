@@ -73,7 +73,7 @@ const ForgatePassword = () => {
         className="relative hidden lg:block"
       >
         <Image
-          src="/signup.png"
+          src="/loginimage.png"
           alt="Login background"
           width={800}
           height={800}
@@ -94,7 +94,7 @@ const ForgatePassword = () => {
         className="flex items-center justify-center p-6"
       >
         <div className="w-full max-w-md">
-          <h2 className="text-3xl font-bold text-green-600 mb-2">
+          <h2 className="text-3xl md:text-[40px] font-playfair font-bold text-green-600 mb-2">
             Forgot Password
           </h2>
           <p className="text-gray-500 mb-6">
@@ -109,7 +109,7 @@ const ForgatePassword = () => {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email Address</FormLabel>
+                    <FormLabel className="text-[16px] leading-[150%] font-medium text-[#343A40]">Email Address</FormLabel>
                     <FormControl>
                       <Input
                         type="email"

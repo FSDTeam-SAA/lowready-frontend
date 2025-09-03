@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { toast } from "sonner";
 import { getSession, signIn } from "next-auth/react";
-import { Eye, EyeOff } from "lucide-react"; // 👈 added icons
+import { ArrowLeft, Eye, EyeOff } from "lucide-react"; // 👈 added icons
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -84,9 +84,9 @@ const LoginForm = () => {
       {/* back to home  */}
       <button
         onClick={() => router.push("/")}
-        className="absolute top-8 md:top-16 right-16 md:right-48  text-[#6C757D] hover:underline cursor-pointer"
+        className="absolute top-8 md:top-16 right-16 md:right-48 flex gap-2 border-gray-500  text-[#6C757D] hover:border-b cursor-pointer"
       >
-        Back to Home
+       <ArrowLeft /> Back to Home
       </button>
 
       {/* Left side image */}
@@ -96,7 +96,7 @@ const LoginForm = () => {
         className="relative hidden lg:block"
       >
         <Image
-          src="/signup.png"
+          src="/loginimage.png"
           alt="Login background"
           width={800}
           height={800}
@@ -115,7 +115,7 @@ const LoginForm = () => {
         className="flex items-center justify-center p-6 px-3 md:px-4 lg:px-0"
       >
         <div className="w-full max-w-lg">
-          <h2 className="text-3xl font-bold text-green-600 mb-2">Welcome</h2>
+          <h2 className="text-3xl md:text-[40px] font-bold leading-[150%] font-playfair text-green-600 mb-2">Welcome</h2>
           <p className="text-gray-500 mb-6">
             Access your account to manage tours, leads, and listings
           </p>
@@ -128,7 +128,7 @@ const LoginForm = () => {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email Address</FormLabel>
+                    <FormLabel className="text-[16px] leading-[150%] font-medium text-[#343A40]">Email Address</FormLabel>
                     <FormControl>
                       <Input
                         type="email"
@@ -147,10 +147,10 @@ const LoginForm = () => {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel className="text-[16px] leading-[150%] font-medium text-[#343A40]">Password</FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <Input
+                        <Input className=""
                           type={showPassword ? "text" : "password"}
                           placeholder="********"
                           {...field}
@@ -186,14 +186,14 @@ const LoginForm = () => {
                           onCheckedChange={field.onChange}
                         />
                       </FormControl>
-                      <FormLabel className="text-sm">Remember me</FormLabel>
+                      <FormLabel className="text-[16px] text-[#6C757D]">Remember me</FormLabel>
                     </FormItem>
                   )}
                 />
 
                 <a
                   href="/forget-password"
-                  className="text-green-600 text-sm hover:underline cursor-pointer"
+                  className="text-green-600 text-sm  border-b border-gray-400 cursor-pointer"
                 >
                   Forgot password?
                 </a>
