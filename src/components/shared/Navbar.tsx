@@ -72,10 +72,10 @@ const Navbar = () => {
   return (
     <header className="sticky top-0 h-20 bg-white z-50 shadow-sm">
       <div className="container mx-auto px-4">
-        <nav className="flex justify-between items-center py-[26px]">
+        <nav className="flex justify-between items-center py-[15px]">
           {/* Logo */}
-          <div className="flex-shrink-0">
-            <Image src="/images/Logo.png" alt="logo" width={150} height={48} />
+          <div className="flex-shrink-0 cursor-pointer flex pb-6 items-center">
+           <Link href="/"><Image src="/images/Logo.png"   alt="logo" width={150} height={48} /></Link> 
           </div>
 
           {/* Navigation */}
@@ -157,7 +157,7 @@ const Navbar = () => {
           }`}
         >
           <div className="container mx-auto px-4 py-6">
-            <ul className="flex flex-col gap-6 font-poppins text-lg">
+            <ul className="flex flex-col justify-start gap-6 font-poppins text-lg">
               {navItems.map((item) => {
                 const isActive = pathname === item.path;
                 return (
