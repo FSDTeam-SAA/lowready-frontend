@@ -10,11 +10,12 @@ import {
   Facility,
 } from "@/lib/api";
 import { useMutation } from "@tanstack/react-query";
-import { MapPin } from "lucide-react";
+import { Dot, MapPin } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
 
 interface FacilityTourProps {
   data: { data: Facility };
@@ -43,6 +44,12 @@ export function FacilityGallery({ data }: FacilityTourProps) {
   const createBookingMutation = useMutation({
     mutationKey: ["booking"],
     mutationFn: (values: BookingType) => createBooking(values),
+    onSuccess: (data) => {
+      toast.success(data.message);
+    },
+    onError(error) {
+      toast.error(error.message);
+    },
   });
 
   async function handleBookingSubmit(values: BookingType) {
@@ -102,22 +109,23 @@ export function FacilityGallery({ data }: FacilityTourProps) {
 
         {/* Facility Info */}
         <div>
-          <Button className="text-green-300 border-1 mt-5 border-green-300">
+          <Button className="text-[#28A745] bg-[#9CE7AD] border-1 mt-5 flex gap-1 items-center border-green-300">
+            <Dot />
             Available
           </Button>
           <h1 className="text-2xl font-bold pt-[24px] text-[#343A40]">
             {datas?.name}
           </h1>
-          <p className="text-muted-foreground mt-2 flex gap-2">
+          <p className="text-[16px] text-[#68706A] mt-2 flex gap-2">
             <MapPin />
             {datas?.location}
           </p>
-          <p className="py-4 text-[#68706A] text-[16px] leading-[150%]">
+          <p className="pt-4 text-[#68706A] text-[16px] leading-[150%]">
             {datas?.description}
           </p>
 
           {/* Amenities */}
-          <div className="pt-[40px] pb-[60px]">
+          <div className=" pt-[24px] md:pt-[40px] pb-[60px]">
             <h3 className="text-[20px] text-[#343A40] pb-[6px]">Amenities</h3>
             <div>
               <ul className="flex items-center gap-3 flex-wrap">
@@ -134,10 +142,10 @@ export function FacilityGallery({ data }: FacilityTourProps) {
           </div>
 
           {/* Price + Actions */}
-          <div className="mt-6">
+          <div className="">
             <p className="text-[20px] font-semibold text-[#343A40]">Pricing</p>
-            <p className="text-2xl font-semibold text-green-600">
-              ${datas?.price || 2200} / month
+            <p className="text-2xl md:text-[40px] font-bold text-green-600">
+              ${datas?.price || 2200} <span className="text-[16px] font-medium">/ month</span>
             </p>
             <div className="space-x-2 pt-[80px] flex cursor-pointer justify-between">
               <Link

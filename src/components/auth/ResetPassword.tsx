@@ -81,7 +81,7 @@ const ResetPassword = () => {
           {/* Left side - image */}
           <div className="bg-center">
             <Image
-              src={"/signup.png"}
+              src={"/loginimage.png"}
               alt="signup"
               width={600}
               height={600}
@@ -96,7 +96,7 @@ const ResetPassword = () => {
           <div className="flex items-center justify-center">
             <div className="w-full max-w-md">
               <h2 className="text-2xl md:text-[40px] font-playfair leading-[150%] font-bold text-green-600">
-                Forgot Password
+                Change Password
               </h2>
               <p className="text-sm md:-[16px] text-[#6C757D] mb-6 md:mb-[40px]">
                 Connect families with trusted care join ALH Hub today.
