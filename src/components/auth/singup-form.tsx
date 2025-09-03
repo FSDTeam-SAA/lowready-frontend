@@ -21,7 +21,7 @@ import Image from "next/image";
 import { useMutation } from "@tanstack/react-query";
 import { registerUser } from "@/lib/auth";
 import { toast } from "sonner";
-import { Eye, EyeOff } from "lucide-react"; // 👈 added
+import { ArrowLeft, Eye, EyeOff } from "lucide-react"; // 👈 added
 
 // ✅ Zod Schema for validation
 const signupSchema = z
@@ -99,16 +99,16 @@ const SingupForm = () => {
         {/* back to home */}
         <button
           onClick={() => router.push("/")}
-          className="absolute top-8 md:top-16 right-16 md:right-48  text-[#6C757D]  hover:underline cursor-pointer"
+          className="absolute top-8 md:top-16 right-16 md:right-48  text-[#6C757D] flex gap-2 hover:border-b border-gray-500 cursor-pointer"
         >
-          Back to Home
+         <ArrowLeft /> Back to Home
         </button>
 
         <div className="grid lg:grid-cols-2 items-center h-svh">
           {/* Left side - image */}
           <div className="bg-center hidden lg:block">
             <Image
-              src={"/signup.png"}
+              src={"/loginimage.png"}
               alt="signup"
               width={600}
               height={600}
@@ -140,7 +140,7 @@ const SingupForm = () => {
                       name="firstName"
                       render={({ field }) => (
                         <FormItem className="md:w-1/2">
-                          <FormLabel>First Name</FormLabel>
+                          <FormLabel className="text-[16px] leading-[150%] font-medium text-[#343A40]">First Name</FormLabel>
                           <FormControl>
                             <Input className="" placeholder="Name Here" {...field} />
                           </FormControl>
@@ -153,7 +153,7 @@ const SingupForm = () => {
                       name="lastName"
                       render={({ field }) => (
                         <FormItem className="md:w-1/2">
-                          <FormLabel>Last Name</FormLabel>
+                          <FormLabel className="text-[16px] leading-[150%] font-medium text-[#343A40]">Last Name</FormLabel>
                           <FormControl>
                             <Input placeholder="Name Here" {...field} />
                           </FormControl>
@@ -168,7 +168,7 @@ const SingupForm = () => {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email Address</FormLabel>
+                        <FormLabel className="text-[16px] leading-[150%] font-medium text-[#343A40]">Email Address</FormLabel>
                         <FormControl>
                           <Input
                             type="email"
@@ -187,7 +187,7 @@ const SingupForm = () => {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Create Password</FormLabel>
+                        <FormLabel className="text-[16px] leading-[150%] font-medium text-[#343A40]">Create Password</FormLabel>
                         <FormControl>
                           <div className="relative">
                             <Input
@@ -219,7 +219,7 @@ const SingupForm = () => {
                     name="confirmPassword"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Confirm Password</FormLabel>
+                        <FormLabel className="text-[16px] leading-[150%] font-medium text-[#343A40]">Confirm Password</FormLabel>
                         <FormControl>
                           <div className="relative">
                             <Input

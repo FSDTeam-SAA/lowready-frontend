@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { ArrowLeft } from "lucide-react";
 
 const VerifyEmail = () => {
   const searchParams = useSearchParams();
@@ -125,12 +126,12 @@ const VerifyEmail = () => {
           <div className="w-full max-w-md">
             <button
               onClick={() => router.push("/")}
-              className="text-gray-500 text-sm mb-6 hover:underline"
+              className="text-gray-500 text-sm mb-6 hover:border-b border-gray-500 flex gap-2 items-center"
             >
-              Back to Home
+              <ArrowLeft /> Back to Home
             </button>
 
-            <h2 className="text-2xl font-bold text-green-600 mb-2 text-center">
+            <h2 className="text-2xl md:text-[40px] font-playfair font-bold text-green-600 mb-2 text-center">
               Verify Email
             </h2>
             <p className="text-gray-500 text-center mb-6">

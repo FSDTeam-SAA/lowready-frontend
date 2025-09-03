@@ -35,7 +35,7 @@ const SignInAsPage = () => {
             {/* Facility Provider Card */}
             <Card className="rounded-2xl shadow-sm hover:shadow-md transition">
               <CardHeader>
-                <CardTitle>
+                <CardTitle className="text-2xl md:text-[40px] font-playfair leading-[150%]">
                   Sign In as a{" "}
                   <span className="text-green-600">Facility Provider</span>
                 </CardTitle>
@@ -44,7 +44,7 @@ const SignInAsPage = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <ul className="list-disc list-inside text-gray-600 mb-6 space-y-2">
+                <ul className="list-disc list-inside text-[#68706A] mb-6 pt-4 space-y-2">
                   <li>Browse and book services instantly</li>
                   <li>Track your requests and bookings</li>
                   <li>Easy payment and secure transactions</li>
@@ -64,7 +64,7 @@ const SignInAsPage = () => {
             {/* User Card */}
             <Card className="rounded-2xl shadow-sm hover:shadow-md transition">
               <CardHeader>
-                <CardTitle>
+                <CardTitle className="text-2xl md:text-[40px] font-playfair leading-[150%]">
                   Sign In as a <span className="text-green-600">User</span>
                 </CardTitle>
                 <CardDescription>
@@ -72,7 +72,7 @@ const SignInAsPage = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <ul className="list-disc list-inside text-gray-600 mb-6 space-y-2">
+                <ul className="list-disc list-inside text-[#68706A] mb-6 pt-4 space-y-2">
                   <li>Browse and book services instantly</li>
                   <li>Track your requests and bookings</li>
                   <li>Easy payment and secure transactions</li>
