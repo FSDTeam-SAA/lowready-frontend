@@ -767,3 +767,19 @@ export async function reviewratinSummery(id: string) {
     }
   }
 }
+
+// create contact us data
+export async function createContactUs(userData: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  message: string;
+}) {
+  try {
+    const res = await api.post(`/contactUs/send-message`, userData);
+    return res.data;
+  } catch  {
+    throw new Error("Contact Us Error");
+  }
+}
