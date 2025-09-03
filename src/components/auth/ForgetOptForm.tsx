@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { ArrowLeft } from "lucide-react";
 
 const ForgetOptForm = () => {
   const searchParams = useSearchParams();
@@ -109,9 +110,9 @@ const ForgetOptForm = () => {
       {/* back to home  */}
       <button
         onClick={() => router.push("/")}
-        className="absolute top-24 md:top-24 right-16 md:right-48 text-[#6C757D]  hover:underline cursor-pointer"
+        className="absolute top-24 md:top-24 right-16 md:right-48 text-[#6C757D]  hover:border border-gray-500 flex gap-2 cursor-pointer"
       >
-        Back to Home
+       <ArrowLeft /> Back to Home
       </button>
 
       <div className="grid lg:grid-cols-2 items-center h-svh">

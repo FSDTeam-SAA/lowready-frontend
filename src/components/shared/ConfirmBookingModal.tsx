@@ -34,11 +34,10 @@ import { format } from "date-fns";
 import { useState, useEffect } from "react";
 import { BookingType } from "@/lib/api";
 
-
 // ✅ Validation schema
 const bookingSchema = z.object({
   residentName: z.string().min(1, "Full Name is required"),
-  dob: z.date("Date of Birth is required" ),
+  dob: z.date("Date of Birth is required"),
   gender: z.string().min(1, "Gender is required"),
   specialNeeds: z.string().optional(),
   medicalInfo: z.string().optional(),
@@ -48,7 +47,7 @@ const bookingSchema = z.object({
   email: z.string().email("Invalid email"),
   facility: z.string().min(1, "Facility is required"),
   roomType: z.string().min(1, "Room type is required"),
-  admissionDate: z.date( "Admission Date is required"),
+  admissionDate: z.date("Admission Date is required"),
   duration: z.string().min(1, "Duration is required"),
 });
 
@@ -120,7 +119,7 @@ export function ConfirmBookingModal({
     const payload: BookingType = {
       _id: isEdit ? apiData?._id : undefined,
       facility: values.facility,
-      userId: apiData?.userId ?? "", 
+      userId: apiData?.userId ?? "",
       startingDate: values.admissionDate.toISOString(),
       duration: values.duration,
       paymentStatus: isEdit ? apiData?.paymentStatus || "pending" : "pending",
@@ -132,7 +131,10 @@ export function ConfirmBookingModal({
           requirements: values.specialNeeds,
         },
       ],
-      totalPrice: apiData?.totalPrice ?? 0,
+      totalPrice:
+        apiData?.totalPrice && apiData?.duration
+          ? apiData.totalPrice * Number(apiData.duration)
+          : 0,
     };
 
     onSubmitBooking?.(payload, isEdit);
@@ -141,21 +143,29 @@ export function ConfirmBookingModal({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto rounded-2xl">
-        <DialogHeader>
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto  !p-0">
+        <DialogHeader
+          className="rounded-xl p-4 text-white"
+          style={{
+            background:
+              "linear-gradient(282deg, rgba(40, 167, 69, 0.80) -0.29%, #51B8A0 48.99%, #6DBC8B 101.56%)",
+          }}
+        >
           <DialogTitle className="text-2xl font-bold">
             {isEdit ? "Edit Your Booking" : "Confirm Your Booking"}
           </DialogTitle>
-          <DialogDescription>
-            {isEdit 
-              ? "Update your booking details below." 
-              : "Please review and complete your booking details below."
-            }
+          <DialogDescription className="text-white/90">
+            {isEdit
+              ? "Update your booking details below."
+              : "Please review and complete your booking details below."}
           </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-8 p-6"
+          >
             {/* Resident Info */}
             <div>
               <div className="flex items-center justify-between">
@@ -375,11 +385,11 @@ export function ConfirmBookingModal({
                 <FormField
                   control={form.control}
                   name="facility"
-                  render={({ field }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel>Facility Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter facility name" {...field} />
+                        <Input placeholder="Enter facility name" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
