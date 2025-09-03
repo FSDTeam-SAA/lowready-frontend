@@ -13,7 +13,7 @@ export function FacilityTour({ data }: FacilityTourProps) {
   return (
     <section className="my-[80px]">
       {/* Tour Title */}
-      <h2 className="text-xl text-[32px] font-semibold">
+      <h2 className="text-xl text-[32px] font-playfair font-semibold">
         {datas?.videoTitle} <span className="text-green-400">Tour</span>
       </h2>
 
@@ -21,14 +21,14 @@ export function FacilityTour({ data }: FacilityTourProps) {
       <p className="text-[16px] text-[#8E938F]">{datas?.videoDescription}</p>
 
       {/* Video Section */}
-      <div className="mt-4 rounded-xl overflow-hidden">
+      <div className=" rounded-2xl overflow-hidden">
         {/* Video tag to display the tour video */}
         <video
           controls
           src={datas?.uploadVideo}
           width={800}
           height={400}
-          className="w-full h-auto rounded-b-sm pt-[40px] object-cover"
+          className="w-full rounded-2xl h-auto rounded-b-sm pt-[40px] object-cover"
         />
       </div>
     </section>

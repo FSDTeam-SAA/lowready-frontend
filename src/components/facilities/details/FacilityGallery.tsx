@@ -75,9 +75,9 @@ export function FacilityGallery({ data }: FacilityTourProps) {
 
   return (
     <section className="py-[80px]">
-      <div className="lg:flex items-center gap-[48px] mx-auto">
+      <div className="lg:flex items-center  gap-[48px] ">
         {/* Images */}
-        <div className="flex flex-col-reverse md:flex-row gap-2 items-center mx-auto">
+        <div className="flex flex-col-reverse lg:w-1/2 md:justify-between md:flex-row gap-2 lg:gap-[24px]  items-center mx-auto md:mx-0">
           {/* Thumbnails */}
           <div className="flex overflow-hidden gap-3 md:flex-col">
             {datas?.amenitiesServices?.map(
@@ -108,8 +108,8 @@ export function FacilityGallery({ data }: FacilityTourProps) {
         </div>
 
         {/* Facility Info */}
-        <div>
-          <Button className="text-[#28A745] bg-[#9CE7AD] border-1 mt-5 flex gap-1 items-center border-green-300">
+        <div className="lg:w-1/2">
+          <Button className="text-[#28A745] bg-[#9CE7AD] hover:text-white border-1 mt-5  flex gap-1 items-center ">
             <Dot />
             Available
           </Button>
@@ -152,7 +152,7 @@ export function FacilityGallery({ data }: FacilityTourProps) {
                 className="w-1/2 cursor-pointer text-[#28A745]"
                 href={"#requestACall"}
               >
-                <Button className="w-full" variant="outline">
+                <Button className="w-full cursor-pointer" variant="outline">
                   Request a Call
                 </Button>
               </Link>

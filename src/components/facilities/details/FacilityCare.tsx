@@ -39,7 +39,7 @@ export function FacilityCare({ data }: FacilityTourProps) {
               ))}
             </ul>
           </div>
-          <div className="pt-[40px] lg:pt-[80px]">
+          <div className="pt-[40px]">
             <h2 className="text-xl lg:text-[32px] font-semibold">
               Amenities <span className="text-[#28A745]">Services</span>
             </h2>
@@ -48,9 +48,9 @@ export function FacilityCare({ data }: FacilityTourProps) {
               Living ensures your loved ones receive the support, attention, and
               comfort they need every day.
             </p>
-            <div className="flex flex-wrap items-center gap-4 pt-[40px]">
+            <div className="flex flex-wrap items-center gap-[32px] pt-[40px]">
               {datas?.amenitiesServices?.map((item, id: number) => (
-                <div key={id} className="flex items-center gap-2 space-x-2">
+                <div key={id} className="flex md:w-[40%] w-[70%] items-center gap-2">
                   <Image
                     src={item.image.url}
                     width={40}
