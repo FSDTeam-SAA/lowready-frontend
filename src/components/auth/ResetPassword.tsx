@@ -20,7 +20,7 @@ import Image from "next/image";
 import { useMutation } from "@tanstack/react-query";
 import { resetPassword } from "@/lib/auth";
 import { toast } from "sonner";
-import { ArrowBigLeft, Eye, EyeOff } from "lucide-react"; // 👁️ icons
+import { ArrowLeft, Eye, EyeOff } from "lucide-react"; // 👁️ icons
 
 // ✅ Zod Schema for validation
 const signupSchema = z
@@ -53,7 +53,7 @@ const ResetPassword = () => {
     mutationFn: async (password: string) => resetPassword(password, token),
     onSuccess: (data) => {
       toast.success(data.message);
-      router.push(`/`);
+      router.push(`/login`);
     },
     onError: (error) => {
       if (error instanceof Error) {
@@ -74,7 +74,7 @@ const ResetPassword = () => {
           onClick={() => router.push("/")}
           className="absolute flex gap-2 items-center top-24 right-28 md:right-48 text-[#6C757D] hover:border-b border-gray-500 cursor-pointer"
         >
-          <ArrowBigLeft /> Back to Home
+          <ArrowLeft /> Back to Home
         </button>
 
         <div className="grid md:grid-cols-2 items-center h-svh">
@@ -95,7 +95,7 @@ const ResetPassword = () => {
           {/* Right side - form */}
           <div className="flex items-center justify-center">
             <div className="w-full max-w-md">
-              <h2 className="text-2xl mg:text-[40px] leading-[150%] font-bold text-green-600">
+              <h2 className="text-2xl md:text-[40px] font-playfair leading-[150%] font-bold text-green-600">
                 Forgot Password
               </h2>
               <p className="text-sm md:-[16px] text-[#6C757D] mb-6 md:mb-[40px]">
