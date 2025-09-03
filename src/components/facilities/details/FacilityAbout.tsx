@@ -2,8 +2,8 @@
 
 export function FacilityAbout() {
   return (
-    <section className="my-6">
-      <h2 className="text-xl  font-semibold">
+    <section className="mt-[120px]">
+      <h2 className="text-xl md:text-[32px] font-playfair font-semibold">
         About{" "}
         <span className="text-green-300">Sunny Hills Assisted Living</span>
       </h2>
