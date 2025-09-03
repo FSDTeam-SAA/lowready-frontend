@@ -123,7 +123,7 @@ const Footer = () => {
           </div>
 
           {/*  Newsletter */}
-          <div className="space-y-6">
+          {/* <div className="space-y-6">
             <div className="space-y-4">
               <h3 className="font-semibold text-lg">Newsletter</h3>
               <p className="text-sm text-muted-foreground">
@@ -149,12 +149,12 @@ const Footer = () => {
                 <FaTwitter className="text-3xl  text-gray-500 duration-700 hover:text-blue-400" />
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Divider and Copyright */}
         <div className="mt-12 pt-8 border-t border-primary/20">
-          <p className="text-center text-sm text-muted-foreground">
+          <p className="text-center text-sm pb-0 text-muted-foreground">
             © 2025 Albin Hub. All rights reserved.
           </p>
         </div>

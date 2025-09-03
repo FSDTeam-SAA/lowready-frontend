@@ -61,25 +61,25 @@ const WhyAlhHub = () => {
   </div>
 
   {/* Right Content - full width on mobile/tablet, half on desktop */}
-  <div className="w-full lg:w-1/2 px-0 md:px-4 lg:px-10 space-y-6 md:space-y-8 lg:space-y-12">
+  <div className="w-full lg:w-1/2 px-0 md:px-4 lg:px-10 space-y-6 md:space-y-12 lg:space-y-16">
     {[
       {
-        img: "/images/01-icon.png",
+        img: "/images/01.png",
         title: "Transparent Search",
         text: "Easily explore assisted living facilities with clear, upfront information and no hidden fees or commissions.",
       },
       {
-        img: "/images/02-icon.png",
+        img: "/images/02.png",
         title: "Personalized Assistance",
         text: "Get tailored recommendations based on your needs and preferences.",
       },
       {
-        img: "/images/03-icon.png",
+        img: "/images/03.png",
         title: "Verified Listings",
         text: "All listings are thoroughly verified for trust and safety.",
       },
       {
-        img: "/images/04-icon.png",
+        img: "/images/04.png",
         title: "24/7 Support",
         text: "Our team is available around the clock to assist you.",
       },
@@ -98,10 +98,10 @@ const WhyAlhHub = () => {
         />
         {/* Text content */}
         <div className="relative z-10">
-          <h3 className="text-gray-900 font-bold text-lg">
+          <h3 className="text-gray-800 font-bold mb-2 text-2xl">
             {item.title}
           </h3>
-          <p className="text-gray-500">{item.text}</p>
+          <p className="text-gray-500 text-base">{item.text}</p>
         </div>
       </div>
     ))}
