@@ -14,7 +14,7 @@ export function FacilityCare({ data }: FacilityTourProps) {
 
   return (
     <section className="my-6">
-      <div>
+      <div className="container mx-auto">
         <Card className="px-10 py-10">
           <div>
             <h2 className="text-xl lg:text-[32px] font-semibold">

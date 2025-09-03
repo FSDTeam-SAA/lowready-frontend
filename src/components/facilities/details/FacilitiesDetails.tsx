@@ -34,7 +34,7 @@ const FacilitiesDetails = () => {
   }
 
   return (
-    <div>
+    <div className="">
       <FacilityGallery data={data} />
       <FacilityCare data={data} />
       <FacilityAbout />
