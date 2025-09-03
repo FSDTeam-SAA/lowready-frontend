@@ -66,51 +66,57 @@ export function FacilitySimilar() {
   }
 
   return (
-    <div className="container mx-auto py-8 lg:py-20">
-      {/* Header */}
-      <div className="text-center mb-12">
-        <h2 className="text-4xl font-bold text-gray-900 mb-4">
-          Featured <span className="text-green-600">Facilities</span>
-        </h2>
-        <p className="text-gray-600 max-w-2xl mx-auto leading-relaxed">
-          Discover highlighted senior living options carefully tailored to meet
-          the needs of families and their loved ones.
-        </p>
-      </div>
-      {/* Carousel Container */}
-      <div className="relative overflow-hidden">
-        <div
-          className="flex transition-transform duration-500 ease-in-out"
-          style={{
-            transform: `translateX(-${currentSlide * (100 / slidesToShow)}%)`,
-          }}
-        >
-          {facilities.map((facility) => (
+    <section>
+      <div className="container bg-white mx-auto">
+        <div className="  mx-auto py-8 lg:py-20">
+          {/* Header */}
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold font-playfair text-gray-900 mb-4">
+              Featured <span className="text-green-600">Facilities</span>
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto leading-relaxed">
+              Discover highlighted senior living options carefully tailored to
+              meet the needs of families and their loved ones.
+            </p>
+          </div>
+          {/* Carousel Container */}
+          <div className="relative overflow-hidden">
             <div
-              key={facility._id}
-              className="flex-shrink-0 px-2"
-              style={{ width: `${100 / slidesToShow}%` }}
+              className="flex transition-transform duration-500 ease-in-out"
+              style={{
+                transform: `translateX(-${
+                  currentSlide * (100 / slidesToShow)
+                }%)`,
+              }}
             >
-              <FacilityCard
-                facility={facility}
-                onSeeDetails={()=>handleSeeDetails(facility._id)}
-                onBookTour={()=>handleBookTour(facility._id)}
-              />
+              {facilities.map((facility) => (
+                <div
+                  key={facility._id}
+                  className="flex-shrink-0 px-2"
+                  style={{ width: `${100 / slidesToShow}%` }}
+                >
+                  <FacilityCard
+                    facility={facility}
+                    onSeeDetails={() => handleSeeDetails(facility._id)}
+                    onBookTour={() => handleBookTour(facility._id)}
+                  />
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
+
+          {/* Navigation */}
+          {totalSlides > 1 && (
+            <CarouselNavigation
+              currentSlide={currentSlide}
+              totalSlides={totalSlides}
+              onPrevious={handlePrevious}
+              onNext={handleNext}
+              onDotClick={handleDotClick}
+            />
+          )}
         </div>
       </div>
-
-      {/* Navigation */}
-      {totalSlides > 1 && (
-        <CarouselNavigation
-          currentSlide={currentSlide}
-          totalSlides={totalSlides}
-          onPrevious={handlePrevious}
-          onNext={handleNext}
-          onDotClick={handleDotClick}
-        />
-      )}
-    </div>
+    </section>
   );
 }

@@ -80,8 +80,9 @@ export function FacilityBooking({ data,facilityId }: FacilityTourProps) {
   const datas = data?.data || [];
 
   return (
-    <section className=" pt-[30px] shadow-2xl p-[40px]" id="requestACall">
-      <h2 className="text-xl text-[32px] font-playfair font-semibold">
+    <section className=" ">
+     <div className="container mx-auto  pt-[30px] shadow-2xl p-[40px]" id="requestACall">
+       <h2 className="text-xl text-[32px] font-playfair font-semibold">
         Book a tour at
         <span className="text-green-400"> Sunny Hills Assisted Living</span>
       </h2>
@@ -229,6 +230,7 @@ export function FacilityBooking({ data,facilityId }: FacilityTourProps) {
           </div>
         </div>
       </form>
+     </div>
     </section>
   );
 }

@@ -12,7 +12,8 @@ export function FacilityTour({ data }: FacilityTourProps) {
 
   return (
     <section className="my-[80px]">
-      {/* Tour Title */}
+    <div className="container mx-auto">
+        {/* Tour Title */}
       <h2 className="text-xl text-[32px] font-playfair font-semibold">
         {datas?.videoTitle} <span className="text-green-400">Tour</span>
       </h2>
@@ -31,6 +32,7 @@ export function FacilityTour({ data }: FacilityTourProps) {
           className="w-full rounded-2xl h-auto rounded-b-sm pt-[40px] object-cover"
         />
       </div>
+    </div>
     </section>
   );
 }

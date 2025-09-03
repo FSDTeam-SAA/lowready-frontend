@@ -3,6 +3,7 @@
 export function FacilityAbout() {
   return (
     <section className="mt-[120px]">
+      <div className="container mx-auto">
       <h2 className="text-xl md:text-[32px] font-playfair font-semibold">
         About{" "}
         <span className="text-green-300">Sunny Hills Assisted Living</span>
@@ -28,6 +29,8 @@ export function FacilityAbout() {
         </li>
         <li>🍲 Nutritious Dining – Fresh, chef-prepared meals served daily.</li>
       </ul>
+      </div>
+
     </section>
   );
 }

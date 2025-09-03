@@ -75,7 +75,7 @@ export function FacilityGallery({ data }: FacilityTourProps) {
 
   return (
     <section className="py-[80px]">
-      <div className="lg:flex items-center  gap-[48px] ">
+      <div className="lg:flex items-center container mx-auto  gap-[48px] ">
         {/* Images */}
         <div className="flex flex-col-reverse lg:w-1/2 md:justify-between md:flex-row gap-2 lg:gap-[24px]  items-center mx-auto md:mx-0">
           {/* Thumbnails */}
