@@ -78,7 +78,7 @@ const ToureRequest = () => {
     setSelectedBooking(booking);
     setDialogOpen(true);
   };
-  console.log("tour data", data);
+  
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error loading bookings</p>;

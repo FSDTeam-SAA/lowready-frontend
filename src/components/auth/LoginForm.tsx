@@ -55,7 +55,7 @@ const LoginForm = () => {
     if (res?.error) {
       toast.error(res.error || "Invalid email or password");
     } else {
-      console.log("res: ", res);
+      
       toast.success("Login successful!");
       type SessionUserWithRole = {
         name?: string | null;
@@ -65,7 +65,7 @@ const LoginForm = () => {
       };
 
       const session = await getSession();
-      console.log("session: ", session);
+      
 
       const user = session?.user as SessionUserWithRole | undefined;
 

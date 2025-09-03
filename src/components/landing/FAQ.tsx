@@ -8,6 +8,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { CirclePlus, CircleMinus } from "lucide-react";
+import Link from "next/link";
 
 const FAQ = () => {
   const faqData = [
@@ -62,7 +63,7 @@ const FAQ = () => {
               type="single"
               collapsible
               className="w-full"
-              value={openItem || undefined}
+              value={openItem ?? ""}
               onValueChange={(value) => setOpenItem(value)}
             >
               {faqData.map((faq) => (
@@ -105,9 +106,11 @@ const FAQ = () => {
             </p>
 
             <div className="mt-6 sm:mt-8">
+              <Link href="/contact-us">
               <Button size="lg" className="w-full text-[16px] sm:w-[200px] cursor-pointer">
                 Contact Us
               </Button>
+              </Link>
             </div>
           </div>
         </div>
