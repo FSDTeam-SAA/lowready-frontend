@@ -41,8 +41,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   // initialize location once data is available
   useEffect(() => {
     if (locations.length > 0 && !selectedLocation) {
-      setSelectedLocation(locations[0].location);
-      setQuery(locations[0].location); // ✅ sync with query
+      setSelectedLocation(locations[locations.length-1].location);
+      setQuery(locations[0].location); 
     }
   }, [locations, selectedLocation]);
 
@@ -54,6 +54,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         selectedLocation
       )}&q=${encodeURIComponent(query)}`
     );
+    setSelectedLocation("");
   };
 
   // ✅ when location changes, also set query
@@ -65,10 +66,10 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   return (
     <div className="flex items-center py-3 px-3 w-full bg-white rounded-md overflow-hidden">
       {/* Location Selector */}
-      <div className="flex items-center px-3 border-r">
+      <div className="flex items-center gap-1 px-3 border-r">
         <MapPin className="h-6 w-6 text-primary cursor-pointer" />
         <Select value={selectedLocation} onValueChange={handleLocationChange}>
-          <SelectTrigger className="p-0 border-none bg-transparent cursor-pointer shadow-none">
+          <SelectTrigger className="p-0 border-none text-[#68706A] w-[125px] overflow-hidden cursor-pointer shadow-none">
             <SelectValue
               placeholder={`${selectedLocation} || Location`}
               className="focus-visible:ring-[0px] outline-none border-none"
@@ -79,7 +80,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
               <SelectItem
                 key={loc._id}
                 value={loc.location}
-                className="shadow-none cursor-pointer border-none"
+                className="shadow-none  cursor-pointer border-none"
               >
                 {loc.location}
               </SelectItem>
