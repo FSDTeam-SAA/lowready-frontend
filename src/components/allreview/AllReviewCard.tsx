@@ -35,7 +35,7 @@ const AllReviewCard = () => {
       <h2>Error</h2>
     </div>;
   }
-  // console.log('reviewssss',reviews);
+   
   
   return (
     <section>

@@ -16,7 +16,7 @@ export default function TopBanner() {
           onClick={() => setIsVisible(false)}
           className=" absolute md:right-2 md:top-4 right-4 top-5 sm:right-2 sm:top-5  text-gray-600 flex items-center hover:text-red-500 transition"
         >
-          <X size={20} />
+          <X className="cursor-pointer" size={20} />
         </button>
 
         <div className="flex flex-col md:flex-row justify-between items-center py-2 md:py-4 text-sm md:text-base gap-1 md:gap-0">
