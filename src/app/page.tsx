@@ -1,3 +1,4 @@
+import SimilarBlogs from "@/components/Blogs/SimilarBlogs";
 import ResidentialFacility from "@/components/facilities/ResidentialFacility";
 import { FacilitiesCarousel } from "@/components/landing/facilities-carousel";
 import { ReviewFamilyCarousel } from "@/components/landing/FamilyReview";
@@ -26,6 +27,7 @@ export default function Home() {
         buttonText="Book a Tour Now"
         showButton={true}
       />
+      <SimilarBlogs />
       <FAQ />
       <ResidentialFacility />
       {/* <BlogsCard /> */}
