@@ -43,7 +43,7 @@ export default function SearchField() {
   const initialLocation = searchParams.get("location") || "Dhaka";
   const [filters, setFilters] = useState<FacilityFilters>({
     minPrice: 0,
-    maxPrice: 1000000,
+    maxPrice: undefined,
     location: initialLocation,
     availability: true,
     rating: undefined,
