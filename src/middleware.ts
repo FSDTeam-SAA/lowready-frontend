@@ -129,6 +129,6 @@ export const config = {
      * - favicon.ico (favicon file)
      * - All public asset directories
      */
-    "/((?!api/auth|_next/static|_next/image|favicon.ico|about|gallary|blogs|contact|images|dashboard|public|icons|assets).*)",
+    "/((?!api/auth|_next/static|_next/image|favicon.ico|about|gallary|blogs|contact|images|public|icons|assets).*)",
   ],
 };
