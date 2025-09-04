@@ -23,6 +23,8 @@ export interface User {
 }
 
 export interface Facility {
+  rating: string;
+  reviews: string;
   _id: string;
   name: string;
   location: string;

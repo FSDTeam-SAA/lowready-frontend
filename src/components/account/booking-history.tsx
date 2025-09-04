@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -11,14 +11,63 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Eye, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
-import { getBookingDetails, getUserBookings } from "@/lib/api";
-import { cn } from "@/lib/utils";
+import { getBookingDetails, getUserBookings, deletePlacement } from "@/lib/api";
 import DashboardLayout from "./profile-dashboard-layout";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
+import { toast } from "sonner";
 
+// ---------------- Delete Confirm Modal ----------------
+interface DeleteConfirmModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  isLoading?: boolean;
+}
+
+function DeleteConfirmModal({
+  isOpen,
+  onClose,
+  onConfirm,
+  isLoading = false,
+}: DeleteConfirmModalProps) {
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Delete Booking</DialogTitle>
+          <DialogDescription>
+            Are you sure you want to delete this booking? This action cannot be
+            undone.
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <Button
+            variant="outline"
+            onClick={onClose}
+            className="cursor-pointer"
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="destructive"
+            onClick={onConfirm}
+            disabled={isLoading}
+            className="cursor-pointer"
+          >
+            {isLoading ? "Deleting..." : "Delete"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+// ---------------- Booking Details Modal (Updated for Screenshot Style) ----------------
 interface BookingDetailsModalProps {
   bookingId: string;
   isOpen: boolean;
@@ -39,7 +88,7 @@ function BookingDetailsModal({
   if (isLoading) {
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="sm:max-w-2xl">
+        <DialogContent className="sm:max-w-lg">
           <div className="flex items-center justify-center h-32">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#179649]"></div>
           </div>
@@ -50,104 +99,71 @@ function BookingDetailsModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-2xl">
-        <DialogHeader>
-          <DialogTitle>Booking Details</DialogTitle>
-        </DialogHeader>
-
+      <DialogContent className="sm:max-w-lg p-0 overflow-hidden rounded-2xl">
         {booking && (
-          <div className="space-y-6">
-            {/* Facility Info */}
-            <div className="flex gap-4">
+          <div className="w-full">
+            {/* Top Image */}
+            <div className="relative w-full h-60">
               <Image
                 src={
                   booking.data.facility.images[0]?.url ||
-                  "/placeholder.svg?height=80&width=80&query=facility"
+                  "/placeholder.svg?height=240&width=400&query=facility"
                 }
-                width={80}
-                height={80}
                 alt={booking.data.facility.name}
-                className="w-20 h-20 rounded-lg object-cover"
+                fill
+                className="object-cover"
               />
-              <div className="flex-1">
-                <h3 className="font-semibold text-lg">
-                  {booking.data.facility.name}
-                </h3>
-                <p className="text-[#68706a]">
-                  {booking.data.facility.location}
-                </p>
-                <p className="text-lg font-semibold alnhub-primary">
-                  ${booking.data.facility.price}/Month
-                </p>
-              </div>
             </div>
 
-            {/* Booking Details */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <h4 className="font-medium mb-2">Booking Information</h4>
-                <div className="space-y-1 text-sm">
-                  <div>
-                    <span className="font-medium">Starting Date:</span>{" "}
-                    {new Date(booking.data.startingDate).toLocaleDateString()}
-                  </div>
-                  <div>
-                    <span className="font-medium">Duration:</span>{" "}
-                    {booking.data.duration} months
-                  </div>
-                  <div>
-                    <span className="font-medium">Total Price:</span> $
-                    {booking.data.totalPrice}
-                  </div>
-                  <div>
-                    <span className="font-medium">Payment Status:</span>
-                    <Badge
-                      className={cn(
-                        "ml-2",
-                        booking.data.paymentStatus === "paid"
-                          ? "bg-[#e6f9eb] text-[#179649] hover:bg-[#e6f9eb]"
-                          : "bg-[#feecee] text-[#e5102e] hover:bg-[#feecee]"
-                      )}
-                    >
-                      {booking.data.paymentStatus}
-                    </Badge>
-                  </div>
+            {/* Content */}
+            <div className="p-6 space-y-4">
+              {/* Title & Rating */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-semibold">
+                    {booking.data.facility.name}
+                  </h2>
+                  <p className="text-sm text-gray-500">
+                    Handpicked for comfort, care, and community
+                  </p>
+                </div>
+                <div className="flex items-center gap-1 text-sm text-gray-600">
+                  <span className="text-yellow-500">★</span>
+                  <span>
+                    {booking.data.facility?.rating || "4.8"} (
+                    {booking.data.facility?.reviews || "32"} reviews)
+                  </span>
                 </div>
               </div>
 
-              <div>
-                <h4 className="font-medium mb-2">Resident Information</h4>
-                {booking.data.residentialInfo.map(
-                  (resident: any, index: number) => (
-                    <div key={index} className="space-y-1 text-sm">
-                      <div>
-                        <span className="font-medium">Name:</span>{" "}
-                        {resident.name}
-                      </div>
-                      <div>
-                        <span className="font-medium">Date of Birth:</span>{" "}
-                        {new Date(resident.dateOfBirth).toLocaleDateString()}
-                      </div>
-                      <div>
-                        <span className="font-medium">Gender:</span>{" "}
-                        {resident.gender}
-                      </div>
-                      <div>
-                        <span className="font-medium">Requirements:</span>{" "}
-                        {resident.requirements}
-                      </div>
-                    </div>
-                  )
-                )}
+              {/* Tags */}
+              <div className="flex flex-wrap gap-2">
+                <Badge className="bg-[#e6f9eb] text-[#179649]">Available</Badge>
+                <Badge variant="secondary">Private</Badge>
+                <Badge variant="secondary">Wi-Fi</Badge>
+                <Badge variant="secondary">Garden</Badge>
               </div>
-            </div>
 
-            {/* Facility Description */}
-            <div>
-              <h4 className="font-medium mb-2">About the Facility</h4>
-              <p className="text-sm text-[#68706a]">
-                {booking.data.facility.description}
-              </p>
+              {/* Price */}
+              <div className="text-2xl font-bold">
+                ${booking.data.facility.price}/
+                <span className="text-base font-normal text-gray-600">
+                  Month
+                </span>
+              </div>
+
+              {/* CTA Buttons */}
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  className="flex-1 border-[#179649] text-[#179649] cursor-pointer"
+                >
+                  See Details
+                </Button>
+                <Button className="flex-1 bg-[#179649] hover:bg-[#148a41] cursor-pointer">
+                  See Over
+                </Button>
+              </div>
             </div>
           </div>
         )}
@@ -156,17 +172,34 @@ function BookingDetailsModal({
   );
 }
 
+// ---------------- Main Booking History Page ----------------
 export default function BookingHistoryPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedBookingId, setSelectedBookingId] = useState<string | null>(
     null
   );
+  const [deleteId, setDeleteId] = useState<string | null>(null);
   const itemsPerPage = 10;
 
-  // Get session data first
+  // Get session data
   const { data: session, status: sessionStatus } = useSession();
 
-  // Use the session data in the query with proper dependency
+  const queryClient = useQueryClient();
+
+  // Delete booking mutation
+  const { mutate: deleteBooking } = useMutation({
+    mutationFn: (id: string) => deletePlacement(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["bookingHistory"] });
+      setDeleteId(null);
+      toast.success("Deleted Successfully!");
+    },
+    onError: (err) => {
+      console.error("Delete failed:", err);
+    },
+  });
+
+  // Use the session data in the query
   const {
     data: bookingsData,
     isLoading,
@@ -177,18 +210,12 @@ export default function BookingHistoryPage() {
       if (!session?.user?.id) {
         throw new Error("User ID is required");
       }
-
       return getUserBookings(session.user.id, currentPage, itemsPerPage);
     },
-    enabled: !!session?.user?.id, // Only run when we have a user ID
+    enabled: !!session?.user?.id,
     retry: 3,
     retryDelay: 1000,
   });
-
-  // Add error logging
-  if (error) {
-    console.error("Error fetching bookings:", error);
-  }
 
   const bookings = bookingsData?.data || [];
   const totalPages = Math.ceil(
@@ -199,8 +226,14 @@ export default function BookingHistoryPage() {
     switch (status.toLowerCase()) {
       case "paid":
         return (
-          <Badge className="bg-[#e6f9eb] text-[#179649] hover:bg-[#e6f9eb]">
-            Paid
+          <Badge className="bg-[#E6FAEE] text-[#27BE69] hover:bg-[#E6FAEE]">
+            Placed
+          </Badge>
+        );
+      case "pending":
+        return (
+          <Badge className="bg-[#E1ECF9] text-[#53A6FF] hover:bg-[#E1ECF9]">
+            Pending
           </Badge>
         );
       case "cancelled":
@@ -338,14 +371,15 @@ export default function BookingHistoryPage() {
                                   onClick={() =>
                                     setSelectedBookingId(booking._id)
                                   }
-                                  className="text-[#179649] hover:bg-[#e6f9eb]"
+                                  className="text-[#179649] hover:bg-[#e6f9eb] cursor-pointer"
                                 >
                                   <Eye className="h-4 w-4" />
                                 </Button>
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  className="text-[#e5102e] hover:bg-[#feecee]"
+                                  className="text-[#e5102e] hover:bg-[#feecee] cursor-pointer"
+                                  onClick={() => setDeleteId(booking._id)}
                                 >
                                   <Trash2 className="h-4 w-4" />
                                 </Button>
@@ -403,6 +437,7 @@ export default function BookingHistoryPage() {
                               variant="outline"
                               size="sm"
                               className="text-[#e5102e] border-[#e5102e] hover:bg-[#feecee] bg-transparent"
+                              onClick={() => setDeleteId(booking._id)}
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
@@ -485,6 +520,17 @@ export default function BookingHistoryPage() {
           bookingId={selectedBookingId || ""}
           isOpen={!!selectedBookingId}
           onClose={() => setSelectedBookingId(null)}
+        />
+
+        {/* Delete Confirm Modal */}
+        <DeleteConfirmModal
+          isOpen={!!deleteId}
+          onClose={() => setDeleteId(null)}
+          onConfirm={() => {
+            if (deleteId) {
+              deleteBooking(deleteId);
+            }
+          }}
         />
       </div>
     </DashboardLayout>
