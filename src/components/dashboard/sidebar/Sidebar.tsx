@@ -90,7 +90,7 @@ export function DashboardSidebar() {
                 ? "bg-[#179649] text-white hover:bg-[#179649] hover:text-white"
                 : "text-[#68706a] hover:bg-[#f8f9fa] hover:text-[#179649]"
             }`}
-            onClick={() => router.push(`${item.href}?reloadTwice=true`)}
+            onClick={() => router.push(`${item.href} `)}
           >
             <item.icon className="h-5 w-5" />
             {item.name}

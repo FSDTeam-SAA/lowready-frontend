@@ -56,7 +56,7 @@ const FacilityCard: React.FC<FacilityCardProps> = ({ facility }) => {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl p-[-20px] transition-shadow duration-300">
+    <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl !p-[-20px] transition-shadow duration-300">
       <div className="relative h-48 overflow-hidden">
         <Image
           width={400}

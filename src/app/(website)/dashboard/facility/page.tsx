@@ -95,7 +95,7 @@ export default function ManageFacilityPage() {
   // const displayFacilities = facilities.length > 0 ? facilities : [sampleFacility];
 
   return (
-    <div className="flex bg-gray-50">
+    <div className="flex  bg-gray-50">
       <div className="flex-1 flex flex-col overflow-hidden">
         <main className="flex-1 overflow-auto p-8">
           {hasFacilities ? (
