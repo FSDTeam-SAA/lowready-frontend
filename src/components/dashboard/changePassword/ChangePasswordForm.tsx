@@ -127,7 +127,7 @@ const isSaving = changePasswordMutation.status === "pending"
   }
 
   return (
-    <Card className="w-full mx-auto ">
+    <Card className="w-full p-5 mx-auto h-screen">
       <CardHeader>
         <CardTitle className="text-2xl font-semibold">Change Password</CardTitle>
         <CardDescription>Manage your account preferences, security settings, and privacy options.</CardDescription>

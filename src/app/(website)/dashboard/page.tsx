@@ -1,6 +1,7 @@
 "use client";
 
 import type React from "react";
+import { useState, useEffect } from "react";
 
 import {
   Calendar,
@@ -19,21 +20,30 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { useSession } from "next-auth/react";
 
-const chartData = [
-  { month: "Jan", earnings: 5, bookings: 10 },
-  { month: "Feb", earnings: 100, bookings: 60 },
-  { month: "Mar", earnings: 105, bookings: 25 },
-  { month: "Apr", earnings: 125, bookings: 90 },
-  { month: "May", earnings: 175, bookings: 120, highlight: true },
-  { month: "Jun", earnings: 30, bookings: 50 },
-  { month: "Jul", earnings: 175, bookings: 140 },
-  { month: "Aug", earnings: 225, bookings: 160 },
-  { month: "Sep", earnings: 50, bookings: 10 },
-  { month: "Oct", earnings: 200, bookings: 150 },
-  { month: "Nov", earnings: 175, bookings: 30 },
-  { month: "Dec", earnings: 150, bookings: 120 },
-];
+// Month names for chart display
+const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+                   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+// Interfaces for API responses
+interface EarningsData {
+  month: number;
+  totalEarnings: number;
+}
+
+interface StatsData {
+  upcomingTours: number;
+  totalBookings: number;
+  totalEarnings: number;
+  residentsServed: number;
+}
+
+interface ApiResponse<T> {
+  success: boolean;
+  message?: string;
+  data: T;
+}
 
 const chartConfig = {
   earnings: {
@@ -47,35 +57,172 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export default function DashboardPage() {
+  const { data: session } = useSession();
+  const [earningsData, setEarningsData] = useState<EarningsData[]>([]);
+  const [statsData, setStatsData] = useState<StatsData>({
+    upcomingTours: 0,
+    totalBookings: 0,
+    totalEarnings: 0,
+    residentsServed: 0
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Replace with your actual base URL
+  const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "YOUR_BASE_URL_HERE";
+
+  // Fetch earnings data
+  const fetchEarningsData = async () => {
+    try {
+      if (!session?.accessToken) {
+        throw new Error("Access token not found");
+      }
+
+      const response = await fetch(
+        `${BASE_URL}/dashboard/org-dashboard/total/earnings`,
+        {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${session.accessToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result: ApiResponse<EarningsData[]> = await response.json();
+      
+      if (result.success) {
+        setEarningsData(result.data);
+      } else {
+        throw new Error(result.message || "Failed to fetch earnings data");
+      }
+    } catch (err) {
+      console.error("Error fetching earnings data:", err);
+      setError(err instanceof Error ? err.message : "Failed to fetch earnings data");
+    }
+  };
+
+  // Fetch stats data
+  const fetchStatsData = async () => {
+    try {
+      if (!session?.accessToken) {
+        throw new Error("Access token not found");
+      }
+
+      const response = await fetch(
+        `${BASE_URL}/dashboard/org-dashboard`,
+        {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${session.accessToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result: ApiResponse<StatsData> = await response.json();
+      
+      if (result.success) {
+        setStatsData(result.data);
+      } else {
+        throw new Error(result.message || "Failed to fetch stats data");
+      }
+    } catch (err) {
+      console.error("Error fetching stats data:", err);
+      setError(err instanceof Error ? err.message : "Failed to fetch stats data");
+    }
+  };
+
+  // Fetch data on component mount
+  useEffect(() => {
+    const fetchData = async () => {
+      if (session?.accessToken) {
+        setLoading(true);
+        setError(null);
+        
+        await Promise.all([
+          fetchEarningsData(),
+          fetchStatsData()
+        ]);
+        
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [session?.accessToken]);
+
+  // Transform earnings data for chart
+  const transformedChartData = earningsData.map((item) => ({
+    month: monthNames[item.month - 1], // Convert month number to name
+    earnings: item.totalEarnings,
+    bookings: 0, // You'll need to get this data from another API or calculate it
+  }));
+
+  // Calculate current month's earnings
+  const currentMonth = new Date().getMonth() + 1;
+  const currentMonthEarnings = earningsData.find(item => item.month === currentMonth)?.totalEarnings || 0;
+
+  // Calculate total year earnings
+  const totalYearEarnings = earningsData.reduce((sum, item) => sum + item.totalEarnings, 0);
+
+  if (loading) {
+    return (
+      <main role="main" className="p-6 bg-gray-50">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-lg text-gray-600">Loading dashboard data...</div>
+        </div>
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main role="main" className="p-6 bg-gray-50">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-lg text-red-600">Error: {error}</div>
+        </div>
+      </main>
+    );
+  }
+
   return (
-    <main role="main" className="p-0  bg-gray-50  ">
-      <div className="p-6 space-y-6">
+    <main role="main" className="p-6 bg-gray-50">
+      <div className="!px-[-2px] py-2 space-y-6">
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard
             title="Upcoming Tours"
-            value="12"
+            value={statsData.upcomingTours.toString()}
             change="+36% from the last month"
             icon={<Building2 className="h-6 w-6 text-green-500" />}
             bgColor="bg-green-50"
           />
           <StatCard
             title="Total Placements"
-            value="123"
+            value={statsData.totalBookings.toString()}
             change="+36% from the last month"
             icon={<Calendar className="h-6 w-6 text-green-500" />}
             bgColor="bg-green-50"
           />
           <StatCard
             title="Residents Served"
-            value="123"
+            value={statsData.residentsServed.toString()}
             change="+36% from the last month"
             icon={<Users className="h-6 w-6 text-green-500" />}
             bgColor="bg-green-50"
           />
           <StatCard
             title="Total Earnings"
-            value="$1,234"
+            value={`$${statsData.totalEarnings.toLocaleString()}`}
             change="+36% from the last month"
             icon={<TrendingUp className="h-6 w-6 text-green-500" />}
             bgColor="bg-green-50"
@@ -85,7 +232,7 @@ export default function DashboardPage() {
         {/* Charts + Side Panel */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Earnings Chart */}
-          <Card className="lg:col-span-8 bg-white">
+          <Card className="lg:col-span-8 bg-white p-2.5">
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
                 <CardTitle className="text-lg font-semibold text-gray-900">
@@ -93,21 +240,25 @@ export default function DashboardPage() {
                 </CardTitle>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="text-2xl font-bold text-gray-900">
-                    $9,234
+                    ${currentMonthEarnings.toLocaleString()}
                   </span>
-                  <span className="text-sm text-gray-500">May</span>
+                  <span className="text-sm text-gray-500">
+                    {monthNames[currentMonth - 1]}
+                  </span>
                 </div>
               </div>
               <div className="text-right">
-                <span className="text-sm text-gray-500">March, 2025</span>
+                <span className="text-sm text-gray-500">
+                  {new Date().getFullYear()}
+                </span>
               </div>
             </CardHeader>
             <CardContent>
               <ChartContainer config={chartConfig} className="h-[300px] w-full">
                 <AreaChart
-                  data={chartData}
+                  data={transformedChartData}
                   margin={{ left: 0, right: 0, top: 20, bottom: 20 }}
-                  width={500} // optional, will be overridden by responsive container
+                  width={500}
                   height={300}
                 >
                   <defs>
@@ -179,7 +330,7 @@ export default function DashboardPage() {
                     }}
                   />
 
-                  {/* Bookings (Gray) */}
+                  {/* Bookings (Gray) - You may want to remove this or get data from another API */}
                   <Area
                     dataKey="bookings"
                     type="monotone"
@@ -200,17 +351,15 @@ export default function DashboardPage() {
           </Card>
 
           {/* Upcoming Tours */}
-          <Card className="lg:col-span-4 bg-white">
+          <Card className="lg:col-span-4 p-5 bg-white">
             <CardHeader className="flex flex-row items-center justify-between pb-4">
               <CardTitle className="text-lg font-semibold text-gray-900">
-                Upcoming tours
+                Referral Savings 
               </CardTitle>
-              <button className="text-green-600 text-sm font-medium hover:text-green-700">
-                See all
-              </button>
+               
             </CardHeader>
             <CardContent className="space-y-3">
-              {[1, 2, 3, 4].map((_, idx) => (
+              {/* {[1, 2, 3, 4].map((_, idx) => (
                 <div
                   key={idx}
                   className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors"
@@ -234,7 +383,8 @@ export default function DashboardPage() {
                     Details
                   </button>
                 </div>
-              ))}
+              ))} */}
+              <h2 className="text-[#10421B] font-bold text-6xl mx-auto text-center flex justify-center items-center" >$1,234</h2>
             </CardContent>
           </Card>
         </div>
@@ -242,7 +392,7 @@ export default function DashboardPage() {
         {/* Bookings & Reviews */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Recent Bookings */}
-          <Card className="bg-white">
+          <Card className="bg-white p-5">
             <CardHeader className="flex flex-row items-center justify-between pb-4">
               <CardTitle className="text-lg font-semibold text-gray-900">
                 Recent Bookings
@@ -292,7 +442,7 @@ export default function DashboardPage() {
           </Card>
 
           {/* Recent Reviews */}
-          <Card className="bg-white">
+          <Card className="bg-white p-5">
             <CardHeader className="flex flex-row items-center justify-between pb-4">
               <CardTitle className="text-lg font-semibold text-gray-900">
                 Recent Reviews
@@ -329,7 +479,7 @@ export default function DashboardPage() {
                     </div>
                   </div>
                   <p className="text-sm text-gray-600 leading-relaxed">
-                    I &apos; ve been ordering from TABLEFRESH for over a year
+                    I&apos;ve been ordering from TABLEFRESH for over a year
                     now, and the quality of their organic produce is
                     consistently excellent.
                   </p>
@@ -357,17 +507,20 @@ function StatCard({
   bgColor: string;
 }) {
   return (
-    <Card className="bg-white border-0 shadow-sm">
+    <Card className="bg-white border-0 shadow-sm flex flex-row justify-between items-center p-5">
+      <div>
+
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <CardTitle className="text-sm font-medium text-gray-600">
           {title}
         </CardTitle>
-        <div className={`p-2 rounded-lg ${bgColor}`}>{icon}</div>
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold text-gray-900 mb-1">{value}</div>
         <p className="text-xs text-green-600 font-medium">{change}</p>
       </CardContent>
+      </div>
+        <div className={`p-2 rounded-lg w-[60px] h-[60px] flex items-center justify-center ${bgColor}`}>{icon}</div>
     </Card>
   );
 }

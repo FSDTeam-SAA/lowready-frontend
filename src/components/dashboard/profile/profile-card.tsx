@@ -1,72 +1,95 @@
-"use client"
+"use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Card } from "@/components/ui/card"
-import { Pencil } from "lucide-react"
-import { useQuery } from "@tanstack/react-query"
-import { useSession } from "next-auth/react" // Adjust import based on your auth solution
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card } from "@/components/ui/card";
+import { Pencil } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { useSession } from "next-auth/react"; // Adjust import based on your auth solution
 
 // API Response Types
 interface ApiResponse {
-  success: boolean
-  message: string
+  success: boolean;
+  message: string;
   data: {
     avatar: {
-      public_id: string
-      url: string
-    }
+      public_id: string;
+      url: string;
+    };
     verificationInfo: {
-      token: string
-      verified: boolean
-    }
-    _id: string
-    firstName: string
-    lastName: string
-    email: string
-    role: string
-    avatars: string
-    bio: string
-    street: string
-    postCode: number | null
-    phoneNum: string
-    createdAt: string
-    updatedAt: string
-    __v: number
-    onboardingStatus: boolean
-  }
+      token: string;
+      verified: boolean;
+    };
+    _id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    role: string;
+    avatars: string;
+    bio: string;
+    street: string;
+    postCode: number | null;
+    phoneNum: string;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
+    onboardingStatus: boolean;
+  };
 }
 
 // Fetch user profile function
-async function fetchUserProfile(accessToken: string, id: string): Promise<ApiResponse> {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/${id}`, {
-    method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${accessToken}`,
-      'Content-Type': 'application/json',
-    },
-  })
+async function fetchUserProfile(
+  accessToken: string,
+  id: string
+): Promise<ApiResponse> {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/user/${id}`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
 
   if (!response.ok) {
-    throw new Error('Failed to fetch user profile')
+    throw new Error("Failed to fetch user profile");
   }
 
-  return response.json()
+  return response.json();
 }
 
 export function ProfileCard() {
-  const { data: session } = useSession()
-  
-  const { data: userProfile, isLoading, error } = useQuery<ApiResponse, Error>({
-    queryKey: ['userProfile'],
-    queryFn: () => fetchUserProfile(session?.accessToken as string, session?.user.id as string),
+  const { data: session } = useSession();
+
+  const {
+    data: userProfile,
+    isLoading,
+    error,
+  } = useQuery<ApiResponse, Error>({
+    queryKey: ["userProfile"],
+    queryFn: () =>
+      fetchUserProfile(
+        session?.accessToken as string,
+        session?.user.id as string
+      ),
     enabled: !!session?.accessToken, // Only run query if access token exists
-  })
+  });
 
   // Loading state
-  if (isLoading) { // Fixed: Changed !isLoading to isLoading
+  if (isLoading) {
+    // Fixed: Changed !isLoading to isLoading
     return (
       <Card className="overflow-hidden">
-        <div className="h-24 bg-gradient-to-r from-green-400 to-green-500"></div>
+        <div className="h-24 bg-gradient-to-r from-green-400 to-green-600"></div>
+        <div
+          className="h-24"
+          style={{
+            background:
+              "linear-gradient(281.69deg, rgba(40, 167, 69, 0.8) -0.29%, #51B8A0 48.99%, #6DBC8B 101.56%)",
+          }}
+        ></div>
+
         <div className="relative px-6 pb-6">
           <div className="relative -mt-12 mb-4">
             <div className="h-24 w-24 border-4 border-white shadow-lg rounded-full bg-gray-200 animate-pulse"></div>
@@ -78,13 +101,16 @@ export function ProfileCard() {
             </div>
             <div className="space-y-3">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="h-4 bg-gray-200 rounded animate-pulse"></div>
+                <div
+                  key={i}
+                  className="h-4 bg-gray-200 rounded animate-pulse"
+                ></div>
               ))}
             </div>
           </div>
         </div>
       </Card>
-    )
+    );
   }
 
   // Error state
@@ -95,53 +121,54 @@ export function ProfileCard() {
         <div className="relative px-6 pb-6">
           <div className="text-center py-8">
             <p className="text-red-600">Failed to load profile data</p>
-            <p className="text-sm text-gray-500 mt-2">Please try refreshing the page</p>
+            <p className="text-sm text-gray-500 mt-2">
+              Please try refreshing the page
+            </p>
           </div>
         </div>
       </Card>
-    )
+    );
   }
 
   // Extract user data
-  const userData = userProfile?.data
-  if (!userData) return null
+  const userData = userProfile?.data;
+  if (!userData) return null;
 
-  const fullName = `${userData.firstName} ${userData.lastName}`.trim()
-  const avatarUrl = userData.avatar?.url || userData.avatars || ""
-  
+  const fullName = `${userData.firstName} ${userData.lastName}`.trim();
+  const avatarUrl = userData.avatar?.url || userData.avatars || "";
+
   // Format join date
-  const joinDate = new Date(userData.createdAt).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
+  const joinDate = new Date(userData.createdAt).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 
   // Format location
-  const location = userData.street && userData.postCode 
-    ? `${userData.street}, ${userData.postCode}`
-    : userData.street || "Not specified"
+  const location =
+    userData.street && userData.postCode
+      ? `${userData.street}, ${userData.postCode}`
+      : userData.street || "Not specified";
 
   return (
     <Card className="overflow-hidden h-screen">
       {/* Green header background */}
-      <div className="h-24 w-full bg-gradient-to-r from-green-400 to-green-500">
-
-      </div>
+      <div className="h-50 w-full bg-gradient-to-r from-green-400 to-green-500"></div>
 
       {/* Profile content */}
       <div className="relative px-6 pb-6">
         {/* Avatar with edit button */}
-        <div className="relative -mt-12 mb-4">
+        <div className="relative flex justify-center -mt-20 mb-4">
           <Avatar className="h-24 w-24 border-4 border-white shadow-lg">
             <AvatarImage src={avatarUrl} alt={fullName} />
             <AvatarFallback className="text-lg font-semibold">
-              {userData.firstName[0]?.toUpperCase() || ''}
-              {userData.lastName[0]?.toUpperCase() || ''}
+              {userData.firstName[0]?.toUpperCase() || ""}
+              {userData.lastName[0]?.toUpperCase() || ""}
             </AvatarFallback>
           </Avatar>
-          <button className="absolute bottom-0 right-0 rounded-full bg-green-500 p-2 text-white shadow-lg hover:bg-green-600 transition-colors">
+          {/* <button className="absolute bottom-0 right-0 rounded-full bg-green-500 p-2 text-white shadow-lg hover:bg-green-600 transition-colors">
             <Pencil className="h-3 w-3" />
-          </button>
+          </button> */}
         </div>
 
         {/* User info */}
@@ -159,7 +186,9 @@ export function ProfileCard() {
 
             <div>
               <span className="font-medium text-gray-900">Bio: </span>
-              <span className="text-gray-600">{userData.bio || "No bio available"}</span>
+              <span className="text-gray-600">
+                {userData.bio || "No bio available"}
+              </span>
             </div>
 
             <div>
@@ -169,7 +198,9 @@ export function ProfileCard() {
 
             <div>
               <span className="font-medium text-gray-900">Phone: </span>
-              <span className="text-gray-600">{userData.phoneNum || "Not specified"}</span>
+              <span className="text-gray-600">
+                {userData.phoneNum || "Not specified"}
+              </span>
             </div>
 
             <div>
@@ -189,19 +220,21 @@ export function ProfileCard() {
 
             <div>
               <span className="font-medium text-gray-900">Verified: </span>
-              <span className={`text-sm px-2 py-1 rounded-full ${
-                userData.verificationInfo?.verified 
-                  ? 'bg-green-100 text-green-800' 
-                  : 'bg-yellow-100 text-yellow-800'
-              }`}>
-                {userData.verificationInfo?.verified ? 'Verified' : 'Pending'}
+              <span
+                className={`text-sm px-2 py-1 rounded-full ${
+                  userData.verificationInfo?.verified
+                    ? "bg-green-100 text-green-800"
+                    : "bg-yellow-100 text-yellow-800"
+                }`}
+              >
+                {userData.verificationInfo?.verified ? "Verified" : "Pending"}
               </span>
             </div>
           </div>
         </div>
       </div>
     </Card>
-  )
+  );
 }
 
-export default ProfileCard
+export default ProfileCard;
