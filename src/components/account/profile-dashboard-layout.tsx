@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+
 "use client";
 
 import type React from "react";
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { User, Lock, Calendar, MapPin, LogOut, Menu } from "lucide-react";
@@ -12,29 +11,30 @@ import { signOut } from "next-auth/react";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import Image from "next/image";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
+// 🚀 No leading slash needed
 const navigation = [
-  { name: "Profile", href: "/profile", icon: User },
-  { name: "Changes Password", href: "/change-password", icon: Lock },
-  { name: "Placement History", href: "/booking-history", icon: Calendar },
-  { name: "Tour History", href: "/tour-history", icon: MapPin },
+  { name: "Profile", href: "profile", icon: User },
+  { name: "Change Password", href: "change-password", icon: Lock },
+  { name: "Placement History", href: "booking-history", icon: Calendar },
+  { name: "Tour History", href: "tour-history", icon: MapPin },
 ];
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
   const router = useRouter();
-  const pathname = usePathname();
+  const path = usePathname(); // 👉 gives full path, e.g. "/account/profile"
 
   const handleLogout = async () => {
     try {
@@ -49,18 +49,27 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="flex">
+      <div className="flex relative">
+        {/* Sidebar */}
         <div
           className={cn(
-            "fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0",
+            " inset-y-0 h-screen fixed left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 pt-[30px]",
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
           )}
         >
           <div className="flex flex-col h-full">
+            <div className="flex items-center mx-auto">
+              <Image
+                src="/images/Logo.png"
+                alt="log"
+                width={100}
+                height={100}
+              />
+            </div>
             {/* Navigation */}
             <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
               {navigation.map((item) => {
-                const isActive = pathname === item.href;
+                const isActive = path === `/account/${item.href}`;
                 return (
                   <Button
                     key={item.name}
@@ -81,19 +90,18 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                   </Button>
                 );
               })}
+              {/* Logout button */}
+              <div className="px-4 py-4 border-t border-gray-100">
+                <Button
+                  variant="ghost"
+                  className="w-full cursor-pointer justify-start gap-3 h-12 px-4 rounded-lg font-medium text-[#e5102e] hover:bg-[#feecee] hover:text-[#e5102e] transition-all duration-200"
+                  onClick={() => setLogoutModalOpen(true)}
+                >
+                  <LogOut className="h-5 w-5 cursor-pointer" />
+                  Log Out
+                </Button>
+              </div>
             </nav>
-
-            {/* Logout at bottom */}
-            <div className="px-4 py-4 mt-auto border-t border-gray-100">
-              <Button
-                variant="ghost"
-                className="w-full cursor-pointer justify-start gap-3 h-12 px-4 rounded-lg font-medium text-[#e5102e] hover:bg-[#feecee] hover:text-[#e5102e] transition-all duration-200"
-                onClick={() => setLogoutModalOpen(true)}
-              >
-                <LogOut className="h-5 w-5 cursor-pointer" />
-                Log Out
-              </Button>
-            </div>
           </div>
         </div>
 
@@ -119,7 +127,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           </div>
 
           {/* Page content */}
-          <main className="p-4 lg:p-8">{children}</main>
+          <main className="p-4 lg:p-8 max-h-screen">{children}</main>
         </div>
       </div>
 
@@ -131,6 +139,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         />
       )}
 
+      {/* Logout Modal */}
       <Dialog open={logoutModalOpen} onOpenChange={setLogoutModalOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -140,7 +149,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             <DialogTitle className="text-center text-[#343a40]">
               Are You Sure?
             </DialogTitle>
-             
           </DialogHeader>
           <DialogFooter className="flex gap-3 sm:gap-3">
             <Button
