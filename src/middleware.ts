@@ -6,15 +6,7 @@ export async function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
   const { pathname } = req.nextUrl;
 
-  // 1️⃣ Define protected routes that require authentication
-  const protectedRoutes = ["/dashboard", "/account"];
-
-  // 2️⃣ Check if the current path is a protected route
-  const isProtectedRoute = protectedRoutes.some((route) =>
-    pathname.startsWith(route)
-  );
-
-  // 3️⃣ Define public paths that don't require authentication
+  // 1️⃣ Define public paths that don't require authentication
   const publicPaths = [
     "/_next/",
     "/favicon.ico",
@@ -23,38 +15,15 @@ export async function middleware(req: NextRequest) {
     "/contact",
     "/blog",
     "/services",
-    "/login",
-    "/api",
   ];
 
   // Allow public paths without authentication
-  if (
-    !isProtectedRoute &&
-    publicPaths.some((path) => pathname.startsWith(path))
-  ) {
+  if (publicPaths.some((path) => pathname.startsWith(path))) {
     return NextResponse.next();
   }
 
-  // 4️⃣ Get JWT token from NextAuth
+  // 2️⃣ Get JWT token from NextAuth
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-
-  // 5️⃣ Redirect to login if trying to access protected routes without authentication
-  if (isProtectedRoute && !token) {
-    url.pathname = "/login";
-    url.search = `?callbackUrl=${encodeURIComponent(pathname)}`;
-    return NextResponse.redirect(url);
-  }
-
-  // 6️⃣ Get JWT token for other routes
-  if (!token) {
-    // For non-protected routes, continue without authentication
-    if (!isProtectedRoute) {
-      return NextResponse.next();
-    }
-    // Otherwise, redirect to login
-    url.pathname = "/login";
-    return NextResponse.redirect(url);
-  }
 
   // Special handling for login route
   if (pathname === "/login") {

@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { toast } from "sonner";
-import { getSession, signIn } from "next-auth/react";
+import { getSession, signIn, signOut } from "next-auth/react";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react"; // 👈 added icons
 
 import { Input } from "@/components/ui/input";
@@ -54,28 +54,34 @@ const LoginForm = () => {
 
     if (res?.error) {
       toast.error(res.error || "Invalid email or password");
+      return;
+    }
+
+    type SessionUserWithRole = {
+      name?: string | null;
+      email?: string | null;
+      image?: string | null;
+      role?: string | null;
+    };
+
+    const session = await getSession();
+    const user = session?.user as SessionUserWithRole | undefined;
+
+    // Block admin login
+    if (user?.role === "admin") {
+      toast.error("Admin login is not allowed through this portal");
+      // Sign out the user immediately
+      await signOut({ redirect: false });
+      return;
+    }
+
+    toast.success("Login successful!");
+
+    // Redirect based on role
+    if (user?.role === "organization") {
+      window.location.href = "/dashboard";
     } else {
-      console.log("res: ", res);
-      toast.success("Login successful!");
-      type SessionUserWithRole = {
-        name?: string | null;
-        email?: string | null;
-        image?: string | null;
-        role?: string | null;
-      };
-
-      const session = await getSession();
-      console.log("session: ", session);
-
-      const user = session?.user as SessionUserWithRole | undefined;
-
-      if (user?.role === "organization") {
-        router.push("/dashboard");
-      } else if (user?.role === "organization") {
-        router.push("/dashboard");
-      } else {
-        router.push("/");
-      }
+      window.location.href = "/";
     }
   };
 
@@ -86,7 +92,7 @@ const LoginForm = () => {
         onClick={() => router.push("/")}
         className="absolute top-8 md:top-16 right-16 md:right-48 flex gap-2 border-gray-500  text-[#6C757D] hover:border-b cursor-pointer"
       >
-       <ArrowLeft /> Back to Home
+        <ArrowLeft /> Back to Home
       </button>
 
       {/* Left side image */}
@@ -103,7 +109,7 @@ const LoginForm = () => {
           className="h-full w-full object-cover"
         />
         <div className="absolute top-6 left-6 text-white text-2xl font-bold">
-          <Image src='/login.png' alt="logo" width={155} height={48}  />
+          <Image src="/login.png" alt="logo" width={155} height={48} />
         </div>
       </motion.div>
 
@@ -115,7 +121,9 @@ const LoginForm = () => {
         className="flex items-center justify-center p-6 px-3 md:px-4 lg:px-0"
       >
         <div className="w-full max-w-lg">
-          <h2 className="text-3xl md:text-[40px] font-bold leading-[150%] font-playfair text-green-600 mb-2">Welcome</h2>
+          <h2 className="text-3xl md:text-[40px] font-bold leading-[150%] font-playfair text-green-600 mb-2">
+            Welcome
+          </h2>
           <p className="text-gray-500 mb-6">
             Access your account to manage tours, leads, and listings
           </p>
@@ -128,7 +136,9 @@ const LoginForm = () => {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[16px] leading-[150%] font-medium text-[#343A40]">Email Address</FormLabel>
+                    <FormLabel className="text-[16px] leading-[150%] font-medium text-[#343A40]">
+                      Email Address
+                    </FormLabel>
                     <FormControl>
                       <Input
                         type="email"
@@ -147,10 +157,13 @@ const LoginForm = () => {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[16px] leading-[150%] font-medium text-[#343A40]">Password</FormLabel>
+                    <FormLabel className="text-[16px] leading-[150%] font-medium text-[#343A40]">
+                      Password
+                    </FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <Input className=""
+                        <Input
+                          className=""
                           type={showPassword ? "text" : "password"}
                           placeholder="********"
                           {...field}
@@ -181,12 +194,15 @@ const LoginForm = () => {
                   render={({ field }) => (
                     <FormItem className="flex items-center space-x-2">
                       <FormControl>
-                        <Checkbox className="cursor-pointer"
+                        <Checkbox
+                          className="cursor-pointer"
                           checked={field.value}
                           onCheckedChange={field.onChange}
                         />
                       </FormControl>
-                      <FormLabel className="text-[16px] text-[#6C757D]">Remember me</FormLabel>
+                      <FormLabel className="text-[16px] text-[#6C757D]">
+                        Remember me
+                      </FormLabel>
                     </FormItem>
                   )}
                 />
