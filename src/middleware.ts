@@ -8,6 +8,8 @@ const PUBLIC_EXACT = [
   "/privacy-policy",
   "/about-us",
   "/contact-us",
+  "/facilities",
+  "/search",
   "/blogs",
   "/login",
   "/favicon.ico",
@@ -17,8 +19,7 @@ const PUBLIC_PREFIX = [
   "/_next/image",
   "/static/",
   "/api/auth/",
-  "/images/",
-  "/gallary/",
+  "/:path*",
 ];
 
 export async function middleware(req: NextRequest) {
@@ -126,8 +127,8 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     * - images, gallary (public asset directories)
+     * - All public asset directories
      */
-    "/((?!api/auth|_next/static|_next/image|favicon.ico|images|gallary).*)",
+    "/((?!api/auth|_next/static|_next/image|favicon.ico|about|gallary|blogs|contact|images|dashboard|public|icons|assets).*)",
   ],
 };
