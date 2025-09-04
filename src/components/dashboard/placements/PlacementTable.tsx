@@ -53,6 +53,7 @@ export function BookingsTable() {
     setDialogOpen(true);
   };
 
+
   if (isFacilitiesLoading || isLoading) {
     return (
       <div className="flex items-center justify-center h-64 text-muted-foreground">
@@ -76,6 +77,8 @@ export function BookingsTable() {
     </div>
   );
 }
+
+
 
   return (
     <div className="space-y-4">

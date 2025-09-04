@@ -5,8 +5,8 @@ import React from "react";
 
 const page = () => {
   return (
-    <section>
-      <div className="container mx-auto">
+    <section className="bg-[#F8F9FA]">
+      <div className="">
          <FacilitiesDetails />
       </div>
     </section>

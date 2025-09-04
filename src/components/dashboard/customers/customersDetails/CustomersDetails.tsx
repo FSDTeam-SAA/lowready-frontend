@@ -18,7 +18,7 @@ const CustomersDetails: React.FC<CustomersDetailsProps> = ({ id }) => {
     avatar: "/images/john.jpg",
   };
 
-  console.log(id);
+  
 
   return (
     <section className="p-6">

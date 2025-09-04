@@ -13,7 +13,7 @@ import axios from "axios";
 import { getSession } from "next-auth/react";
 
 export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
+  process.env.NEXT_PUBLIC_API_URL || "https://lowready-backend.onrender.com/api/v1";
 
 // Create axios instance
 const api = axios.create({
@@ -765,5 +765,21 @@ export async function reviewratinSummery(id: string) {
     if (error instanceof Error) {
       throw new Error(`Get Booking Error ${error.message}`);
     }
+  }
+}
+
+// create contact us data
+export async function createContactUs(userData: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  message: string;
+}) {
+  try {
+    const res = await api.post(`/contactUs/send-message`, userData);
+    return res.data;
+  } catch  {
+    throw new Error("Contact Us Error");
   }
 }

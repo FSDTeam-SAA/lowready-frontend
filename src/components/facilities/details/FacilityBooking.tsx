@@ -80,8 +80,9 @@ export function FacilityBooking({ data,facilityId }: FacilityTourProps) {
   const datas = data?.data || [];
 
   return (
-    <section className="my-6" id="requestACall">
-      <h2 className="text-xl font-semibold">
+    <section className=" ">
+     <div className="container mx-auto  pt-[30px] shadow-2xl p-[40px]" id="requestACall">
+       <h2 className="text-xl text-[32px] font-playfair font-semibold">
         Book a tour at
         <span className="text-green-400"> Sunny Hills Assisted Living</span>
       </h2>
@@ -94,7 +95,7 @@ export function FacilityBooking({ data,facilityId }: FacilityTourProps) {
         onSubmit={handleSubmit(handleCreate)}
         className=" pt-[80px] mt-4"
       >
-        <div className="lg:flex justify-between">
+        <div className="lg:flex justify-between gap-[80px]">
           {/* Left Column */}
           <div className="lg:w-1/2 mx-auto lg:mx-0">
             <div>
@@ -108,7 +109,7 @@ export function FacilityBooking({ data,facilityId }: FacilityTourProps) {
                   setDate(selectedDate);
                   setValue("date", selectedDate); // ✅ Bind to form
                 }}
-                className="rounded-md border mx-auto lg:mx-0 shadow-sm w-full  md:w-1/2 lg:w-[70%] bg-gray-100"
+                className="rounded-md border mx-auto lg:mx-0 shadow-sm w-full  md:w-1/2 lg:w-[100%] bg-gray-100"
                 captionLayout="dropdown"
               />
               {errors.date && (
@@ -118,7 +119,7 @@ export function FacilityBooking({ data,facilityId }: FacilityTourProps) {
 
             <div className="pt-[24px]">
               <h2>Available Time</h2>
-              <ul className="flex flex-wrap gap-2">
+              <ul className="flex flex-wrap justify-between gap-2">
                 {datas?.availableTime?.map((item: string, id: number) => (
                   <li
                     key={id}
@@ -126,7 +127,7 @@ export function FacilityBooking({ data,facilityId }: FacilityTourProps) {
                       setSelectedTime(item); // Set selected time
                       setValue("time", item); // Bind selected time to form
                     }}
-                    className={` px-5 py-2 cursor-pointer  text-[#68706A] rounded-xl hover:bg-[#28A745] hover:text-white ${
+                    className={` px-5 py-2 w-[40%] md:w-[20%] cursor-pointer  text-[#68706A] rounded-xl hover:bg-[#28A745] hover:text-white ${
                       item === selectedTime ? "bg-[#28A745] text-white" : ""
                     } ${errors.time ? "border-2 border-red-500" : ""}`}
                   >
@@ -229,6 +230,7 @@ export function FacilityBooking({ data,facilityId }: FacilityTourProps) {
           </div>
         </div>
       </form>
+     </div>
     </section>
   );
 }

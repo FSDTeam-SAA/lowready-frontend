@@ -1,17 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+// import { Input } from "@/components/ui/input";
+// import { Button } from "@/components/ui/button";
 import logo from "../../../public/images/Logo.png";
-import { FaFacebookSquare } from "react-icons/fa";
-import { FaInstagramSquare } from "react-icons/fa";
-import { FaLinkedin } from "react-icons/fa6";
-import { FaTwitter } from "react-icons/fa6";
+// import { FaFacebookSquare } from "react-icons/fa";
+// import { FaInstagramSquare } from "react-icons/fa";
+// import { FaLinkedin } from "react-icons/fa6";
+// import { FaTwitter } from "react-icons/fa6";
 import { Mail, MapPin, Phone } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="bg-[#E6F9EB] py-12 lg:py-16">
+    <footer className="bg-[#E6F9EB] py-4 lg:py-5">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12">
           {/* Brand Section */}
@@ -59,7 +59,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  href="/about"
+                  href="/about-us"
                   className="text-sm text-muted-foreground hover:text-primary transition-colors"
                 >
                   About Us
@@ -82,7 +82,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  href="/blog"
+                  href="/blogs"
                   className="text-sm text-muted-foreground hover:text-primary transition-colors"
                 >
                   Blogs
@@ -123,7 +123,7 @@ const Footer = () => {
           </div>
 
           {/*  Newsletter */}
-          <div className="space-y-6">
+          {/* <div className="space-y-6">
             <div className="space-y-4">
               <h3 className="font-semibold text-lg">Newsletter</h3>
               <p className="text-sm text-muted-foreground">
@@ -149,12 +149,12 @@ const Footer = () => {
                 <FaTwitter className="text-3xl  text-gray-500 duration-700 hover:text-blue-400" />
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Divider and Copyright */}
-        <div className="mt-12 pt-8 border-t border-primary/20">
-          <p className="text-center text-sm text-muted-foreground">
+        <div className="mt-5 pt-5 border-t border-primary/20">
+          <p className="text-center text-sm pb-0 text-muted-foreground">
             © 2025 Albin Hub. All rights reserved.
           </p>
         </div>

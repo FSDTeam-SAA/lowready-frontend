@@ -20,46 +20,46 @@ const HowWorks = () => {
       </div>
       <div className='flex flex-col md:flex-row lg:flex-row gap-4 px-2' >
         
-        <Card className="w-full overflow-hidden text-center  p-5 items-center flex flex-col justify-center bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+        <Card className="w-full overflow-hidden text-center  px-5 py-3 items-center flex flex-col justify-center bg-white  hover:shadow-xl transition-shadow duration-300">
             {/* Search Icon: Centered and Larger */}
 
             <Image src={searchimage} alt="search-icon" width={80} height={80}/>
 
             {/* Heading */}
-            <h2 className="text-xl text-primary sm:text-3xl font-semibold md:text-3xl mb-6 md:mb-8 leading-tight" style={{ fontFamily: "var(--font-playfair)" }}>
+            <h2 className="text-xl text-primary sm:text-2xl font-semibold md:text-2xl mb-0 md:mb-0 font-playfair leading-tight" >
                 Search & Compare Facilities
             </h2>
 
             {/* Paragraph */}
-            <p className="text-sm sm:text-lg md:text-xl text-gray-700 mx-auto">
+            <p className="text-sm sm:text-sm md:text-base text-gray-700 mx-auto">
                 Find the best options tailored to your needs with filters for location, price, amenities, and services.
             </p>
         </Card>
-            <Card className="w-full overflow-hidden text-center items-center p-5 flex flex-col justify-center bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <Card className="w-full overflow-hidden text-center  px-5 py-3 items-center flex flex-col justify-center bg-white  hover:shadow-xl transition-shadow duration-300">
             {/* Search Icon: Centered and Larger */}
                 <Image src={puzzelimge} alt="search-icon" width={80} height={80}/>
 
             {/* Heading */}
-            <h2 className="text-xl text-primary sm:text-3xl font-semibold md:text-3xl mb-6 md:mb-8 leading-tight" style={{ fontFamily: "var(--font-playfair)" }}>
+            <h2 className="text-xl text-primary sm:text-2xl font-semibold md:text-2xl mb-0 md:mb-0 font-playfair leading-tight" >
                 Connect Directly
             </h2>
 
             {/* Paragraph */}
-            <p className="text-sm sm:text-lg md:text-xl text-gray-700 mx-auto">
+            <p className="text-sm sm:text-sm md:text-base text-gray-700 mx-auto">
                 Reach out to facilities without middlemen for faster, clearer communication.
             </p>
         </Card>
-        <Card className="w-full overflow-hidden text-center items-center p-5 flex flex-col justify-center bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+        <Card className="w-full overflow-hidden text-center  px-5 py-3 items-center flex flex-col justify-center bg-white  hover:shadow-xl transition-shadow duration-300">
             {/* Search Icon: Centered and Larger */}
             <Image src={calenderimg} alt="search-icon" width={80} height={80} />
 
             {/* Heading */}
-            <h2 className="text-xl text-primary sm:text-3xl font-semibold md:text-3xl mb-6 md:mb-8 leading-tight" style={{ fontFamily: "var(--font-playfair)" }}>
+            <h2 className="text-xl text-primary sm:text-2xl font-semibold md:text-2xl mb-0 md:mb-0 font-playfair leading-tight" >
                 Book Tours & Services
             </h2>
 
             {/* Paragraph */}
-            <p className="text-sm sm:text-lg md:text-xl text-gray-700 mx-auto">
+            <p className="text-sm sm:text-sm md:text-base text-gray-700 mx-auto">
                 Schedule visits and confirm services easily through our platform.
             </p>
         </Card>

@@ -427,7 +427,7 @@ export default function TourHistoryPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {tours?.bookings.map((tour: any, index: number) => {
+                  {tours?.bookings?.map((tour: any, index: number) => {
                     // Mock status for demo to match Figma
                     const statuses = [
                       "upcoming",
@@ -500,7 +500,7 @@ export default function TourHistoryPage() {
 
           {/* Mobile Cards */}
           <div className="md:hidden space-y-4 p-4">
-            {tours.map((tour: any, index: number) => {
+            {tours?.bookings?.map((tour: any, index: number) => {
               const statuses = [
                 "upcoming",
                 "completed",

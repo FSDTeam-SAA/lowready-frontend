@@ -30,6 +30,7 @@ import Link from "next/link";
 import { ConfirmBookingModal } from "@/components/shared/ConfirmBookingModal";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
+import { toast } from "sonner";
 
 interface Location {
   _id: string;
@@ -42,7 +43,7 @@ export default function SearchField() {
   const initialLocation = searchParams.get("location") || "Dhaka";
   const [filters, setFilters] = useState<FacilityFilters>({
     minPrice: 0,
-    maxPrice: 1000000,
+    maxPrice: undefined,
     location: initialLocation,
     availability: true,
     rating: undefined,
@@ -88,7 +89,7 @@ export default function SearchField() {
 
     queryFn: facilitiesLocation,
   });
-  
+
   const locations: Location[] = locationdata?.data || [];
 
   // Fetch facilities
@@ -104,6 +105,12 @@ export default function SearchField() {
   const createBookingMutation = useMutation({
     mutationKey: ["booking"],
     mutationFn: (values: BookingType) => createBooking(values),
+    onSuccess: (data) => {
+      toast.success(data.message);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
   });
 
   async function handleBookingSubmit(values: BookingType) {
@@ -155,14 +162,21 @@ export default function SearchField() {
   return (
     <div className="relative container mx-auto w-full min-h-screen bg-white">
       {/* Search Bar */}
-      <div className=" z-50 bg-white shadow-2xl my-10 p-4  rounded-xl flex items-center mx-auto justify-between w-[85%] lg:w-8/12 gap-2">
+      <div className=" z-50 bg-white  my-10 p-4 shadow-xl  rounded-xl flex items-center mx-auto justify-between w-[85%] lg:w-8/12 gap-2">
         <Input
           placeholder="Enter location..."
           value={filters.location}
           onChange={handleLocationChange}
           className=" border-none w-[70%] outline-none shadow-none"
         />
-        <Button className="cursor-pointer" onClick={() => refetch()}>
+        <Button
+          className="cursor-pointer"
+          onClick={() => {
+            setIsSearching(false);
+            setFilters({ ...filters });
+            refetch();
+          }}
+        >
           Search
         </Button>
       </div>
@@ -173,9 +187,9 @@ export default function SearchField() {
           isSearching ? "opacity-40" : "opacity-100"
         } transition-opacity duration-300`}
       >
-        <div className="flex">
+        <div className="flex flex-col lg:flex-row justify-center  lg:justify-between">
           {/* Left Sidebar Filters */}
-          <aside className="hidden md:block w-1/4 lg:w-1/5 p-6 space-y-6 sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto border-r">
+          <aside className="lg:w-1/5 p-6 lg:space-y-6 lg:sticky top-16 lg:h-[calc(100vh-4rem)] md:overflow-y-auto border-r">
             {/* Price Range */}
             <div>
               <h3 className="font-semibold mb-2">Price Range</h3>
@@ -219,7 +233,7 @@ export default function SearchField() {
                   setFilters({ ...filters, location: val })
                 }
               >
-                <SelectTrigger className="w-full cursor-pointer h-[44px] px-3 ">
+                <SelectTrigger className="w-[200px] cursor-pointer h-[44px] px-3">
                   <SelectValue placeholder="Select Location" />
                 </SelectTrigger>
                 <SelectContent>
