@@ -2,123 +2,132 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 
+const PUBLIC_EXACT = [
+  "/",
+  "/faqs",
+  "/privacy-policy",
+  "/about-us",
+  "/contact-us",
+  "/blogs",
+  "/login",
+  "/favicon.ico",
+];
+const PUBLIC_PREFIX = [
+  "/_next/",
+  "/_next/image",
+  "/static/",
+  "/api/auth/",
+  "/images/",
+  "/gallary/",
+];
+
 export async function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
   const { pathname } = req.nextUrl;
 
-  // 1️⃣ Define public paths that don't require authentication
-  const publicPaths = [
-    "/_next/",
-    "/favicon.ico",
-    "/",
-    "/about",
-    "/contact",
-    "/blog",
-    "/services",
-  ];
-
-  // Allow public paths without authentication
-  if (publicPaths.some((path) => pathname.startsWith(path))) {
+  // 1) Allow public routes and static assets
+  if (
+    PUBLIC_EXACT.includes(pathname) ||
+    PUBLIC_PREFIX.some((p) => pathname.startsWith(p))
+  ) {
     return NextResponse.next();
   }
 
-  // 2️⃣ Get JWT token from NextAuth
+  // 2) Get JWT
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
-  // Special handling for login route
-  if (pathname === "/login") {
-    // If already logged in, redirect based on role
-    if (token) {
-      if (token.role === "admin") {
-        url.pathname = "/unauthorized";
-        return NextResponse.redirect(url);
-      }
-
-      url.pathname = token.role === "organization" ? "/dashboard" : "/account";
-      return NextResponse.redirect(url);
-    }
-    // Not logged in, allow access to login page
-    return NextResponse.next();
+  // Only log in development
+  if (process.env.NODE_ENV === "development") {
+    console.log("Debug - Current path:", pathname);
+    console.log("Debug - Token:", token);
   }
-
-  // 3️⃣ Not logged in → redirect to login
   if (!token) {
     url.pathname = "/login";
     return NextResponse.redirect(url);
   }
 
-  // 4️⃣ Handle admin role - restrict access completely
-  if (token.role === "admin") {
+  // ✅ Your role is directly on the token
+  const role = token.role;
+
+  if (!role) {
     url.pathname = "/unauthorized";
     return NextResponse.redirect(url);
   }
 
-  // 5️⃣ Define role-based route access
-  const roleRouteAccess: Record<
-    string,
-    { allowed: string[]; restricted: string[] }
-  > = {
-    user: {
-      allowed: ["/account"],
-      restricted: ["/dashboard"],
-    },
-    organization: {
-      allowed: ["/dashboard"],
-      restricted: [
-        "/account",
-        "/",
-        "/about-us",
-        "/contact-us",
-        "/blogs",
-        "/facilities",
-        "/allreview",
-        "/search",
-      ],
-    },
-  };
-
-  const roleAccess =
-    roleRouteAccess[token.role as keyof typeof roleRouteAccess];
-
-  // 6️⃣ Check for restricted paths
-  if (roleAccess?.restricted.some((route) => pathname.startsWith(route))) {
-    url.pathname = "/unauthorized";
-    return NextResponse.redirect(url);
-  }
-
-  // 7️⃣ Check for allowed paths
-  if (roleAccess?.allowed.some((route) => pathname.startsWith(route))) {
-    return NextResponse.next();
-  }
-
-  // 8️⃣ Handle organization access - restrict to dashboard only
-  if (token.role === "organization") {
-    // If not accessing dashboard, redirect to dashboard
-    if (!pathname.startsWith("/dashboard")) {
+  // 3) Special handling for /login
+  if (pathname === "/login") {
+    if (role === "organization") {
       url.pathname = "/dashboard";
-      return NextResponse.redirect(url);
+    } else if (role === "user") {
+      url.pathname = "/account";
+    } else if (role === "admin") {
+      url.pathname = "/unauthorized"; // or "/admin/dashboard"
+    } else {
+      url.pathname = "/unauthorized";
     }
-    // If accessing dashboard, allow
-    return NextResponse.next();
+    return NextResponse.redirect(url);
   }
 
-  // 9️⃣ Handle user access
-  if (token.role === "user") {
-    // Allow access to website routes for users
-    if (
-      !pathname.startsWith("/account") &&
-      !pathname.startsWith("/dashboard")
-    ) {
+  // 4) Role-specific rules
+  console.log("🔍 DEBUG - Processing role-specific rules for role:", role);
+
+  if (role === "organization") {
+    console.log("✅ DEBUG - Organization role detected");
+    // Organization users can only access:
+    // - /dashboard and its subroutes (their main area)
+    if (pathname.startsWith("/dashboard")) {
+      console.log("✅ DEBUG - Organization accessing dashboard - ALLOWED");
       return NextResponse.next();
     }
+
+    // Redirect to dashboard for all other routes
+    console.log(
+      "❌ DEBUG - Organization trying to access non-dashboard route - REDIRECTING"
+    );
+    url.pathname = "/dashboard";
+    return NextResponse.redirect(url);
   }
 
-  // 🔟 Default: redirect to unauthorized
+  if (role === "user") {
+    // Users can access:
+    console.log("✅ DEBUG - User accessing general website - ALLOWED");
+    // - /account and its subroutes (their main area)
+    // - General website pages (but NOT /dashboard)
+    if (pathname.startsWith("/account")) {
+      return NextResponse.next();
+    }
+
+    // Block access to /dashboard for users
+    if (pathname.startsWith("/dashboard")) {
+      url.pathname = "/unauthorized";
+      return NextResponse.redirect(url);
+    }
+
+    // Allow access to all other routes (general website)
+    return NextResponse.next();
+  }
+
+  if (role === "admin") {
+    // Adjust if you want an admin dashboard
+    url.pathname = "/unauthorized";
+    return NextResponse.redirect(url);
+  }
+
+  // Default deny
   url.pathname = "/unauthorized";
   return NextResponse.redirect(url);
 }
 
-// Apply middleware to all routes
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api/auth (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - images, gallary (public asset directories)
+     */
+    "/((?!api/auth|_next/static|_next/image|favicon.ico|images|gallary).*)",
+  ],
 };
