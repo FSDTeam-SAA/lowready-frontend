@@ -7,7 +7,7 @@ const EarningSummeryBottom = () => {
     <section className="px-5  py-[24px]">
       <div className="flex justify-between gap-5 ">
         <div className="w-1/2">
-          <Card className="bg-white w-full">
+          <Card className="bg-white p-5 w-full">
             <CardHeader className="flex flex-row items-center justify-between pb-4 w-full">
               <CardTitle className="text-lg font-semibold text-gray-900">
                 Recent Placements
@@ -59,7 +59,7 @@ const EarningSummeryBottom = () => {
           </Card>
         </div>
         <div className="w-1/2">
-          <Card className="bg-white w-full">
+          <Card className="bg-white p-5 w-full">
             <CardHeader className="flex flex-row items-center justify-between pb-4 w-full">
               <CardTitle className="text-lg font-semibold text-gray-900">
                 Referral Fee (18%)
