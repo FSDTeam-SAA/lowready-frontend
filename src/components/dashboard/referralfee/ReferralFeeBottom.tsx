@@ -29,9 +29,9 @@ const ReferralFeeBottom = () => {
               <SelectValue placeholder="Select a option" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="light">habu</SelectItem>
-              <SelectItem value="dark">Habibulla</SelectItem>
-              <SelectItem value="system">hi</SelectItem>
+              <SelectItem value="light">Paid</SelectItem>
+              <SelectItem value="dark">UnPaid</SelectItem>
+              {/* <SelectItem value="system">i</SelectItem> */}
             </SelectContent>
           </Select>
         </div>
@@ -42,9 +42,9 @@ const ReferralFeeBottom = () => {
               <SelectValue placeholder="Select a option" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="light">hey</SelectItem>
-              <SelectItem value="dark">sei</SelectItem>
-              <SelectItem value="system">System</SelectItem>
+              <SelectItem value="light"></SelectItem>
+              <SelectItem value="dark"></SelectItem>
+              <SelectItem value="system"></SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -53,14 +53,14 @@ const ReferralFeeBottom = () => {
         <Table>
           <TableHeader>
             <TableRow className="bg-[#E6FAEE]">
-              <TableHead>Invoice</TableHead>
-              <TableHead>Billing Month</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Referral Fee (18%)</TableHead>
-              <TableHead>Action</TableHead>
+              <TableHead className="text-center">Invoice</TableHead>
+              <TableHead className="text-center">Billing Month</TableHead>
+              <TableHead className="text-center">Status</TableHead>
+              <TableHead className="text-center">Referral Fee (18%)</TableHead>
+              <TableHead className="text-center">Action</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
+          <TableBody className="text-center">
             <TableRow className="hover:bg-muted/50">
               <TableCell>#12333</TableCell>
               <TableCell>
@@ -72,8 +72,8 @@ const ReferralFeeBottom = () => {
               <TableCell>
                 <p>$123</p>
               </TableCell>
-              <TableCell>
-                <Button className="bg-[#28A745]">Pay</Button>
+              <TableCell className=" py-1">
+                <Button className="bg-[#28A745] px-10 cursor-pointer">Pay</Button>
               </TableCell>
             </TableRow>
           </TableBody>

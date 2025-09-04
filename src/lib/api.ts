@@ -63,6 +63,7 @@ export interface BookingData {
     email: string;
     avatar: string;
   };
+  images:Avatar[];
   location: string;
   price: number;
   status: "Paid" | "Cancelled";
@@ -99,6 +100,7 @@ export interface Facility {
 export interface Avatar {
   public_id: string;
   url: string;
+  _id?: string;
 }
 
 export interface VerificationInfo {
@@ -168,6 +170,7 @@ export function mapApiBookingToBookingData(
       email: apiBooking.userId.email,
       avatar: apiBooking.userId.avatar?.url || "/placeholder.svg",
     },
+    images: facility?.images || [], // ✅ Added
     location: facility?.location || "N/A",
     price: apiBooking.totalPrice,
     status: apiBooking.paymentStatus === "paid" ? "Paid" : "Cancelled",
@@ -210,7 +213,7 @@ export async function getFacilities() {
   }
 }
 
-// ✅ unified customer/bookings API
+// customer/bookings API
 export async function getCustomers(
   facilityId: string,
   page: number,
@@ -280,7 +283,7 @@ export async function markNotificationAsRead(
 // -------------------------------
 export interface FacilityImage {
   public_id: string;
-  url: ImageType;
+  url: string;
   _id: string;
 }
 
