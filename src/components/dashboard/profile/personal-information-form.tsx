@@ -113,7 +113,7 @@ export function PersonalInformationForm() {
 
   return (
     <div className="overflow-hidden ">
-      <Card className="overflow-hidden">
+      <Card className="overflow-hidden p-5">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-6">
           <div>
             <h3 className="text-lg font-semibold text-gray-900">
@@ -149,34 +149,64 @@ export function PersonalInformationForm() {
             </div>
           </RadioGroup>
 
-          {/* Text Inputs */}
-          {[
-            "firstName",
-            "lastName",
-            "email",
-            "phoneNum",
-            "bio",
-            "address",
-            "location",
-            "postCode",
-          ].map((field) => (
+          {/* Text Inputs - 2x2 Grid Layout */}
+          <div className="grid grid-cols-2 gap-4">
+            {["firstName", "lastName", "email", "phoneNum"].map((field) => (
+              <div key={field} className="space-y-2">
+                <Label className="capitalize text-sm font-medium text-gray-700">
+                  {field}
+                </Label>
+                <Input
+                  type={field === "email" ? "email" : "text"}
+                  value={formData[field as keyof FormDataType] as string}
+                  onChange={(e) =>
+                    handleInputChange(
+                      field as keyof FormDataType,
+                      e.target.value
+                    )
+                  }
+                  className="w-full"
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* Remaining inputs below */}
+          {["bio", "address", "location", "postCode"].map((field) => (
             <div key={field} className="space-y-2">
               <Label className="capitalize text-sm font-medium text-gray-700">
                 {field}
               </Label>
-              <Input
-                type={field === "email" ? "email" : "text"}
-                value={formData[field as keyof FormDataType] as string}
-                onChange={(e) =>
-                  handleInputChange(field as keyof FormDataType, e.target.value)
-                }
-                className="w-full"
-              />
+              {field === "bio" ? (
+                <textarea
+                  value={formData[field as keyof FormDataType] as string}
+                  onChange={(e) =>
+                    handleInputChange(
+                      field as keyof FormDataType,
+                      e.target.value
+                    )
+                  }
+                  className="w-full min-h-[100px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-vertical"
+                  placeholder="Tell us about yourself..."
+                />
+              ) : (
+                <Input
+                  type="text"
+                  value={formData[field as keyof FormDataType] as string}
+                  onChange={(e) =>
+                    handleInputChange(
+                      field as keyof FormDataType,
+                      e.target.value
+                    )
+                  }
+                  className="w-full"
+                />
+              )}
             </div>
           ))}
 
           {/* Photo Upload */}
-          <div className="space-y-2">
+          <div className="space-y-2 ">
             <Label className="text-sm font-medium text-gray-700">
               Profile Photo
             </Label>
