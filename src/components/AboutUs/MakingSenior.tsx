@@ -5,7 +5,7 @@ export default function MakingSenior() {
   return (
     <section className="bg-[#F8F9FA]">
       <div className="mx-auto container">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center px-8 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center py-10">
           {/* Left side - images */}
           <div className="grid grid-cols-2 gap-4">
             <div className="row-span-2">
