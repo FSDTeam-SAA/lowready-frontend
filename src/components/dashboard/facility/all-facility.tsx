@@ -81,6 +81,7 @@ const FacilityCard: React.FC<FacilityCardProps> = ({ facility }) => {
           </div>
         </div>
 
+
         <div className="flex items-center gap-2 mb-3">
           <MapPin className="w-4 h-4 text-gray-400" />
           <span className="text-sm text-gray-600">{facility.location}</span>
