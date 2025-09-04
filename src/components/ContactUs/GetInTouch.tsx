@@ -95,7 +95,7 @@ export default function GetInTouch() {
                       <FormLabel>First Name</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Name Here"
+                          placeholder="Frist Name"
                           {...field}
                           className="py-5 rounded-sm"
                         />
@@ -113,7 +113,7 @@ export default function GetInTouch() {
                       <FormLabel>Last Name</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Name Here"
+                          placeholder="Last Name"
                           {...field}
                           className="py-5 rounded-sm"
                         />

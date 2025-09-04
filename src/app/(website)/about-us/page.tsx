@@ -3,17 +3,25 @@ import MakingSenior from "@/components/AboutUs/MakingSenior";
 import WhyWeStarted from "@/components/AboutUs/WhyWeStarted";
 import HowWorks from "@/components/landing/HowWorks";
 import FindCare from "@/components/shared/FindPerfectCare";
+import SmallHero from "@/components/shared/SmallHero";
 import React from "react";
 
 export default function page() {
   return (
     <div>
-      <FindCare
+      {/* <FindCare
         imageSrc="/about/about-us.jpg"
-        heading="Reach Out to ALH Hub for Support & Guidance"
+        heading="Connecting Families with Trusted Facilities"
         subHeading="Our team is ready to assist you with any questions, provide guidance, and help you confidently connect with the most suitable assisted living facilities for your loved ones."
         buttonText="Get Started"
         showButton={false}
+      /> */}
+
+      <SmallHero
+        imageSrc="/about/about-us.jpg"
+        heading="Connecting Families with"
+        subHeading="Trusted Facilities"
+        description="e aim to bridge the gap between families and quality care providers, making it simple to discover, compare, and connect with the right residential options for your loved ones."
       />
       <MakingSenior />
       <HowWorks />
