@@ -189,7 +189,7 @@ export default function AddFacilityPage() {
     
     const file = e.target.files?.[0];
     if (file) {
-      console.log("Video file selected:", file.name, file.type, file.size);
+      
       const isValidType =
         file.type.startsWith("video/") ||
         file.name.toLowerCase().match(/\.(mp4|mov|avi|mkv|webm|flv|wmv)$/i);
@@ -207,7 +207,7 @@ export default function AddFacilityPage() {
         e.target.value = "";
         return;
       }
-      console.log("Video file valid, setting state");
+      
       setSelectedVideo(file);
     } else {
       toast.error('somting error handelvideo upload')
@@ -332,7 +332,7 @@ export default function AddFacilityPage() {
   const handleSubscribe = async (plan: SubscriptionPlan) => {
     try {
       // Your subscription logic here
-      console.log('Subscribing to plan:', plan);
+      
       
       closePricingModal();
       toast.success('Subscription activated! You can now add facilities.');
@@ -758,7 +758,7 @@ export default function AddFacilityPage() {
                               <button
                                 type="button"
                                 onClick={() => {
-                                  console.log("Removing video file");
+                                  
                                   setSelectedVideo(null);
                                 }}
                                 className="text-red-500 hover:text-red-700 p-1"

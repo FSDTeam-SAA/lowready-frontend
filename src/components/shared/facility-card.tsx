@@ -113,7 +113,7 @@ export default function FacilityCard({ facility }: FacilityCardProps) {
               </div>
             </div>
 
-            <div className="flex items-center gap-1 text-gray-600">
+            <div className="flex items-center gap-1 text-xs text-[#68706A]">
               <MapPin className="w-4 h-4" />
               <span className="text-sm">{facility?.location}</span>
             </div>

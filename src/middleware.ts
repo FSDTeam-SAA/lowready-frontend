@@ -64,7 +64,16 @@ export async function middleware(req: NextRequest) {
     },
     organization: {
       allowed: ["/dashboard"],
-      restricted: ["/account", "/"],
+      restricted: [
+        "/account",
+        "/",
+        "/about-us",
+        "/contact-us",
+        "/blogs",
+        "/facilities",
+        "/allreview",
+        "/search",
+      ],
     },
   };
 
@@ -82,10 +91,15 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // 8️⃣ Handle organization access to website routes
-  if (token.role === "organization" && !pathname.startsWith("/dashboard")) {
-    url.pathname = "/dashboard";
-    return NextResponse.redirect(url);
+  // 8️⃣ Handle organization access - restrict to dashboard only
+  if (token.role === "organization") {
+    // If not accessing dashboard, redirect to dashboard
+    if (!pathname.startsWith("/dashboard")) {
+      url.pathname = "/dashboard";
+      return NextResponse.redirect(url);
+    }
+    // If accessing dashboard, allow
+    return NextResponse.next();
   }
 
   // 9️⃣ Handle user access

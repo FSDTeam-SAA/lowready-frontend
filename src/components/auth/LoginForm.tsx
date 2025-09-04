@@ -35,6 +35,7 @@ const LoginForm = () => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
 
+  const [isLoading, setLoading] = useState(false);
   const form = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -46,45 +47,52 @@ const LoginForm = () => {
 
   // ✅ Handle login with NextAuth
   const onSubmit = async (values: LoginSchema) => {
-    const res = await signIn("credentials", {
-      redirect: false,
-      email: values.email,
-      password: values.password,
-    });
+  setLoading(true);
+    try {
+      const res = await signIn("credentials", {
+        redirect: false,
+        email: values.email,
+        password: values.password,
+      });
 
     if (res?.error) {
-      toast.error(res.error || "Invalid email or password");
-      return;
-    }
+        toast.error(res.error || "Invalid email or password");
+        return;
+      }
 
-    type SessionUserWithRole = {
-      name?: string | null;
-      email?: string | null;
-      image?: string | null;
-      role?: string | null;
-    };
+      type SessionUserWithRole = {
+        name?: string | null;
+        email?: string | null;
+        image?: string | null;
+        role?: string | null;
+      };
 
-    const session = await getSession();
-    const user = session?.user as SessionUserWithRole | undefined;
+      const session = await getSession();
+      const user = session?.user as SessionUserWithRole | undefined;
 
     // Block admin login
-    if (user?.role === "admin") {
-      toast.error("Admin login is not allowed through this portal");
-      // Sign out the user immediately
-      await signOut({ redirect: false });
-      return;
-    }
+      if (user?.role === "admin") {
+        toast.error("Admin login is not allowed through this portal");
+        // Sign out the user immediately
+        await signOut({ redirect: false });
+        return;
+      }
 
-    toast.success("Login successful!");
+      toast.success("Login successful!");
 
-    // Redirect based on role
-    if (user?.role === "organization") {
-      window.location.href = "/dashboard";
-    } else {
-      window.location.href = "/";
+      // Redirect based on role
+      if (user?.role === "organization") {
+        window.location.href = "/dashboard";
+      } else {
+        window.location.href = "/";
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("Something went wrong during login. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
-
   return (
     <section className="min-h-screen grid lg:grid-cols-2">
       {/* back to home  */}
@@ -219,8 +227,9 @@ const LoginForm = () => {
               <Button
                 type="submit"
                 className="w-full bg-green-600 hover:bg-green-700 cursor-pointer"
+                disabled={isLoading}
               >
-                Log In
+              {isLoading ? "Logging In" : "Log In"}
               </Button>
             </form>
           </Form>

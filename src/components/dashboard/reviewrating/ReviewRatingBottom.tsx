@@ -66,7 +66,7 @@ const ReviewRatingBottom = () => {
     queryFn: () => getReviewRating(facilityId),
     enabled: !!facilityId,
   });
-  console.log(data);
+  
 
   const deleteMutation = useMutation({
     mutationKey: ["delete"],
@@ -322,7 +322,7 @@ const ReviewRatingBottom = () => {
               className="bg-red-600 hover:bg-red-700 text-white"
               onClick={() => {
                 // 👉 Here you can call your API
-                console.log("Delete review", deleteReview?._id);
+                
                 setDeleteReview(null);
                 handelDelete(deleteReview?._id || "");
               }}
