@@ -89,6 +89,7 @@ export function PricingModal({ open, onOpenChange }: PricingModalProps) {
     setIsSubscribing(true)
     setError(null)
 
+    console.log(plan)
     try {
       const response = await fetch(`${baseUrl}/payment/pay`, {
         method: 'POST',
@@ -97,9 +98,12 @@ export function PricingModal({ open, onOpenChange }: PricingModalProps) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          planId: plan._id,
+          referenceId: plan._id,
+          type: "subscription",
+          billingCycle:"monthly",
         }),
       })
+      console.log(response)
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
@@ -129,7 +133,7 @@ export function PricingModal({ open, onOpenChange }: PricingModalProps) {
   }
 
   const getBillingText = (billingCycle: string) => {
-    return billingCycle === 'yearly' ? 'per year' : 'per month'
+    return billingCycle === 'yearly' ? ' /year' : '/ month'
   }
 
   // Don't render if no base URL or access token
@@ -222,10 +226,10 @@ export function PricingModal({ open, onOpenChange }: PricingModalProps) {
                   <span className="text-4xl font-bold">
                     {formatPrice(plan.price, plan.currency)}
                   </span>
-                </div>
                 <span className="text-green-100 text-sm">
                   {getBillingText(plan.billingCycle)}
                 </span>
+                </div>
               </div>
 
               <Button
