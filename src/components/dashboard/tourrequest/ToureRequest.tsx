@@ -11,9 +11,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
 import { Button } from "@/components/ui/button";
-import { Check, ChevronLeft, ChevronRight, Eye, X } from "lucide-react";
+import {
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Eye,
+  X,
+  AlertTriangle,
+} from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   getTourRequest,
@@ -22,6 +28,7 @@ import {
   TourRequest,
 } from "@/lib/api";
 import { toast } from "sonner";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const ToureRequest = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -31,7 +38,8 @@ const ToureRequest = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const queryClient = useQueryClient();
-  const { data, isLoading, error } = useQuery({
+
+  const { data, isLoading, isError, error } = useQuery({
     queryKey: ["tourrequest"],
     queryFn: getTourRequest,
   });
@@ -40,7 +48,6 @@ const ToureRequest = () => {
     mutationKey: ["status"],
     mutationFn: (id: string) => statusTourRequest(id),
     onSuccess: () => {
-      // Invalidate and refetch
       toast.success("Status updated successfully");
       queryClient.invalidateQueries({ queryKey: ["tourrequest"] });
     },
@@ -48,11 +55,11 @@ const ToureRequest = () => {
       toast.error("Failed to update status");
     },
   });
+
   const statusCancelMutation = useMutation({
-    mutationKey: ["status"],
+    mutationKey: ["status-cancel"],
     mutationFn: (id: string) => statusCancelTourRequest(id),
     onSuccess: () => {
-      // Invalidate and refetch
       toast.success("Status Cancel successfully");
       queryClient.invalidateQueries({ queryKey: ["tourrequest"] });
     },
@@ -61,34 +68,109 @@ const ToureRequest = () => {
     },
   });
 
-  // Ensure bookings is always an array
   const tourbookings: TourRequest[] = data?.data?.bookings || [];
   const totalResults = data?.data?.pagination?.total || tourbookings.length;
   const totalPages = data?.data?.pagination?.totalPages || 1;
 
-  const handelstatusChange = (bookingring: TourRequest) => {
-    statusMutation.mutate(bookingring?._id);
+  const handelstatusChange = (booking: TourRequest) => {
+    statusMutation.mutate(booking?._id);
   };
 
-  const handelstatusCancel = (bookingring: TourRequest) => {
-    statusCancelMutation.mutate(bookingring?._id);
+  const handelstatusCancel = (booking: TourRequest) => {
+    statusCancelMutation.mutate(booking?._id);
   };
 
   const handleDetailsClick = (booking: TourRequest) => {
     setSelectedBooking(booking);
     setDialogOpen(true);
   };
-  console.log("tour data", data);
 
-  if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>Error loading bookings</p>;
+  // -----------------
+  // Loading skeletons
+  // -----------------
+  if (isLoading) {
+    return (
+      <section className="p-6 space-y-4">
+        <div className="border rounded-lg">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-[#E6FAEE]">
+                <TableHead>Invoice</TableHead>
+                <TableHead>Customer</TableHead>
+                <TableHead>Location</TableHead>
+                <TableHead>Time</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead>Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {Array.from({ length: 5 }).map((_, i) => (
+                <TableRow key={i}>
+                  <TableCell>
+                    <Skeleton className="h-4 w-12" />
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-3">
+                      <Skeleton className="h-8 w-8 rounded-full" />
+                      <div className="space-y-1">
+                        <Skeleton className="h-4 w-24" />
+                        <Skeleton className="h-3 w-32" />
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-20" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-16" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-20" />
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex gap-2">
+                      <Skeleton className="h-8 w-8 rounded-md" />
+                      <Skeleton className="h-8 w-8 rounded-md" />
+                      <Skeleton className="h-8 w-8 rounded-md" />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </section>
+    );
+  }
+
+  // -----------------
+  // Error State
+  // -----------------
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64 text-red-600">
+        <AlertTriangle className="h-10 w-10 mb-2" />
+        <p className="text-lg font-medium">Failed to load tour requests</p>
+        <p className="text-sm text-muted-foreground">
+          {(error as Error)?.message || "Something went wrong"}
+        </p>
+      </div>
+    );
+  }
+
+  // -----------------
+  // No Data State
+  // -----------------
   if (!tourbookings || tourbookings.length === 0) {
-  return (
-    <div className="flex items-center justify-center h-64 text-8xl text-muted-foreground">
-      No Data available
-    </div>
-  );
-}
+    return (
+      <div className="flex items-center justify-center h-64 text-2xl text-muted-foreground">
+        No Data Available
+      </div>
+    );
+  }
+
+  console.log('ddd',tourbookings);
+  
 
   return (
     <section>
@@ -139,7 +221,7 @@ const ToureRequest = () => {
                   <TableCell>
                     <div className="flex gap-2">
                       <Button
-                        className="bg-[#E6F9EB] text-[#1F9854]  hover:bg-green-100 cursor-pointer"
+                        className="bg-[#E6F9EB] text-[#1F9854] hover:bg-green-100"
                         variant="ghost"
                         size="sm"
                         onClick={() => handelstatusChange(booking)}
@@ -147,16 +229,15 @@ const ToureRequest = () => {
                         <Check />
                       </Button>
                       <Button
-                        className="bg-[#FEECEE] text-[#E5102E] hover:bg-green-100 cursor-pointer"
+                        className="bg-[#FEECEE] text-[#E5102E] hover:bg-green-100"
                         variant="ghost"
                         size="sm"
                         onClick={() => handelstatusCancel(booking)}
                       >
                         <X />
                       </Button>
-
                       <Button
-                        className="bg-gray-50 text-[#343A40] hover:bg-green-100 cursor-pointer"
+                        className="bg-gray-50 text-[#343A40] hover:bg-green-100"
                         variant="ghost"
                         size="sm"
                         onClick={() => handleDetailsClick(booking)}
