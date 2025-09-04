@@ -35,6 +35,7 @@ const LoginForm = () => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
 
+  const [isLoading, setLoading] = useState(false);
   const form = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -46,39 +47,45 @@ const LoginForm = () => {
 
   // ✅ Handle login with NextAuth
   const onSubmit = async (values: LoginSchema) => {
-    const res = await signIn("credentials", {
-      redirect: false,
-      email: values.email,
-      password: values.password,
-    });
+    setLoading(true)
+    try {
+      const res = await signIn("credentials", {
+        redirect: false,
+        email: values.email,
+        password: values.password,
+      });
 
-    if (res?.error) {
-      toast.error(res.error || "Invalid email or password");
-    } else {
-      
-      toast.success("Login successful!");
-      type SessionUserWithRole = {
-        name?: string | null;
-        email?: string | null;
-        image?: string | null;
-        role?: string | null;
-      };
-
-      const session = await getSession();
-      
-
-      const user = session?.user as SessionUserWithRole | undefined;
-
-      if (user?.role === "organization") {
-        router.push("/dashboard");
-      } else if (user?.role === "organization") {
-        router.push("/dashboard");
+      if (res?.error) {
+        toast.error(res.error || "Invalid email or password");
       } else {
-        router.push("/");
+        toast.success("Login successful!");
+
+        const session = await getSession();
+
+        type SessionUserWithRole = {
+          name?: string | null;
+          email?: string | null;
+          image?: string | null;
+          role?: string | null;
+        };
+
+        const user = session?.user as SessionUserWithRole | undefined;
+
+        if (user?.role === "organization") {
+          router.push("/dashboard");
+        } else if (user?.role === "admin") {
+          router.push("/admin-dashboard");
+        } else {
+          router.push("/");
+        }
       }
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("Something went wrong during login. Please try again.");
+    } finally {
+      setLoading(false)
     }
   };
-
   return (
     <section className="min-h-screen grid lg:grid-cols-2">
       {/* back to home  */}
@@ -86,7 +93,7 @@ const LoginForm = () => {
         onClick={() => router.push("/")}
         className="absolute top-8 md:top-16 right-16 md:right-48 flex gap-2 border-gray-500  text-[#6C757D] hover:border-b cursor-pointer"
       >
-       <ArrowLeft /> Back to Home
+        <ArrowLeft /> Back to Home
       </button>
 
       {/* Left side image */}
@@ -103,7 +110,7 @@ const LoginForm = () => {
           className="h-full w-full object-cover"
         />
         <div className="absolute top-6 left-6 text-white text-2xl font-bold">
-          <Image src='/login.png' alt="logo" width={155} height={48}  />
+          <Image src="/login.png" alt="logo" width={155} height={48} />
         </div>
       </motion.div>
 
@@ -115,7 +122,9 @@ const LoginForm = () => {
         className="flex items-center justify-center p-6 px-3 md:px-4 lg:px-0"
       >
         <div className="w-full max-w-lg">
-          <h2 className="text-3xl md:text-[40px] font-bold leading-[150%] font-playfair text-green-600 mb-2">Welcome</h2>
+          <h2 className="text-3xl md:text-[40px] font-bold leading-[150%] font-playfair text-green-600 mb-2">
+            Welcome
+          </h2>
           <p className="text-gray-500 mb-6">
             Access your account to manage tours, leads, and listings
           </p>
@@ -128,7 +137,9 @@ const LoginForm = () => {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[16px] leading-[150%] font-medium text-[#343A40]">Email Address</FormLabel>
+                    <FormLabel className="text-[16px] leading-[150%] font-medium text-[#343A40]">
+                      Email Address
+                    </FormLabel>
                     <FormControl>
                       <Input
                         type="email"
@@ -147,10 +158,13 @@ const LoginForm = () => {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[16px] leading-[150%] font-medium text-[#343A40]">Password</FormLabel>
+                    <FormLabel className="text-[16px] leading-[150%] font-medium text-[#343A40]">
+                      Password
+                    </FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <Input className=""
+                        <Input
+                          className=""
                           type={showPassword ? "text" : "password"}
                           placeholder="********"
                           {...field}
@@ -181,12 +195,15 @@ const LoginForm = () => {
                   render={({ field }) => (
                     <FormItem className="flex items-center space-x-2">
                       <FormControl>
-                        <Checkbox className="cursor-pointer"
+                        <Checkbox
+                          className="cursor-pointer"
                           checked={field.value}
                           onCheckedChange={field.onChange}
                         />
                       </FormControl>
-                      <FormLabel className="text-[16px] text-[#6C757D]">Remember me</FormLabel>
+                      <FormLabel className="text-[16px] text-[#6C757D]">
+                        Remember me
+                      </FormLabel>
                     </FormItem>
                   )}
                 />
@@ -203,8 +220,11 @@ const LoginForm = () => {
               <Button
                 type="submit"
                 className="w-full bg-green-600 hover:bg-green-700 cursor-pointer"
+                disabled={isLoading}
               >
-                Log In
+                {
+                  isLoading ? "Logging In" : "Log In"
+                }
               </Button>
             </form>
           </Form>
