@@ -34,7 +34,7 @@ export default function MakingSenior() {
           </div>
 
           {/* Right side - text */}
-          <div className="space-y-4">
+          <div className="space-y-4 p-4 md:p-0 lg:p-0">
             <h2 className="text-2xl md:text-3xl font-bold"  style={{ fontFamily: "var(--font-playfair)" }}>
               Making Senior Care{" "}
               <span className="text-primary">Accessible and Transparent</span>
