@@ -124,7 +124,9 @@ export function ProfileCard() {
   return (
     <Card className="overflow-hidden h-screen">
       {/* Green header background */}
-      <div className="h-24 bg-gradient-to-r from-green-400 to-green-500"></div>
+      <div className="h-24 w-full bg-gradient-to-r from-green-400 to-green-500">
+
+      </div>
 
       {/* Profile content */}
       <div className="relative px-6 pb-6">

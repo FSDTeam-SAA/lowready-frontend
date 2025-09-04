@@ -210,12 +210,13 @@ export default function ProfilePage() {
       <div className="mx-auto space-y-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Profile Card */}
-          <Card className="lg:w-1/3">
-            <CardContent className="p-6">
-              <div className="text-center space-y-4">
-                <div className="relative inline-block">
-                  <div className="w-32 h-32 bg-[#7cc245] rounded-lg mx-auto relative overflow-hidden">
-                    <Avatar className="w-full h-full rounded-lg">
+          <Card className="lg:w-1/3 ">
+            <CardContent className="px-0">
+              <div className="text-center">
+                <div className="h-[140px] rounded-t-lg opacity-80 bg-[linear-gradient(282deg,rgba(40,167,69,0.80)_-0.29%,#51B8A0_48.99%,#6DBC8B_101.56%)]"></div>
+                <div className="relative -mt-16">
+                  <div className="w-32 h-32 mx-auto ">
+                    <Avatar className="w-full h-full rounded-full">
                       <AvatarImage
                         src={previewUrl || userProfile?.avatar?.url}
                         alt={`${userProfile?.firstName} ${userProfile?.lastName}`}
@@ -229,7 +230,7 @@ export default function ProfilePage() {
                   </div>
                   <label
                     htmlFor="photo-upload"
-                    className="absolute -bottom-2 -right-2 w-8 h-8 bg-[#179649] rounded-full flex items-center justify-center cursor-pointer hover:bg-[#33b34c] transition-smooth"
+                    className="mx-auto relative -mt-6 left-5 w-8 h-8 bg-[#179649] rounded-full flex items-center justify-center cursor-pointer hover:bg-[#33b34c] transition-smooth"
                   >
                     <Edit className="h-4 w-4 text-white" />
                   </label>
@@ -243,36 +244,60 @@ export default function ProfilePage() {
                 </div>
 
                 <div>
-                  <h2 className="text-xl font-semibold alnhub-primary">
+                  <h2 className="text-xl md:text-[24px] text-[#28A745] font-semibold alnhub-primary">
                     {userProfile?.firstName} {userProfile?.lastName}
                   </h2>
-                  <p className="text-[#68706a]">{userProfile?.email}</p>
+                  <p className="text-[#68706A]">{userProfile?.email}</p>
                 </div>
 
-                <div className="space-y-2 text-left">
+                <div className="space-y-2 text-left p-[24px]">
                   <div>
-                    <span className="font-medium">Name:</span>{" "}
-                    {userProfile?.firstName} {userProfile?.lastName}
+                    <span className="font-medium text-[#343A40] text-sm leading-[150%]">
+                      Name:
+                    </span>{" "}
+                    <span className="text-[#68706A] text-sm">
+                      {userProfile?.firstName} {userProfile?.lastName}
+                    </span>
                   </div>
                   <div>
-                    <span className="font-medium">Bio:</span>{" "}
-                    {userProfile?.bio || "No bio available"}
+                    <span className="font-medium text-[#343A40] text-sm leading-[150%]">
+                      Bio:
+                    </span>{" "}
+                    <span className="text-[#68706A] text-sm">
+                      {userProfile?.bio || "No bio available"}
+                    </span>
                   </div>
                   <div>
-                    <span className="font-medium">Email:</span>{" "}
-                    {userProfile?.email}
+                    <span className="font-medium text-[#343A40] text-sm leading-[150%]">
+                      Email:
+                    </span>{" "}
+                    <span className="text-[#68706A] text-sm">
+                      {userProfile?.email}
+                    </span>
                   </div>
                   <div>
-                    <span className="font-medium">Phone:</span>{" "}
-                    {userProfile?.phoneNum}
+                    <span className="font-medium text-[#343A40] text-sm leading-[150%]">
+                      Phone:
+                    </span>{" "}
+                    <span className="text-[#68706A] text-sm">
+                      {userProfile?.phoneNum}
+                    </span>
                   </div>
                   <div>
-                    <span className="font-medium">Location:</span>{" "}
-                    {userProfile?.street}
+                    <span className="font-medium text-[#343A40] text-sm leading-[150%]">
+                      Location:
+                    </span>{" "}
+                    <span className="text-[#68706A] text-sm">
+                      {userProfile?.street}
+                    </span>
                   </div>
                   <div>
-                    <span className="font-medium">Since:</span>{" "}
-                    {new Date(userProfile?.createdAt).toLocaleDateString()}
+                    <span className="font-medium text-[#343A40]  leading-[150%]">
+                      Since:
+                    </span>{" "}
+                    <span className="text-[#68706A] text-sm">
+                      {new Date(userProfile?.createdAt).toLocaleDateString()}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -280,10 +305,12 @@ export default function ProfilePage() {
           </Card>
 
           {/* Profile Form */}
-          <Card className="lg:w-2/3">
+          <Card className="lg:w-2/3 p-[33px]">
             <CardHeader>
-              <CardTitle>Personal Information</CardTitle>
-              <p className="text-[#68706a]">
+              <CardTitle className="text-[32px] text-[#343A40]">
+                Personal Information
+              </CardTitle>
+              <p className="text-[#68706a] text-[16px]">
                 Manage your personal information and profile details.
               </p>
             </CardHeader>
@@ -291,7 +318,9 @@ export default function ProfilePage() {
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 {/* Gender Selection */}
                 <div className="space-y-3">
-                  <Label>Gender</Label>
+                  <Label className="text-[16px] text-[#434C45] leading-[150%] font-medium">
+                    Gender
+                  </Label>
                   <RadioGroup
                     value={watch("gender")}
                     onValueChange={(value) =>
@@ -313,7 +342,12 @@ export default function ProfilePage() {
                 {/* Name Fields */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="firstName">First Name</Label>
+                    <Label
+                      htmlFor="firstName"
+                      className="text-[16px] text-[#434C45] leading-[150%] font-medium"
+                    >
+                      First Name
+                    </Label>
                     <Input
                       id="firstName"
                       {...register("firstName")}
@@ -326,7 +360,13 @@ export default function ProfilePage() {
                     )}
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="lastName">Last Name</Label>
+                    <Label
+                      htmlFor="lastName"
+                      className="text-[16px] text-[#434C45] leading-[150%] font-medium"
+                    >
+                      {" "}
+                      Last Name
+                    </Label>
                     <Input
                       id="lastName"
                       {...register("lastName")}
@@ -342,7 +382,12 @@ export default function ProfilePage() {
 
                 {/* Email */}
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email Address</Label>
+                  <Label
+                    htmlFor="email"
+                    className="text-[16px] text-[#434C45] leading-[150%] font-medium"
+                  >
+                    Email Address
+                  </Label>
                   <Input
                     id="email"
                     type="email"
@@ -358,7 +403,12 @@ export default function ProfilePage() {
 
                 {/* Bio */}
                 <div className="space-y-2">
-                  <Label htmlFor="bio">Bio</Label>
+                  <Label
+                    htmlFor="bio"
+                    className="text-[16px] text-[#434C45] leading-[150%] font-medium"
+                  >
+                    Bio
+                  </Label>
                   <Textarea
                     id="bio"
                     {...register("bio")}
@@ -369,7 +419,12 @@ export default function ProfilePage() {
 
                 {/* Address */}
                 <div className="space-y-2">
-                  <Label htmlFor="street">Street Address</Label>
+                  <Label
+                    htmlFor="street"
+                    className="text-[16px] text-[#434C45] leading-[150%] font-medium"
+                  >
+                    Street Address
+                  </Label>
                   <Input
                     id="street"
                     {...register("street")}
@@ -384,7 +439,12 @@ export default function ProfilePage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="location">Location</Label>
+                    <Label
+                      htmlFor="location"
+                      className="text-[16px] text-[#434C45] leading-[150%] font-medium"
+                    >
+                      Location
+                    </Label>
                     <Input
                       id="location"
                       {...register("location")}
@@ -397,7 +457,12 @@ export default function ProfilePage() {
                     )}
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="postCode">Postal Code</Label>
+                    <Label
+                      htmlFor="postCode"
+                      className="text-[16px] text-[#434C45] leading-[150%] font-medium"
+                    >
+                      Postal Code
+                    </Label>
                     <Input
                       id="postCode"
                       {...register("postCode")}
@@ -413,7 +478,12 @@ export default function ProfilePage() {
 
                 {/* Phone */}
                 <div className="space-y-2">
-                  <Label htmlFor="phoneNum">Phone Number</Label>
+                  <Label
+                    htmlFor="phoneNum"
+                    className="text-[16px] text-[#434C45] leading-[150%] font-medium"
+                  >
+                    Phone Number
+                  </Label>
                   <Input
                     id="phoneNum"
                     {...register("phoneNum")}
@@ -421,10 +491,10 @@ export default function ProfilePage() {
                   />
                   {errors.phoneNum && (
                     <p className="text-sm text-[#e5102e]">
-                        {errors.phoneNum.message}
-                      </p>
-                    )}
-                  </div>
+                      {errors.phoneNum.message}
+                    </p>
+                  )}
+                </div>
 
                 {/* Action Buttons */}
                 <div className="flex gap-4 pt-4">
@@ -433,7 +503,7 @@ export default function ProfilePage() {
                     variant="outline"
                     onClick={handleDiscard}
                     disabled={!isDirty && !selectedFile}
-                    className="flex-1 md:flex-none bg-transparent"
+                    className="flex-1 md:flex-none bg-transparent cursor-pointer"
                   >
                     Discard Changes
                   </Button>
@@ -443,7 +513,7 @@ export default function ProfilePage() {
                       updateProfileMutation.isPending ||
                       (!isDirty && !selectedFile)
                     }
-                    className="flex-1 md:flex-none bg-[#179649] hover:bg-[#33b34c]"
+                    className="flex-1 md:flex-none cursor-pointer bg-[#179649] hover:bg-[#33b34c]"
                   >
                     {updateProfileMutation.isPending
                       ? "Saving..."
