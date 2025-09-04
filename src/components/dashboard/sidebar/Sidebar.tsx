@@ -66,6 +66,8 @@ export function DashboardSidebar() {
     setIsOpen(false);
   };
 
+
+
   return (
     <div className="flex flex-col h-screen w-[312px] fixed shadow-2xl border-r-0 bg-white">
       {/* Logo */}
@@ -74,7 +76,7 @@ export function DashboardSidebar() {
           src="/images/Logo.png"
           alt="Logo"
           width={150}
-          height={80}
+          height={48}
           className="mx-auto h-[80px] w-[150px] object-contain mb-4"
         /></Link>
       </div>
