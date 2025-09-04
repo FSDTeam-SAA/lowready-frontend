@@ -41,7 +41,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       await signOut({ redirect: false });
       toast.success("Logged out successfully");
       router.push("/login");
-    } catch (error) {
+    } catch   {
       toast.error("Failed to logout");
     }
     setLogoutModalOpen(false);

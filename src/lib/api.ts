@@ -786,3 +786,15 @@ export async function createContactUs(userData: {
     throw new Error("Contact Us Error");
   }
 }
+
+// Delete Placement history
+export async function deletePlacement(id: string) {
+  try {
+    const res = await api.delete(`/bookings/${id}`);
+    return res.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error Deleted plecement data: ${error.message}`);
+    }
+  }
+}
