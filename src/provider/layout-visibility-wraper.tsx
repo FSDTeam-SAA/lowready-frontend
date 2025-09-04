@@ -16,6 +16,10 @@ const HIDDEN_ROUTES = [
   '/signinaspage',
   '/forget-otp',
   '/forget-password',
+  '/account/profile',
+  '/account/change-password',
+  '/account/booking-history',
+  '/account/tour-history'
   
 ];
 

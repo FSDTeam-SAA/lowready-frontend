@@ -166,8 +166,6 @@ export default function BookingHistoryPage() {
   // Get session data first
   const { data: session, status: sessionStatus } = useSession();
 
-  
-
   // Use the session data in the query with proper dependency
   const {
     data: bookingsData,
@@ -179,7 +177,7 @@ export default function BookingHistoryPage() {
       if (!session?.user?.id) {
         throw new Error("User ID is required");
       }
-     
+
       return getUserBookings(session.user.id, currentPage, itemsPerPage);
     },
     enabled: !!session?.user?.id, // Only run when we have a user ID
@@ -196,7 +194,7 @@ export default function BookingHistoryPage() {
   const totalPages = Math.ceil(
     (bookingsData?.pagination?.totalPages || 0) / itemsPerPage
   );
-   
+
   const getStatusBadge = (status: string) => {
     switch (status.toLowerCase()) {
       case "paid":
@@ -263,7 +261,7 @@ export default function BookingHistoryPage() {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <Card>
+        <Card className="p-[24px]">
           <CardHeader>
             <CardTitle>Booking History</CardTitle>
           </CardHeader>

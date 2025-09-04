@@ -34,11 +34,10 @@ import { format } from "date-fns";
 import { useState, useEffect } from "react";
 import { BookingType } from "@/lib/api";
 
-
 // ✅ Validation schema
 const bookingSchema = z.object({
   residentName: z.string().min(1, "Full Name is required"),
-  dob: z.date("Date of Birth is required" ),
+  dob: z.date("Date of Birth is required"),
   gender: z.string().min(1, "Gender is required"),
   specialNeeds: z.string().optional(),
   medicalInfo: z.string().optional(),
@@ -48,7 +47,7 @@ const bookingSchema = z.object({
   email: z.string().email("Invalid email"),
   facility: z.string().min(1, "Facility is required"),
   roomType: z.string().min(1, "Room type is required"),
-  admissionDate: z.date( "Admission Date is required"),
+  admissionDate: z.date("Admission Date is required"),
   duration: z.string().min(1, "Duration is required"),
 });
 
@@ -120,7 +119,7 @@ export function ConfirmBookingModal({
     const payload: BookingType = {
       _id: isEdit ? apiData?._id : undefined,
       facility: values.facility,
-      userId: apiData?.userId ?? "", 
+      userId: apiData?.userId ?? "",
       startingDate: values.admissionDate.toISOString(),
       duration: values.duration,
       paymentStatus: isEdit ? apiData?.paymentStatus || "pending" : "pending",
@@ -132,7 +131,10 @@ export function ConfirmBookingModal({
           requirements: values.specialNeeds,
         },
       ],
-      totalPrice: apiData?.totalPrice ?? 0,
+      totalPrice:
+        apiData?.totalPrice && apiData?.duration
+          ? apiData.totalPrice * Number(apiData.duration)
+          : 0,
     };
 
     onSubmitBooking?.(payload, isEdit);
@@ -141,25 +143,33 @@ export function ConfirmBookingModal({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto rounded-2xl">
-        <DialogHeader>
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto  !p-0">
+        <DialogHeader
+          className=" p-4 py-8 text-white"
+          style={{
+            background:
+              "linear-gradient(282deg, rgba(40, 167, 69, 0.80) -0.29%, #51B8A0 48.99%, #6DBC8B 101.56%)",
+          }}
+        >
           <DialogTitle className="text-2xl font-bold">
             {isEdit ? "Edit Your Booking" : "Confirm Your Booking"}
           </DialogTitle>
-          <DialogDescription>
-            {isEdit 
-              ? "Update your booking details below." 
-              : "Please review and complete your booking details below."
-            }
+          <DialogDescription className="text-white/90">
+            {isEdit
+              ? "Update your booking details below."
+              : "Please review and complete your booking details below."}
           </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-8 p-6"
+          >
             {/* Resident Info */}
             <div>
               <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-lg mb-2">
+                <h3 className="font-semibold text-[20px] text-[#434C45] mb-2">
                   Resident Information
                 </h3>
                 <Button
@@ -195,7 +205,9 @@ export function ConfirmBookingModal({
                       name="residentName"
                       render={({ field }) => (
                         <FormItem className="col-span-2">
-                          <FormLabel>Full Name</FormLabel>
+                          <FormLabel className="text-sm text-[#434C45] font-medium leading-[150%]">
+                            Full Name
+                          </FormLabel>
                           <FormControl>
                             <Input placeholder="Enter full name" {...field} />
                           </FormControl>
@@ -210,7 +222,9 @@ export function ConfirmBookingModal({
                       name="dob"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Date of Birth</FormLabel>
+                          <FormLabel className="text-sm text-[#434C45] font-medium leading-[150%]">
+                            Date of Birth
+                          </FormLabel>
                           <Popover>
                             <PopoverTrigger asChild>
                               <FormControl>
@@ -248,7 +262,9 @@ export function ConfirmBookingModal({
                       name="gender"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Gender</FormLabel>
+                          <FormLabel className="text-sm text-[#434C45] font-medium leading-[150%]">
+                            Gender
+                          </FormLabel>
                           <FormControl>
                             <select
                               className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
@@ -271,7 +287,9 @@ export function ConfirmBookingModal({
                       name="specialNeeds"
                       render={({ field }) => (
                         <FormItem className="col-span-2">
-                          <FormLabel>Special Needs / Requirements</FormLabel>
+                          <FormLabel className="text-sm text-[#434C45] font-medium leading-[150%]">
+                            Special Needs / Requirements
+                          </FormLabel>
                           <FormControl>
                             <Textarea
                               placeholder="Enter requirements"
@@ -306,14 +324,18 @@ export function ConfirmBookingModal({
 
             {/* Booker Info */}
             <div>
-              <h3 className="font-semibold text-lg mb-2">Booker Information</h3>
+              <h3 className="font-semibold text-[20px] text-[#434C45] mb-2">
+                Booker Information
+              </h3>
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="bookerName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Full Name</FormLabel>
+                      <FormLabel className="text-sm text-[#434C45] font-medium leading-[150%]">
+                        Full Name
+                      </FormLabel>
                       <FormControl>
                         <Input placeholder="Enter full name" {...field} />
                       </FormControl>
@@ -326,7 +348,9 @@ export function ConfirmBookingModal({
                   name="relation"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Relation to Resident</FormLabel>
+                      <FormLabel className="text-sm text-[#434C45] font-medium leading-[150%]">
+                        Relation to Resident
+                      </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Daughter / Son / Other"
@@ -342,7 +366,9 @@ export function ConfirmBookingModal({
                   name="phone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Phone Number</FormLabel>
+                      <FormLabel className="text-sm text-[#434C45] font-medium leading-[150%]">
+                        Phone Number
+                      </FormLabel>
                       <FormControl>
                         <Input placeholder="+1 (555) 123-4567" {...field} />
                       </FormControl>
@@ -355,7 +381,9 @@ export function ConfirmBookingModal({
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email Address</FormLabel>
+                      <FormLabel className="text-sm text-[#434C45] font-medium leading-[150%]">
+                        Email Address
+                      </FormLabel>
                       <FormControl>
                         <Input placeholder="example@mail.com" {...field} />
                       </FormControl>
@@ -368,18 +396,20 @@ export function ConfirmBookingModal({
 
             {/* Booking Info */}
             <div>
-              <h3 className="font-semibold text-lg mb-2">
+              <h3 className="font-semibold text-[20px] text-[#434C45] mb-2">
                 Booking Information
               </h3>
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="facility"
-                  render={({ field }) => (
+                  render={() => (
                     <FormItem>
-                      <FormLabel>Facility Name</FormLabel>
+                      <FormLabel className="text-sm text-[#434C45] font-medium leading-[150%]">
+                        Facility Name
+                      </FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter facility name" {...field} />
+                        <Input placeholder="Enter facility name" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -390,7 +420,9 @@ export function ConfirmBookingModal({
                   name="roomType"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Room / Service Type</FormLabel>
+                      <FormLabel className="text-sm text-[#434C45] font-medium leading-[150%]">
+                        Room / Service Type
+                      </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Private / Shared room..."
@@ -406,7 +438,9 @@ export function ConfirmBookingModal({
                   name="admissionDate"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Admission Date</FormLabel>
+                      <FormLabel className="text-sm text-[#434C45] font-medium leading-[150%]">
+                        Admission Date
+                      </FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
@@ -442,7 +476,9 @@ export function ConfirmBookingModal({
                   name="duration"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Duration of Stay</FormLabel>
+                      <FormLabel className="text-sm text-[#434C45] font-medium leading-[150%]">
+                        Duration of Stay
+                      </FormLabel>
                       <FormControl>
                         <Input placeholder="e.g. 6 Months" {...field} />
                       </FormControl>
