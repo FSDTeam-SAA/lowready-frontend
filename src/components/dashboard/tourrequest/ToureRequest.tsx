@@ -169,8 +169,7 @@ const ToureRequest = () => {
     );
   }
 
-  console.log('ddd',tourbookings);
-  
+  console.log("ddd", tourbookings);
 
   return (
     <section>

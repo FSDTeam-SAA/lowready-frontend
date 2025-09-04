@@ -24,7 +24,14 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import Link from "next/link";
 
 const menuItems = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -47,31 +54,29 @@ const settingsItems = [
 export function DashboardSidebar() {
   const [isOpen, setIsOpen] = React.useState(false);
 
-
   const pathname = usePathname();
   const router = useRouter();
 
   const isActive = (href: string) => pathname === href;
-   const handleLogout = async () => {
+  const handleLogout = async () => {
     await signOut({ callbackUrl: "/login" });
   };
   const confirmLogout = () => {
     handleLogout();
     setIsOpen(false);
   };
- 
 
   return (
     <div className="flex flex-col h-screen w-[312px] fixed shadow-2xl border-r-0 bg-white">
       {/* Logo */}
       <div className="px-4 py-6">
-        <Image
+        <Link href="/"> <Image
           src="/images/Logo.png"
           alt="Logo"
           width={150}
           height={80}
           className="mx-auto h-[80px] w-[150px] object-contain mb-4"
-        />
+        /></Link>
       </div>
 
       {/* Navigation */}
@@ -85,7 +90,7 @@ export function DashboardSidebar() {
                 ? "bg-[#179649] text-white hover:bg-[#179649] hover:text-white"
                 : "text-[#68706a] hover:bg-[#f8f9fa] hover:text-[#179649]"
             }`}
-            onClick={() => router.push(item.href)}
+            onClick={() => router.push(`${item.href}?reloadTwice=true`)}
           >
             <item.icon className="h-5 w-5" />
             {item.name}
@@ -131,30 +136,38 @@ export function DashboardSidebar() {
         <Button
           variant="ghost"
           className="w-full justify-start gap-3 h-12 px-4 cursor-pointer rounded-lg font-medium text-[#e5102e] hover:bg-[#feecee] hover:text-[#e5102e] transition-all duration-200"
-          onClick={()=>setIsOpen(true)}
+          onClick={() => setIsOpen(true)}
         >
           <LogOut className="h-5 w-5" />
           Log Out
         </Button>
         {/* Confirmation Modal */}
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Confirm Logout</DialogTitle>
-          </DialogHeader>
-          <p className="text-sm text-gray-600 mt-2">
-            Are you sure you want to log out?
-          </p>
-          <DialogFooter className="mt-4 flex justify-end gap-2">
-            <Button variant="outline" className="cursor-pointer" onClick={() => setIsOpen(false)}>
-              Cancel
-            </Button>
-            <Button variant="destructive" className="cursor-pointer" onClick={confirmLogout}>
-              Log Out
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Confirm Logout</DialogTitle>
+            </DialogHeader>
+            <p className="text-sm text-gray-600 mt-2">
+              Are you sure you want to log out?
+            </p>
+            <DialogFooter className="mt-4 flex justify-end gap-2">
+              <Button
+                variant="outline"
+                className="cursor-pointer"
+                onClick={() => setIsOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                className="cursor-pointer"
+                onClick={confirmLogout}
+              >
+                Log Out
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

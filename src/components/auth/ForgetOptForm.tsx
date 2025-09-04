@@ -50,7 +50,7 @@ const ForgetOptForm = () => {
       toast.error("Please enter the full 6-digit OTP");
       return;
     }
-    console.log(email, enteredOtp);
+    
 
     try {
       setLoading(true);
