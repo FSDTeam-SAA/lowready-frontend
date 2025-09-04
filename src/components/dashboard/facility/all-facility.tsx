@@ -296,9 +296,9 @@ const FacilityListing: React.FC<FacilityListingProps> = ({
   });
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen !p-[-50px] bg-gray-50">
       <div className="">
-        <div className="max-w-7xl  mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className=" mx-auto px-1 sm:px-2 lg:px-2 py-4">
           <div className="flex  justify-between items-center mb-4">
             <div className="flex items-center gap-4">
               <select
@@ -337,7 +337,7 @@ const FacilityListing: React.FC<FacilityListingProps> = ({
           </div>
 
           {/* Amenity Filter Dropdown */}
-          {showAmenityFilter && (
+          {/* {showAmenityFilter && (
             <div className="bg-gray-50 border rounded-lg p-4 mb-4">
               <div className="flex justify-between items-center mb-3">
                 <h3 className="font-medium text-gray-900">Filter by Amenities</h3>
@@ -369,7 +369,7 @@ const FacilityListing: React.FC<FacilityListingProps> = ({
                 ))}
               </div>
             </div>
-          )}
+          )} */}
 
           {/* Selected Amenity Tags */}
           {searchFilters.selectedAmenities.length > 0 && (
@@ -394,7 +394,7 @@ const FacilityListing: React.FC<FacilityListingProps> = ({
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className=" mx-auto px-1 sm:px-2 lg:px-2 py-4">
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {Array.from({ length: 6 }).map((_, i) => (
