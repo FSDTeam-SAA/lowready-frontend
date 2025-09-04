@@ -3,7 +3,6 @@
 import { Star, MapPin, Dot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-
 import Image from "next/image";
 import { BookingType, createBooking, FacilityCards } from "@/lib/api";
 import Link from "next/link";
@@ -13,22 +12,24 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface FacilityCardProps {
   facility: FacilityCards;
-  onSeeDetails: (facilityId: string) => void;
-  onBookTour: (facilityId: string) => void;
+  onSeeDetails?: (facilityId: string) => void;
+  onBookTour?: (facilityId: string) => void;
 }
 
 export default function FacilityCard({ facility }: FacilityCardProps) {
   const { data: session } = useSession();
+  const router = useRouter();
+
   const userId = session?.user?.id || "";
+  const userRole = session?.user?.role || "";
+
   const [modalOpen, setModalOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [bookingData, setBookingData] = useState<BookingType | undefined>();
-  // const [selectedFacility, setSelectedFacility] = useState<Facility | null>(
-  //   null
-  // );
 
   const createBookingMutation = useMutation({
     mutationKey: ["booking"],
@@ -47,7 +48,18 @@ export default function FacilityCard({ facility }: FacilityCardProps) {
   }
 
   const handleNewBooking = (facility: FacilityCards) => {
-    // setSelectedFacility(facility as Facility);
+    // Check authentication
+    if (!session) {
+      toast.error("Please login first to book a tour.");
+      router.push("/login"); // redirect to login
+      return;
+    }
+
+    // Check role
+    if (userRole !== "user") {
+      toast.error("Only users can book a tour.");
+      return;
+    }
 
     // Create booking data with the selected facility information
     const newBookingData: BookingType = {
@@ -76,7 +88,6 @@ export default function FacilityCard({ facility }: FacilityCardProps) {
   const handleCloseModal = () => {
     setModalOpen(false);
     setBookingData(undefined);
-    // setSelectedFacility(null);
   };
 
   return (
@@ -171,6 +182,7 @@ export default function FacilityCard({ facility }: FacilityCardProps) {
           </div>
         </CardContent>
       </Card>
+
       <ConfirmBookingModal
         open={modalOpen}
         onClose={handleCloseModal}

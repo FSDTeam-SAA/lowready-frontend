@@ -20,7 +20,7 @@ export default function ContactInformation() {
           </div>
 
           {/* Contact Information Section */}
-          <div className="space-y-6">
+          <div className="space-y-6 p-4 md:p-0">
             <div>
               <h1 className="text-4xl font-bold text-primary mb-4"  style={{ fontFamily: "var(--font-playfair)" }}>Contact Information</h1>
               <p className="text-[#68706A] text-base">
