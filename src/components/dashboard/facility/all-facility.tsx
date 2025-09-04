@@ -56,7 +56,7 @@ const FacilityCard: React.FC<FacilityCardProps> = ({ facility }) => {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+    <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl p-[-20px] transition-shadow duration-300">
       <div className="relative h-48 overflow-hidden">
         <Image
           width={400}
@@ -296,9 +296,9 @@ const FacilityListing: React.FC<FacilityListingProps> = ({
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center mb-4">
+      <div className="">
+        <div className="max-w-7xl  mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex  justify-between items-center mb-4">
             <div className="flex items-center gap-4">
               <select
                 value={searchFilters.selectedOption}
