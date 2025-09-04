@@ -74,7 +74,7 @@ export function Customers() {
 
   if (!bookings || bookings.length === 0) {
     return (
-      <div className="flex items-center justify-center h-64 text-8xl text-muted-foreground">
+      <div className="flex items-center justify-center h-64 text-2xl text-muted-foreground">
         No Customer available
       </div>
     );
