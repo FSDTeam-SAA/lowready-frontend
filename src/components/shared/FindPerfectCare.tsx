@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Button } from "../ui/button";
 
 const FindCare = ({
@@ -6,6 +7,7 @@ const FindCare = ({
   subHeading = "Easily search, compare, and connect with trusted assisted living facilities, helping your loved ones find a safe, comfortable, and supportive environment while giving you peace of mind every step of the way.", // Default subheading
   buttonText = "Book a Tour Now", // Default button text
   showButton = true, // Flag to conditionally render the button
+  buttonlink = "/facilities"
 }) => {
   return (
    <section className="p-4 sm:p-20 bg-[#F8F9FA] bg-cover">
@@ -27,9 +29,11 @@ const FindCare = ({
           </p>
           {showButton && (
             <div className="mt-8">
+              <Link href={buttonlink} >
               <Button size="lg" className="w-[200px] text-[16px] cursor-pointer">
                 {buttonText}
               </Button>
+              </Link>
             </div>
           )}
         </div>

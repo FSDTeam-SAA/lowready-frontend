@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button"
 import { PricingModal } from "@/components/dashboard/facility/pricing-modal"
 import { Search, Plus, Loader2 } from "lucide-react"
 import type { Facility } from "@/types/servicefacility"
-
 import { useRouter } from "next/navigation"
 import FacilityListing from "@/components/dashboard/facility/all-facility"
 import { useSubscriptionStatus } from "@/hooks/useSubscriptionStatus"

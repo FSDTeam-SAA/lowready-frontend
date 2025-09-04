@@ -40,7 +40,7 @@ export function FacilityGallery({ data }: FacilityTourProps) {
     }
   }, [datas.amenitiesServices]);
 
-  // console.log('hey bro how ',datas.images[0])
+ 
   const createBookingMutation = useMutation({
     mutationKey: ["booking"],
     mutationFn: (values: BookingType) => createBooking(values),

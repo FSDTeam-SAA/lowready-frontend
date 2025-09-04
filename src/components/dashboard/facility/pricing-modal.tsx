@@ -231,7 +231,7 @@ export function PricingModal({ open, onOpenChange }: PricingModalProps) {
               <Button
                 onClick={handleSubscribe}
                 disabled={isSubscribing}
-                className="w-full bg-white text-green-600 hover:bg-gray-50 font-medium mb-6 transition-colors disabled:opacity-50"
+                className="w-full bg-white cursor-pointer text-green-600 hover:bg-gray-50 font-medium mb-6 transition-colors disabled:opacity-50"
               >
                 {isSubscribing ? (
                   <>
