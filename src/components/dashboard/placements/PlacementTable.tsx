@@ -13,7 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Eye, ChevronLeft, ChevronRight } from "lucide-react";
+import { Eye, ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
 import {
   getCustomers,
   getFacilities,
@@ -42,7 +42,9 @@ export function BookingsTable() {
     queryFn: () => getCustomers(facilityId, currentPage, itemsPerPage),
     enabled: !!facilityId,
   });
-
+ 
+  console.log('placement',data);
+  
   const bookings: BookingData[] =
     data?.data.map((b, i) => mapApiBookingToBookingData(b, i)) || [];
   const totalPages = data?.pagination?.totalPages || 0;
@@ -53,6 +55,36 @@ export function BookingsTable() {
     setDialogOpen(true);
   };
 
+  // Generate pagination range with ellipsis
+  const generatePaginationRange = () => {
+    const delta = 1; // Number of pages to show around current page
+    const range = [];
+    const rangeWithDots = [];
+
+    for (
+      let i = Math.max(2, currentPage - delta);
+      i <= Math.min(totalPages - 1, currentPage + delta);
+      i++
+    ) {
+      range.push(i);
+    }
+
+    if (currentPage - delta > 2) {
+      rangeWithDots.push(1, "...");
+    } else {
+      rangeWithDots.push(1);
+    }
+
+    rangeWithDots.push(...range);
+
+    if (currentPage + delta < totalPages - 1) {
+      rangeWithDots.push("...", totalPages);
+    } else if (totalPages > 1) {
+      rangeWithDots.push(totalPages);
+    }
+
+    return rangeWithDots;
+  };
 
   if (isFacilitiesLoading || isLoading) {
     return (
@@ -71,40 +103,38 @@ export function BookingsTable() {
   }
 
   if (!bookings || bookings.length === 0) {
-  return (
-    <div className="flex items-center justify-center  font-bold h-50 text-4xl text-muted-foreground">
-      No Placements available
-    </div>
-  );
-}
-
-
+    return (
+      <div className="flex items-center justify-center font-bold h-50 text-4xl text-muted-foreground">
+        No Placements available
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
       <div className="border rounded-lg">
         <Table>
           <TableHeader>
-            <TableRow className="bg-[#E6FAEE]">
-              <TableHead>Invoice</TableHead>
-              <TableHead>Customer</TableHead>
-              <TableHead>Location</TableHead>
-              <TableHead>Price</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Referral Fee</TableHead>
-              <TableHead>Action</TableHead>
+            <TableRow className="bg-[#E6FAEE] text-center">
+              <TableHead className="text-center">Invoice</TableHead>
+              <TableHead className="text-center">Customer</TableHead>
+              <TableHead className="text-center"> Location</TableHead>
+              <TableHead className="text-center">Price</TableHead>
+              <TableHead className="text-center">Status</TableHead>
+              <TableHead className="text-center">Date</TableHead>
+              <TableHead className="text-center">Referral Fee</TableHead>
+              <TableHead className="text-center">Action</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
+          <TableBody className="text-center">
             {bookings.map((booking) => (
               <TableRow key={booking.id} className="hover:bg-muted/50">
                 <TableCell>{booking.invoice}</TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-3">
+                <TableCell className="text-center">
+                  <div className="flex items-center justify-center gap-3">
                     <Avatar className="h-8 w-8">
                       <AvatarImage
-                        src={booking.customer.avatar}
+                        src={booking.images?.[0]?.url}
                         alt={booking.customer.name}
                       />
                       <AvatarFallback>
@@ -129,7 +159,8 @@ export function BookingsTable() {
                     variant={
                       booking.status === "Paid" ? "default" : "destructive"
                     }
-                  >
+                    className={`text-[16px] font-medium px-3 py-1 ${booking.status === 'Paid' ? 'bg-[#E6FAEE]  font-medium text-[#27BE69]' : 'bg-[#FEECEE] text-[#E5102E]'}`}
+                  > 
                     {booking.status}
                   </Badge>
                 </TableCell>
@@ -141,7 +172,7 @@ export function BookingsTable() {
                 </TableCell>
                 <TableCell>
                   <Button
-                    className="bg-green-600 text-white cursor-pointer hover:bg-green-100"
+                    className="bg-[#E6F9EB] text-[#28A745] cursor-pointer hover:bg-green-400 hover:text-white px-3 py-1"
                     variant="ghost"
                     size="sm"
                     onClick={() => handleDetailsClick(booking)}
@@ -162,7 +193,7 @@ export function BookingsTable() {
           {Math.min(currentPage * itemsPerPage, totalResults)} of {totalResults}{" "}
           results
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           <Button
             variant="outline"
             size="sm"
@@ -172,17 +203,33 @@ export function BookingsTable() {
             <ChevronLeft className="h-4 w-4" />
           </Button>
 
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-            <Button
-              key={page}
-              variant={currentPage === page ? "default" : "outline"}
-              size="sm"
-              onClick={() => setCurrentPage(page)}
-              className="w-8 h-8 p-0"
-            >
-              {page}
-            </Button>
-          ))}
+          {generatePaginationRange().map((page, index) => {
+            if (page === "...") {
+              return (
+                <Button
+                  key={`ellipsis-${index}`}
+                  variant="outline"
+                  size="sm"
+                  className="w-8 h-8 p-0"
+                  disabled
+                >
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              );
+            }
+
+            return (
+              <Button
+                key={page}
+                variant={currentPage === page ? "default" : "outline"}
+                size="sm"
+                onClick={() => setCurrentPage(Number(page))}
+                className="w-8 h-8 p-0"
+              >
+                {page}
+              </Button>
+            );
+          })}
 
           <Button
             variant="outline"

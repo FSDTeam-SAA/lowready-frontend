@@ -85,9 +85,6 @@ const ToureRequest = () => {
     setDialogOpen(true);
   };
 
-  // -----------------
-  // Loading skeletons
-  // -----------------
   if (isLoading) {
     return (
       <section className="p-6 space-y-4">
@@ -157,6 +154,7 @@ const ToureRequest = () => {
       </div>
     );
   }
+  console.log("ddd", tourbookings);
 
   // -----------------
   // No Data State
@@ -169,7 +167,7 @@ const ToureRequest = () => {
     );
   }
 
-  console.log("ddd", tourbookings);
+
 
   return (
     <section>
@@ -178,25 +176,25 @@ const ToureRequest = () => {
           <Table>
             <TableHeader>
               <TableRow className="bg-[#E6FAEE]">
-                <TableHead>Invoice</TableHead>
-                <TableHead>Customer</TableHead>
-                <TableHead>Location</TableHead>
-                <TableHead>Time</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Action</TableHead>
+                <TableHead className="text-center">Invoice</TableHead>
+                <TableHead className="text-center">Customer</TableHead>
+                <TableHead className="text-center">Location</TableHead>
+                <TableHead className="text-center">Time</TableHead>
+                <TableHead className="text-center">Date</TableHead>
+                <TableHead className="text-center">Action</TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody>
+            <TableBody className="text-center">
               {tourbookings.map((booking, index) => (
                 <TableRow key={booking._id} className="hover:bg-muted/50">
                   <TableCell>{`INV-${index + 1}`}</TableCell>
                   <TableCell>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center gap-3">
                       <Avatar className="h-8 w-8">
                         <AvatarImage
-                          src="/placeholder.svg"
-                          alt={booking.userId.firstName}
-                        />
+                        src={booking?.images?.[0]?.url}
+                        alt={booking.name || 'user'}
+                      />
                         <AvatarFallback>
                           {booking.userId.firstName[0]}
                           {booking.userId.lastName[0]}
@@ -212,13 +210,13 @@ const ToureRequest = () => {
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell>{booking.facility.name}</TableCell>
+                  <TableCell>{booking.facility.location || 'Not Found'}</TableCell>
                   <TableCell>{booking.visitTime}</TableCell>
                   <TableCell>
                     {new Date(booking.visitDate).toLocaleDateString()}
                   </TableCell>
                   <TableCell>
-                    <div className="flex gap-2">
+                    <div className="flex justify-center gap-2">
                       <Button
                         className="bg-[#E6F9EB] text-[#1F9854] hover:bg-green-100"
                         variant="ghost"
