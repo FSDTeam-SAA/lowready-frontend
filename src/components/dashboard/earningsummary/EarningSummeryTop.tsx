@@ -15,10 +15,10 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon }) => {
       className={`p-4 rounded-lg justify-between bg-white border-2 flex items-center gap-4 `}
     >
       <div>
-        <h4 className="text-sm font-medium text-gray-500">{title}</h4>
-        <p className="text-xl font-boldpt-2">{value}</p>
+        <h4 className="text-sm font-semibold  text-gray-[#343A40]">{title}</h4>
+        <p className="text-xl font-bold pt-2">{value}</p>
       </div>
-      <div className="p-3  text-green-300">{icon}</div>
+      <div className="p-3 h-[60px] w-[60px] text-green-300">{icon}</div>
     </div>
   );
 };
