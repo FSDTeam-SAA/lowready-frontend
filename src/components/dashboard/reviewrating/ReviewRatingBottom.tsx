@@ -14,7 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Eye, Trash2, ChevronLeft, ChevronRight, Star } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { DeleteReview,  getReviewRating } from "@/lib/api";
+import { DeleteReview, getReviewRating } from "@/lib/api";
 import {
   Dialog,
   DialogContent,
@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Review {
   _id: string;
@@ -50,13 +51,12 @@ interface ReviewResponse {
 
 const ReviewRatingBottom = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 5;
+  const pageSize = 10;
 
   const [selectedReview, setSelectedReview] = useState<Review | null>(null);
   const [deleteReview, setDeleteReview] = useState<Review | null>(null);
 
-  
-  const {data:session}=useSession();
+  const { data: session } = useSession();
 
   const { data, isLoading } = useQuery<ReviewResponse>({
     queryKey: ["reviews", session],
@@ -64,9 +64,9 @@ const ReviewRatingBottom = () => {
     enabled: !!session,
   });
 
-  console.log('review',data);
-  
-  const queryClient=useQueryClient()
+  console.log("review", data);
+
+  const queryClient = useQueryClient();
 
   const deleteMutation = useMutation({
     mutationKey: ["delete"],
@@ -76,33 +76,90 @@ const ReviewRatingBottom = () => {
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({
-        queryKey: ['reviews']
-      })
+        queryKey: ["reviews"],
+      });
       toast.success(data.message);
     },
   });
 
   const reviews = data?.data || [];
-  const totalResults = reviews.length; 
+  const totalResults = reviews.length;
 
   const totalPages = Math.ceil(totalResults / pageSize);
   const startItem = (currentPage - 1) * pageSize + 1;
   const endItem = Math.min(startItem + pageSize - 1, totalResults);
   const paginatedReviews = reviews.slice(startItem - 1, endItem);
 
-  if (isLoading) return <p>Loading...</p>;
+
 
   const handelDelete = (id: string) => {
     deleteMutation.mutate(id);
   };
 
-  if (!reviews || reviews.length === 0) {
+
+
+  if (isLoading)
     return (
-      <div className="flex items-center justify-center h-64 text-xl text-muted-foreground">
-        No Review Data
-      </div>
+      <section className="p-6">
+        <div className="space-y-4">
+          <div className="border rounded-lg">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-[#E6FAEE]">
+                  <TableHead>Customer</TableHead>
+                  <TableHead className="text-center">Review</TableHead>
+                  <TableHead className="text-center">Rating</TableHead>
+                  <TableHead className="text-center">Date</TableHead>
+                  <TableHead className="text-center">Action</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <TableRow key={i}>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <Skeleton className="h-8 w-8 rounded-full" />
+                        <div>
+                          <Skeleton className="h-4 w-24 mb-1" />
+                          <Skeleton className="h-3 w-32" />
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-40" />
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex justify-center gap-1">
+                        {Array.from({ length: 5 }).map((_, idx) => (
+                          <Skeleton key={idx} className="h-4 w-4" />
+                        ))}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-20 mx-auto" />
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex justify-center gap-2">
+                        <Skeleton className="h-8 w-8 rounded-md" />
+                        <Skeleton className="h-8 w-8 rounded-md" />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+      </section>
     );
-  }
+
+if (!reviews || reviews.length === 0) {
+  return (
+    <div className="flex items-center justify-center h-64 text-xl text-muted-foreground">
+      No Review Data
+    </div>
+  );
+}
 
   return (
     <section className="p-6">
@@ -111,31 +168,31 @@ const ReviewRatingBottom = () => {
           <Table>
             <TableHeader>
               <TableRow className="bg-[#E6FAEE]">
-                <TableHead>Customer</TableHead>
-                <TableHead>Review</TableHead>
-                <TableHead>Rating</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Action</TableHead>
+                <TableHead className="">Customer</TableHead>
+                <TableHead className="text-center">Review</TableHead>
+                <TableHead className="text-center">Rating</TableHead>
+                <TableHead className="text-center">Date</TableHead>
+                <TableHead className="text-center">Action</TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody>
+            <TableBody className="text-center">
               {paginatedReviews.map((review) => (
                 <TableRow key={review._id} className="hover:bg-muted/50">
                   {/* Customer */}
-                  <TableCell>
-                    <div className="flex items-center gap-3">
+                  <TableCell className="text-start">
+                    <div className="flex items-center justify-start gap-3">
                       <Avatar className="h-8 w-8">
                         <AvatarImage src="" alt={review.userId.firstName} />
-                        <AvatarFallback>
+                        <AvatarFallback className=" shadow-2xs">
                           {review.userId.firstName[0]}
                           {review.userId.lastName[0]}
                         </AvatarFallback>
                       </Avatar>
-                      <div>
-                        <div className="font-medium">
+                      <div className="">
+                        <div className="font-medium text-[#343A40] text-[16px]">
                           {review.userId.firstName} {review.userId.lastName}
                         </div>
-                        <div className="text-sm text-muted-foreground">
+                        <div className="text-xs text-muted-foreground">
                           {review.userId.email}
                         </div>
                       </div>
@@ -148,7 +205,7 @@ const ReviewRatingBottom = () => {
                   </TableCell>
 
                   {/* Stars */}
-                  <TableCell className="flex gap-1">
+                  <TableCell className="flex justify-center gap-1">
                     {Array.from({ length: 5 }).map((_, i) => (
                       <Star
                         key={i}
@@ -171,7 +228,7 @@ const ReviewRatingBottom = () => {
                   </TableCell>
 
                   {/* Actions */}
-                  <TableCell className="flex gap-2">
+                  <TableCell className="flex justify-center gap-2">
                     {/* Details dialog trigger */}
                     <Button
                       variant="ghost"
@@ -197,44 +254,48 @@ const ReviewRatingBottom = () => {
         </div>
 
         {/* Pagination */}
-        <div className="flex items-center justify-between px-10">
-          <div className="text-sm text-muted-foreground">
-            Showing {startItem} to {endItem} of {totalResults} results
-          </div>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between px-10">
+            <div className="text-sm text-muted-foreground">
+              Showing {startItem} to {endItem} of {totalResults} results
+            </div>
+            <div className="flex items-center gap-2">
               <Button
-                key={page}
-                variant={currentPage === page ? "default" : "outline"}
+                variant="outline"
                 size="sm"
-                onClick={() => setCurrentPage(page)}
-                className="w-8 h-8 p-0"
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
               >
-                {page}
+                <ChevronLeft className="h-4 w-4" />
               </Button>
-            ))}
 
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-              }
-              disabled={currentPage === totalPages}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                (page) => (
+                  <Button
+                    key={page}
+                    variant={currentPage === page ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setCurrentPage(page)}
+                    className="w-8 h-8 p-0"
+                  >
+                    {page}
+                  </Button>
+                )
+              )}
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
+                disabled={currentPage === totalPages}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Details Dialog */}
@@ -261,7 +322,7 @@ const ReviewRatingBottom = () => {
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <h3 className="font-semibold text-lg">
+                    <h3 className="font-semibold text-[#343A40] text-lg">
                       {selectedReview.userId.firstName}{" "}
                       {selectedReview.userId.lastName}
                     </h3>
@@ -324,8 +385,6 @@ const ReviewRatingBottom = () => {
             <Button
               className="bg-red-600 hover:bg-red-700 text-white"
               onClick={() => {
-                // 👉 Here you can call your API
-                
                 setDeleteReview(null);
                 handelDelete(deleteReview?._id || "");
               }}

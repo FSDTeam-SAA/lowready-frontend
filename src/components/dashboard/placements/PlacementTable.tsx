@@ -49,8 +49,8 @@ export function BookingsTable() {
 
   const bookings: BookingData[] =
     data?.data.map((b) => mapApiBookingToBookingData(b)) || [];
-  const totalPages = data?.pagination?.totalPages || 0;
-  const totalResults = data?.pagination?.totalItems || 0;
+  const totalPages = data?.meta?.totalPages || 0;
+  const totalResults = data?.meta?.totalItems || 0;
 
   const handleDetailsClick = (booking: BookingData) => {
     setSelectedBooking(booking);
