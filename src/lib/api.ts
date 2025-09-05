@@ -164,7 +164,7 @@ export function mapApiBookingToBookingData(
   const facility = apiBooking.facility; // can be null
   return {
     id: apiBooking._id,
-    invoice: `INV-${index + 1}`,
+    invoice: `${apiBooking._id.slice(0, 4)}`,
     customer: {
       name: `${apiBooking.userId.firstName} ${apiBooking.userId.lastName}`,
       email: apiBooking.userId.email,
@@ -212,6 +212,26 @@ export async function getFacilities() {
     throw error;
   }
 }
+
+// get all facilites data
+export async function getallFacilitiesdata(
+  facilityId: string,
+  page?: number,
+  limit?: number
+) {
+  try {
+    const res = await api.get(
+      `/bookings/organization/${facilityId}?page=${page}&limit=${limit}`
+    );
+    return res.data as PaginatedResponse<ApiBooking>;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error fetching bookings: ${error.message}`);
+    }
+    throw error;
+  }
+}
+
 
 // customer/bookings API
 export async function getCustomers(
