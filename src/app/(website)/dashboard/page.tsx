@@ -25,6 +25,8 @@ import Link from "next/link";
 import {
   BookingData,
   
+  getallFacilitiesdata,
+  
   getFacilities,
   getrecentPlacement,
   getReviewRating,
@@ -113,6 +115,8 @@ export default function DashboardPage() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const { data: facilityData,  } = useQuery({
     queryKey: ["facilityId"],
@@ -129,9 +133,12 @@ export default function DashboardPage() {
   
   const { data: recentPlacement } = useQuery({
     queryKey: ["bookings", session],
-    queryFn: () => getrecentPlacement(facilityId),
+    queryFn: () => getallFacilitiesdata(session?.user.id || '',currentPage, itemsPerPage),
     enabled: !!session,
   });
+
+  console.log('pecentplace data',recentPlacement);
+  
 
   const bookings: BookingData[] =
     recentPlacement?.data.map((b, i) => mapApiBookingToBookingData(b, i)) || [];
