@@ -2,12 +2,13 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Star, MapPin, Dot, Wifi, Trees, Plus, X, Filter } from "lucide-react";
+import { Star, MapPin, Dot, Wifi, Trees, Plus, X } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
 import { getSession } from "next-auth/react";
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 interface Facility {
   _id: string;
@@ -81,7 +82,6 @@ const FacilityCard: React.FC<FacilityCardProps> = ({ facility }) => {
           </div>
         </div>
 
-
         <div className="flex items-center gap-2 mb-3">
           <MapPin className="w-4 h-4 text-gray-400" />
           <span className="text-sm text-gray-600">{facility.location}</span>
@@ -95,7 +95,10 @@ const FacilityCard: React.FC<FacilityCardProps> = ({ facility }) => {
         <div className="flex flex-wrap gap-2 mb-4">
           {facility.amenities && facility.amenities.length > 0 ? (
             facility.amenities.slice(0, 3).map((amenity, index) => (
-              <div key={index} className="flex items-center gap-1 px-3 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
+              <div
+                key={index}
+                className="flex items-center gap-1 px-3 py-1 bg-gray-100 text-gray-700 text-xs rounded-full"
+              >
                 <span>{amenity}</span>
               </div>
             ))
@@ -182,16 +185,16 @@ const FacilityCardSkeleton: React.FC = () => {
   );
 };
 
-const FacilityListing: React.FC<FacilityListingProps> = ({ 
+const FacilityListing: React.FC<FacilityListingProps> = ({
   searchFilters = { selectedOption: "All Facilities", selectedAmenities: [] },
-  onFiltersChange 
+  onFiltersChange,
 }) => {
   const router = useRouter();
   const [facilities, setFacilities] = useState<Facility[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [availableAmenities, setAvailableAmenities] = useState<string[]>([]);
-  const [showAmenityFilter, setShowAmenityFilter] = useState<boolean>(false);
+  // const [showAmenityFilter, setShowAmenityFilter] = useState<boolean>(false);
 
   const BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}`;
 
@@ -203,8 +206,8 @@ const FacilityListing: React.FC<FacilityListingProps> = ({
   useEffect(() => {
     if (facilities.length > 0) {
       const amenitiesSet = new Set<string>();
-      facilities.forEach(facility => {
-        facility.amenities?.forEach(amenity => {
+      facilities.forEach((facility) => {
+        facility.amenities?.forEach((amenity) => {
           if (amenity && amenity.trim()) {
             amenitiesSet.add(amenity.trim());
           }
@@ -261,35 +264,48 @@ const FacilityListing: React.FC<FacilityListingProps> = ({
   };
 
   const handleAmenityToggle = (amenity: string) => {
-    const newSelectedAmenities = searchFilters.selectedAmenities.includes(amenity)
-      ? searchFilters.selectedAmenities.filter(a => a !== amenity)
+    const newSelectedAmenities = searchFilters.selectedAmenities.includes(
+      amenity
+    )
+      ? searchFilters.selectedAmenities.filter((a) => a !== amenity)
       : [...searchFilters.selectedAmenities, amenity];
-    
-    const newFilters = { ...searchFilters, selectedAmenities: newSelectedAmenities };
+
+    const newFilters = {
+      ...searchFilters,
+      selectedAmenities: newSelectedAmenities,
+    };
     onFiltersChange?.(newFilters);
   };
 
   const clearAmenityFilter = (amenity: string) => {
-    const newSelectedAmenities = searchFilters.selectedAmenities.filter(a => a !== amenity);
-    const newFilters = { ...searchFilters, selectedAmenities: newSelectedAmenities };
+    const newSelectedAmenities = searchFilters.selectedAmenities.filter(
+      (a) => a !== amenity
+    );
+    const newFilters = {
+      ...searchFilters,
+      selectedAmenities: newSelectedAmenities,
+    };
     onFiltersChange?.(newFilters);
   };
 
   const clearAllFilters = () => {
-    const newFilters = { selectedOption: "All Facilities", selectedAmenities: [] };
+    const newFilters = {
+      selectedOption: "All Facilities",
+      selectedAmenities: [],
+    };
     onFiltersChange?.(newFilters);
   };
 
   // Filter facilities based on selected amenities
-  const filteredFacilities = facilities.filter(facility => {
+  const filteredFacilities = facilities.filter((facility) => {
     // If no amenities are selected, show all facilities
     if (searchFilters.selectedAmenities.length === 0) {
       return true;
     }
 
     // Check if facility has any of the selected amenities
-    return searchFilters.selectedAmenities.some(selectedAmenity =>
-      facility.amenities?.some(facilityAmenity => 
+    return searchFilters.selectedAmenities.some((selectedAmenity) =>
+      facility.amenities?.some((facilityAmenity) =>
         facilityAmenity.toLowerCase().includes(selectedAmenity.toLowerCase())
       )
     );
@@ -300,31 +316,73 @@ const FacilityListing: React.FC<FacilityListingProps> = ({
       <div className="">
         <div className=" mx-auto px-1 sm:px-2 lg:px-2 py-4">
           <div className="flex  justify-between items-center mb-4">
-            <div className="flex items-center gap-4">
-              <select
-                value={searchFilters.selectedOption}
-                onChange={(e) => handleOptionChange(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option>All Facilities</option>
-                <option>Assisted Living</option>
-                <option>Memory Care</option>
-                <option>Independent Living</option>
-              </select>
+            <div className="flex items-center gap-4 mb-4">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="flex items-center gap-2">
+                    Filters
+                    {searchFilters.selectedAmenities.length > 0 && (
+                      <span className="bg-green-100 text-green-800 px-2 py-0.5 rounded-full text-xs">
+                        {searchFilters.selectedAmenities.length}
+                      </span>
+                    )}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56">
+                  {/* Facility Type */}
+                  <div className="px-2 py-1.5 text-sm font-medium text-gray-600">
+                    Facility Type
+                  </div>
+                  {[
+                    "All Facilities",
+                    "Assisted Living",
+                    "Memory Care",
+                    "Independent Living",
+                  ].map((option) => (
+                    <DropdownMenuItem
+                      key={option}
+                      onClick={() => handleOptionChange(option)}
+                      className={`cursor-pointer ${
+                        searchFilters.selectedOption === option
+                          ? "bg-green-50 text-green-700"
+                          : ""
+                      }`}
+                    >
+                      {option}
+                    </DropdownMenuItem>
+                  ))}
 
-              <Button
-                onClick={() => setShowAmenityFilter(!showAmenityFilter)}
-                variant="outline"
-                className="flex items-center gap-2"
-              >
-                <Filter className="h-4 w-4" />
-                Filter by Amenities
-                {searchFilters.selectedAmenities.length > 0 && (
-                  <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">
-                    {searchFilters.selectedAmenities.length}
-                  </span>
-                )}
-              </Button>
+                  <DropdownMenuSeparator />
+
+                  {/* Amenities */}
+                  <div className="px-2 py-1.5 text-sm font-medium text-gray-600">
+                    Amenities
+                  </div>
+                  {availableAmenities.map((amenity) => (
+                    <DropdownMenuCheckboxItem
+                      key={amenity}
+                      checked={searchFilters.selectedAmenities.includes(
+                        amenity
+                      )}
+                      onCheckedChange={() => handleAmenityToggle(amenity)}
+                    >
+                      {amenity}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+
+                  {searchFilters.selectedAmenities.length > 0 && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        onClick={clearAllFilters}
+                        className="text-red-600 cursor-pointer"
+                      >
+                        Clear All Filters
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
 
             <Button
@@ -374,7 +432,9 @@ const FacilityListing: React.FC<FacilityListingProps> = ({
           {/* Selected Amenity Tags */}
           {searchFilters.selectedAmenities.length > 0 && (
             <div className="flex flex-wrap gap-2">
-              <span className="text-sm text-gray-600 font-medium">Filtered by:</span>
+              <span className="text-sm text-gray-600 font-medium">
+                Filtered by:
+              </span>
               {searchFilters.selectedAmenities.map((amenity) => (
                 <div
                   key={amenity}
@@ -448,12 +508,12 @@ const FacilityListing: React.FC<FacilityListingProps> = ({
               </svg>
             </div>
             <h3 className="text-lg font-medium text-gray-900 mb-2">
-              {searchFilters.selectedAmenities.length > 0 
-                ? "No Facilities Match Your Filters" 
+              {searchFilters.selectedAmenities.length > 0
+                ? "No Facilities Match Your Filters"
                 : "No Facilities Found"}
             </h3>
             <p className="text-gray-600">
-              {searchFilters.selectedAmenities.length > 0 
+              {searchFilters.selectedAmenities.length > 0
                 ? "Try removing some filters or adding facilities with these amenities."
                 : "You haven't added any facilities yet."}
             </p>
@@ -480,7 +540,8 @@ const FacilityListing: React.FC<FacilityListingProps> = ({
           <div>
             <div className="mb-4">
               <p className="text-gray-600">
-                Showing {filteredFacilities.length} of {facilities.length} facilities
+                Showing {filteredFacilities.length} of {facilities.length}{" "}
+                facilities
                 {searchFilters.selectedAmenities.length > 0 && (
                   <span> matching your filter criteria</span>
                 )}

@@ -8,7 +8,7 @@ interface VisitorCounterProps {
 }
 
 async function fetchVisitorSummary(facilityId: string, token: string) {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/facility/summary/${facilityId}`, {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/facility/summary/${facilityId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -17,6 +17,7 @@ async function fetchVisitorSummary(facilityId: string, token: string) {
   if (!response.ok) {
     throw new Error("Failed to fetch visitor summary")
   }
+  console.log(response)
 
   const data = await response.json()
   return data.data

@@ -160,18 +160,18 @@ const FileUploadZone = ({
         <div className="mt-4 p-3 bg-blue-50 rounded-lg">
           <div className="flex items-center justify-between">
             <p className="text-sm font-medium text-blue-900">{selectedFile}</p>
-            <button
+            <Button
               type="button"
               onClick={() =>
                 onFileChange({
                   target: { files: null },
                 } as React.ChangeEvent<HTMLInputElement>)
               }
-              className="text-red-500 hover:text-red-700 p-1"
+              className="text-red-500 hover:text-red-700 cursor-pointer p-1"
               title="Remove file"
             >
               <X className="h-4 w-4" />
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -910,7 +910,7 @@ export default function EditFacilityPage() {
                         <Button
                           type="button"
                           variant="outline"
-                          className="w-full mb-4 bg-transparent"
+                          className="w-full cursor-pointer mb-4 bg-transparent"
                         >
                           <Plus className="h-4 w-4 mr-2" />
                           Add New Amenities Service
@@ -1145,7 +1145,7 @@ export default function EditFacilityPage() {
                             </SelectContent>
                           </Select>
                         </div>
-                        <Button type="button" onClick={addTimeSlot}>
+                        <Button className="cursor-pointer" type="button" onClick={addTimeSlot}>
                           <Plus className="h-4 w-4 mr-1" />
                           Add
                         </Button>
@@ -1176,7 +1176,7 @@ export default function EditFacilityPage() {
                       type="button"
                       variant="outline"
                       onClick={() => router.back()}
-                      className="flex-1"
+                      className="flex-1 cursor-pointer"
                       disabled={updateFacilityMutation.isPending}
                     >
                       Cancel
@@ -1184,7 +1184,7 @@ export default function EditFacilityPage() {
                     <Button
                       type="submit"
                       disabled={updateFacilityMutation.isPending}
-                      className="flex-1 bg-green-600 hover:bg-green-700 disabled:opacity-50"
+                      className="flex-1 cursor-pointer bg-green-600 hover:bg-green-700 disabled:opacity-50"
                     >
                       {updateFacilityMutation.isPending ? (
                         <div className="flex items-center">
