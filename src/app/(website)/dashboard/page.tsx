@@ -21,10 +21,33 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
+import {
+  BookingData,
+  
+  getFacilities,
+  getrecentPlacement,
+  getReviewRating,
+  mapApiBookingToBookingData,
+} from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 // Month names for chart display
-const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
-                   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const monthNames = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
 
 // Interfaces for API responses
 interface EarningsData {
@@ -56,6 +79,29 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
+interface Review {
+  _id: string;
+  comment: string;
+  star: number;
+  createdAt: string;
+  updatedAt: string;
+  userId: {
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+  facility: {
+    _id: string;
+    name: string;
+  };
+}
+
+interface ReviewResponse {
+  success: boolean;
+  total: number;
+  data: Review[];
+}
+
 export default function DashboardPage() {
   const { data: session } = useSession();
   const [earningsData, setEarningsData] = useState<EarningsData[]>([]);
@@ -63,10 +109,33 @@ export default function DashboardPage() {
     upcomingTours: 0,
     totalBookings: 0,
     totalEarnings: 0,
-    residentsServed: 0
+    residentsServed: 0,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const { data: facilityData,  } = useQuery({
+    queryKey: ["facilityId"],
+    queryFn: () => getFacilities(),
+  });
+
+  const facilityId = facilityData?.data?.[0]?._id || "";
+  const { data: reviewRating, isLoading } = useQuery<ReviewResponse>({
+    queryKey: ["reviews", session],
+    queryFn: () => getReviewRating(facilityId),
+    enabled: !!session,
+  });
+
+  
+  const { data: recentPlacement } = useQuery({
+    queryKey: ["bookings", session],
+    queryFn: () => getrecentPlacement(facilityId),
+    enabled: !!session,
+  });
+
+  const bookings: BookingData[] =
+    recentPlacement?.data.map((b, i) => mapApiBookingToBookingData(b, i)) || [];
+  // console.log("bookinggjggg", bookings);
 
   // Replace with your actual base URL
   const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "YOUR_BASE_URL_HERE";
@@ -83,7 +152,7 @@ export default function DashboardPage() {
         {
           method: "GET",
           headers: {
-            "Authorization": `Bearer ${session.accessToken}`,
+            Authorization: `Bearer ${session.accessToken}`,
             "Content-Type": "application/json",
           },
         }
@@ -94,7 +163,7 @@ export default function DashboardPage() {
       }
 
       const result: ApiResponse<EarningsData[]> = await response.json();
-      
+
       if (result.success) {
         setEarningsData(result.data);
       } else {
@@ -102,7 +171,9 @@ export default function DashboardPage() {
       }
     } catch (err) {
       console.error("Error fetching earnings data:", err);
-      setError(err instanceof Error ? err.message : "Failed to fetch earnings data");
+      setError(
+        err instanceof Error ? err.message : "Failed to fetch earnings data"
+      );
     }
   };
 
@@ -113,23 +184,20 @@ export default function DashboardPage() {
         throw new Error("Access token not found");
       }
 
-      const response = await fetch(
-        `${BASE_URL}/dashboard/org-dashboard`,
-        {
-          method: "GET",
-          headers: {
-            "Authorization": `Bearer ${session.accessToken}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch(`${BASE_URL}/dashboard/org-dashboard`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${session.accessToken}`,
+          "Content-Type": "application/json",
+        },
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const result: ApiResponse<StatsData> = await response.json();
-      
+
       if (result.success) {
         setStatsData(result.data);
       } else {
@@ -137,7 +205,9 @@ export default function DashboardPage() {
       }
     } catch (err) {
       console.error("Error fetching stats data:", err);
-      setError(err instanceof Error ? err.message : "Failed to fetch stats data");
+      setError(
+        err instanceof Error ? err.message : "Failed to fetch stats data"
+      );
     }
   };
 
@@ -147,12 +217,9 @@ export default function DashboardPage() {
       if (session?.accessToken) {
         setLoading(true);
         setError(null);
-        
-        await Promise.all([
-          fetchEarningsData(),
-          fetchStatsData()
-        ]);
-        
+
+        await Promise.all([fetchEarningsData(), fetchStatsData()]);
+
         setLoading(false);
       }
     };
@@ -169,10 +236,15 @@ export default function DashboardPage() {
 
   // Calculate current month's earnings
   const currentMonth = new Date().getMonth() + 1;
-  const currentMonthEarnings = earningsData.find(item => item.month === currentMonth)?.totalEarnings || 0;
+  const currentMonthEarnings =
+    earningsData.find((item) => item.month === currentMonth)?.totalEarnings ||
+    0;
 
-  // // Calculate total year earnings
-  // const totalYearEarnings = earningsData.reduce((sum, item) => sum + item.totalEarnings, 0);
+  // Calculate total year earnings
+  const totalYearEarnings = earningsData.reduce(
+    (sum, item) => sum + item.totalEarnings,
+    0
+  );
 
   if (loading) {
     return (
@@ -354,90 +426,85 @@ export default function DashboardPage() {
           <Card className="lg:col-span-4 p-5 bg-white">
             <CardHeader className="flex flex-row items-center justify-between pb-4">
               <CardTitle className="text-lg font-semibold text-gray-900">
-                Referral Savings 
+                Referral Savings
               </CardTitle>
-               
             </CardHeader>
             <CardContent className="space-y-3">
-              {/* {[1, 2, 3, 4].map((_, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
-                      <span className="text-sm font-medium text-gray-600">
-                        OR
-                      </span>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">
-                        Olivia Rhye
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        example@example.com
-                      </p>
-                    </div>
-                  </div>
-                  <button className="px-3 py-1.5 text-xs font-medium rounded-full bg-green-100 text-green-700 hover:bg-green-200 transition-colors">
-                    Details
-                  </button>
-                </div>
-              ))} */}
-              <h2 className="text-[#10421B] font-bold text-6xl mx-auto text-center flex justify-center items-center" >$1,234</h2>
+              <h2 className="text-[#10421B] font-bold text-6xl mx-auto text-center flex justify-center items-center">
+                $1,234
+              </h2>
             </CardContent>
           </Card>
         </div>
 
-        {/* Bookings & Reviews */}
+        {/* Recent Placements & Reviews */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Recent Bookings */}
+       
+          {/* Recent Placements */}
           <Card className="bg-white p-5">
             <CardHeader className="flex flex-row items-center justify-between pb-4">
               <CardTitle className="text-lg font-semibold text-gray-900">
-                Recent Bookings
+                Recent Placements
               </CardTitle>
-              <button className="text-green-600 text-sm font-medium hover:text-green-700">
-                See all
-              </button>
+              <Link href="/dashboard/placements">
+                <button className="text-green-600 text-sm font-medium cursor-pointer hover:text-green-700">
+                  See all
+                </button>
+              </Link>
             </CardHeader>
             <CardContent className="space-y-3">
-              {[1, 2, 3].map((_, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
-                      <span className="text-sm font-medium text-gray-600">
-                        OR
-                      </span>
+              {bookings.length > 0 ? (
+                bookings.slice(0, 3).map((booking) => (
+                  <div
+                    key={booking.id}
+                    className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage
+                            src={booking.images?.[0]?.url}
+                            alt={booking.customer.name}
+                          />
+                          <AvatarFallback>
+                            {booking.customer.name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")}
+                          </AvatarFallback>
+                        </Avatar>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">
+                          {booking.customer.name}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {booking.bookerInfo.emailAddress}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">
-                        Olivia Rhye
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        example@example.com
-                      </p>
+                    <div className="flex items-center gap-3">
+                      <div className="text-right">
+                        <p className="text-xs text-gray-500 flex items-center gap-1">
+                          <MapPin className="h-3 w-3" /> {booking.location}
+                        </p>
+                        <p className="text-sm font-semibold text-gray-900">
+                          ${booking.price.toLocaleString()}
+                        </p>
+                      </div>
+                      <Link className="cursor-pointer" href={`/dashboard/placements/`}>
+                        <button className="px-3 py-1.5 cursor-pointer text-xs font-medium rounded-full bg-green-100 text-green-700 hover:bg-green-200 transition-colors">
+                          Details
+                        </button>
+                      </Link>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <div className="text-right">
-                      <p className="text-sm font-semibold text-gray-900">
-                        $2,000
-                      </p>
-                      <p className="text-xs text-gray-500 flex items-center gap-1">
-                        <MapPin className="h-3 w-3" /> 2715 Ash Dr, San Jose,
-                        South Dakota
-                      </p>
-                    </div>
-                    <button className="px-3 py-1.5 text-xs font-medium rounded-full bg-green-100 text-green-700 hover:bg-green-200 transition-colors">
-                      Details
-                    </button>
-                  </div>
+                ))
+              ) : (
+                <div className="flex items-center justify-center h-32">
+                  <div className="text-gray-500">No recent placements</div>
                 </div>
-              ))}
+              )}
             </CardContent>
           </Card>
 
@@ -447,44 +514,68 @@ export default function DashboardPage() {
               <CardTitle className="text-lg font-semibold text-gray-900">
                 Recent Reviews
               </CardTitle>
-              <button className="text-green-600 text-sm font-medium hover:text-green-700">
-                See all
-              </button>
+              <Link href="/dashboard/reviewratings">
+                <button className="text-green-600 text-sm font-medium cursor-pointer hover:text-green-700">
+                  See all
+                </button>
+              </Link>
             </CardHeader>
             <CardContent className="space-y-4">
-              {[1, 2].map((_, idx) => (
-                <div
-                  key={idx}
-                  className="p-4 rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors space-y-3"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
-                        <span className="text-sm font-medium text-gray-600">
-                          CD
-                        </span>
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          Connect Directly
-                        </p>
-                        <p className="text-xs text-gray-500">Portland, OR</p>
-                      </div>
-                    </div>
-                    <div className="flex text-yellow-400">
-                      {[...Array(4)].map((_, i) => (
-                        <Star key={i} className="h-4 w-4 fill-current" />
-                      ))}
-                      <Star className="h-4 w-4 text-gray-300" />
-                    </div>
-                  </div>
-                  <p className="text-sm text-gray-600 leading-relaxed">
-                    I&apos;ve been ordering from TABLEFRESH for over a year
-                    now, and the quality of their organic produce is
-                    consistently excellent.
-                  </p>
+              {isLoading ? (
+                // Loading state
+                <div className="flex items-center justify-center h-32">
+                  <div className="text-gray-500">Loading reviews...</div>
                 </div>
-              ))}
+              ) : reviewRating?.data && reviewRating.data.length > 0 ? (
+                // Display actual reviews
+                reviewRating.data.slice(0, 2).map((review) => (
+                  <div
+                    key={review._id}
+                    className="p-4 rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors space-y-3"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+                          <span className="text-sm font-medium text-gray-600">
+                            {review.userId.firstName.charAt(0)}
+                            {review.userId.lastName.charAt(0)}
+                          </span>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">
+                            {review.userId.firstName} {review.userId.lastName}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {review.userId.email}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex text-yellow-400">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`h-4 w-4 ${
+                              i < review.star ? "fill-current" : "text-gray-300"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-600 leading-relaxed">
+                      {review.comment}
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      {new Date(review.createdAt).toLocaleDateString()} •{" "}
+                      {review.facility.name}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                // No reviews state
+                <div className="flex items-center justify-center h-32">
+                  <div className="text-gray-500">No reviews yet</div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -509,18 +600,21 @@ function StatCard({
   return (
     <Card className="bg-white border-0 shadow-sm flex flex-row justify-between items-center p-5">
       <div>
-
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-medium text-gray-600">
-          {title}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold text-gray-900 mb-1">{value}</div>
-        <p className="text-xs text-green-600 font-medium">{change}</p>
-      </CardContent>
+        <CardHeader className="flex flex-row items-center justify-between pb-2">
+          <CardTitle className="text-sm font-medium text-gray-600">
+            {title}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold text-gray-900 mb-1">{value}</div>
+          <p className="text-xs text-green-600 font-medium">{change}</p>
+        </CardContent>
       </div>
-        <div className={`p-2 rounded-lg w-[60px] h-[60px] flex items-center justify-center ${bgColor}`}>{icon}</div>
+      <div
+        className={`p-2 rounded-lg w-[60px] h-[60px] flex items-center justify-center ${bgColor}`}
+      >
+        {icon}
+      </div>
     </Card>
   );
 }

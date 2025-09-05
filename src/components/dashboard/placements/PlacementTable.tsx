@@ -130,7 +130,7 @@ export function BookingsTable() {
             {bookings.map((booking) => (
               <TableRow key={booking.id} className="hover:bg-muted/50">
                 <TableCell>{booking.invoice}</TableCell>
-                <TableCell className="text-center">
+                <TableCell className="text-start">
                   <div className="flex items-center justify-center gap-3">
                     <Avatar className="h-8 w-8">
                       <AvatarImage

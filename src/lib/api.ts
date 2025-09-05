@@ -232,6 +232,24 @@ export async function getCustomers(
   }
 }
 
+// recent placement 
+export async function getrecentPlacement(
+  facilityId: string,
+ 
+): Promise<PaginatedResponse<ApiBooking>> {
+  try {
+    const res = await api.get(
+      `/bookings/facility/${facilityId}`
+    );
+    return res.data as PaginatedResponse<ApiBooking>;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error fetching bookings: ${error.message}`);
+    }
+    throw error;
+  }
+}
+
 // -------------------------------
 // Notifications API
 // -------------------------------
@@ -489,7 +507,7 @@ export async function getReviewRating(id: string) {
 
 export async function DeleteReview(id: string) {
   try {
-    const res = await api.delete(`/reviews/${id}`);
+    const res = await api.delete(`/review-rating/${id}`);
     return res.data;
   } catch (error) {
     if (error instanceof Error) {
@@ -785,8 +803,27 @@ export async function createContactUs(userData: {
   } catch  {
     throw new Error("Contact Us Error");
   }
+
+}export async function reviewRatingsummery(id: string) {
+  try {
+    const res = await api.get(`/review-rating/summary/${id}`);
+    return res.data.data;
+  } catch (error) {
+    console.error("Error fetching facilities:", error);
+    return { data: [], totalPages: 1 };
+  }
 }
 
+export async function DeleteRatingReview(id: string) {
+  try {
+    const res = await api.delete(`/review-rating/${id}`);
+    return res.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error Deleted you Review: ${error.message}`);
+    }
+  }
+}
 // Delete Placement history
 export async function deletePlacement(id: string) {
   try {

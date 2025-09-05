@@ -1,4 +1,4 @@
-import CheckboxHorizontalGroupDemo from "../customized/checkbox/checkbox-04";
+// import CheckboxHorizontalGroupDemo from "../customized/checkbox/checkbox-04";
 import { SearchBar } from "../customized/searchbar/searchbar";
 
 const Hero = () => {
@@ -21,7 +21,7 @@ const Hero = () => {
           {/* Checkbox + SearchBar Container */}
           <div className="my-6 md:my-10 w-full bg-transparent p-4 sm:p-6 rounded-md">
             <div className="max-w-3xl mx-auto space-y-4">
-              <CheckboxHorizontalGroupDemo />
+              {/* <CheckboxHorizontalGroupDemo /> */}
               <SearchBar />
             </div>
           </div>

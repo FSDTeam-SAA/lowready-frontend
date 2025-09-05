@@ -14,6 +14,7 @@ import { Dot, MapPin } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
@@ -23,8 +24,12 @@ interface FacilityTourProps {
 
 export function FacilityGallery({ data }: FacilityTourProps) {
   const datas = data?.data || {};
+  const router = useRouter();
   const { data: session } = useSession();
+
   const userId = session?.user?.id || "";
+  const userRole = session?.user?.role || "";
+
   const [previewImage, setPreviewImage] = useState(
     datas?.images?.[0]?.url || "/default-image.png"
   );
@@ -40,7 +45,6 @@ export function FacilityGallery({ data }: FacilityTourProps) {
     }
   }, [datas.amenitiesServices]);
 
- 
   const createBookingMutation = useMutation({
     mutationKey: ["booking"],
     mutationFn: (values: BookingType) => createBooking(values),
@@ -53,16 +57,25 @@ export function FacilityGallery({ data }: FacilityTourProps) {
   });
 
   async function handleBookingSubmit(values: BookingType) {
-    await createBookingMutation.mutate(values);
+    await createBookingMutation.mutateAsync(values);
+    handleCloseModal();
   }
 
-  // const handleEditBooking = (booking: BookingType) => {
-  //   setBookingData(booking);
-  //   setIsEdit(true);
-  //   setModalOpen(true);
-  // };
-
   const handleNewBooking = () => {
+    // ✅ Authentication check
+    if (!session) {
+      toast.error("Please login first to book a tour.");
+      router.push("/login"); // redirect to login
+      return;
+    }
+
+    // ✅ Role check
+    if (userRole !== "user") {
+      toast.error("Only users can book a tour.");
+      return;
+    }
+
+    // Open booking modal with default data
     setBookingData(undefined);
     setIsEdit(false);
     setModalOpen(true);
@@ -108,9 +121,9 @@ export function FacilityGallery({ data }: FacilityTourProps) {
         </div>
 
         {/* Facility Info */}
-        <div className="lg:w-1/2">
-          <Button className="text-[#28A745] bg-[#9CE7AD] hover:text-white border-1 mt-5  flex gap-1 items-center ">
-            <Dot />
+        <div className="lg:w-1/2 p-4 md:p-0">
+          <Button className="text-[#28A745] bg-[#E6F9EB]   border-1 border-[#9CE7AD] hover:bg-transparent mt-5  flex gap-1 items-center ">
+            <Dot className=""/>
             Available
           </Button>
           <h1 className="text-2xl font-bold pt-[24px] text-[#343A40]">
@@ -125,7 +138,7 @@ export function FacilityGallery({ data }: FacilityTourProps) {
           </p>
 
           {/* Amenities */}
-          <div className=" pt-[24px] md:pt-[40px] pb-[60px]">
+          <div className="  md:pt-[40px] pb-[30px] md:pb-[60px]">
             <h3 className="text-[20px] text-[#343A40] pb-[6px]">Amenities</h3>
             <div>
               <ul className="flex items-center gap-3 flex-wrap">
@@ -144,10 +157,11 @@ export function FacilityGallery({ data }: FacilityTourProps) {
           {/* Price + Actions */}
           <div className="">
             <p className="text-[20px] font-semibold text-[#343A40]">Pricing</p>
-            <p className="text-2xl md:text-[40px] font-bold text-green-600">
-              ${datas?.price || 2200} <span className="text-[16px] font-medium">/ month</span>
+            <p className="text-3xl md:text-[40px] font-bold text-green-600">
+              ${datas?.price || 2200}{" "}
+              <span className="text-[16px] font-medium">/ month</span>
             </p>
-            <div className="space-x-2 pt-[80px] flex cursor-pointer justify-between">
+            <div className="space-x-2 pt-[20px] md:pt-[80px] flex cursor-pointer justify-between">
               <Link
                 className="w-1/2 cursor-pointer text-[#28A745]"
                 href={"#requestACall"}
