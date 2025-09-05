@@ -60,14 +60,15 @@ const ReviewRatingBottom = () => {
     queryFn: getFacilities,
   });
   const {data:session}=useSession();
-  const facilityId = facilityData?.data?.[0]?._id || "";
+  const facilityId = "68b0bdd9d31b6ec6bd244b15";
 
   const { data, isLoading } = useQuery<ReviewResponse>({
     queryKey: ["reviews", session],
-    queryFn: () => getReviewRating(facilityId),
+    queryFn: () => getReviewRating(),
     enabled: !!session,
   });
 
+  console.log('review',data);
   
   
 
