@@ -1,12 +1,11 @@
 "use client";
 
-import { getFacilities, reviewRatingsummery } from "@/lib/api";
+import { reviewRatingsummery } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 
 import { ArrowUp } from "lucide-react";
-import { useSession } from "next-auth/react";
-import React from "react";
 
+import React from "react";
 
 interface StatCardProps {
   title: string;
@@ -36,40 +35,18 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, change, icon }) => {
 };
 
 const ReviewRatingTop = () => {
-  const { data: facilityData, isLoading: isFacilitiesLoading, error: facilityError } =
-    useQuery({
-      queryKey: ["facilities"],
-      queryFn: getFacilities,
-    });
-
-  const facilityId = facilityData?.data?.[0]?._id || "";
-   const {data:session}=useSession();
   const {
     data: reviewrating,
-    isLoading: isRatingLoading,
-    error: ratingError,
+   
   } = useQuery({
-    queryKey: ["reviewRating", facilityId],
-    queryFn: () => reviewRatingsummery(facilityId),
-    enabled: !!facilityId,
+    queryKey: ["reviewRating"],
+    queryFn: () => reviewRatingsummery(),
   });
-
-
-
-  if (isFacilitiesLoading || isRatingLoading) {
-    return <p className="p-5 text-gray-500">Loading...</p>;
-  }
-
-  if (facilityError || ratingError) {
-    return <p className="p-5 text-red-500">Failed to load data.</p>;
-  }
 
   const ratings = [5, 4, 3, 2, 1].map((star) => ({
     title: `${star} Star Ratings`,
     value: reviewrating?.ratings?.[star] || 0,
   }));
-
- 
 
   return (
     <section className="pt-8 px-5">
