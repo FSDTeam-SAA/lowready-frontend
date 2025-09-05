@@ -2,7 +2,7 @@ import {
   ApiResponse,
   Booking,
   ChangePasswordResponse,
-  PaginatedResponse,
+  
   RebookData,
   RebookResponse,
   ReviewData,
@@ -145,15 +145,15 @@ export interface ApiBooking {
   phoneNumber?: string;
 }
 
-// export interface PaginatedResponse<T> {
-//   data: T[];
-//   meta: {
-//     totalPages: number;
-//     totalItems: number;
-//     currentPage: number;
-//     itemsPerPage: number;
-//   };
-// }
+export interface PaginatedResponse<T> {
+  data: T[];
+  meta: {
+    totalPages: number;
+    totalItems: number;
+    currentPage: number;
+    itemsPerPage: number;
+  };
+}
 
 // -------------------------------
 // Mapper: ApiBooking → BookingData
@@ -819,8 +819,8 @@ export async function createContactUs(userData: {
   } catch {
     throw new Error("Contact Us Error");
   }
-
-}export async function reviewRatingsummery() {
+}
+export async function reviewRatingsummery() {
   try {
     const res = await api.get(`/review-rating/summary/all-reviews`);
     return res.data.data;
@@ -849,5 +849,32 @@ export async function deletePlacement(id: string) {
     if (error instanceof Error) {
       throw new Error(`Error Deleted plecement data: ${error.message}`);
     }
+  }
+}
+
+//dashboard summery
+
+// --- Types ---
+
+interface dashboardsummer{
+  totalBookings?: number;
+  totalEarnings?: number;
+  referralFee?: number;
+  residentsServed?:number;
+}
+export interface DashboardSummary {
+  data:dashboardsummer;
+}
+
+// --- API Call ---
+export async function getDashboardSummery(): Promise<DashboardSummary> {
+  try {
+    const res = await api.get(`/dashboard/org-dashboard`);
+    return res.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error fetching dashboard summary: ${error.message}`);
+    }
+    throw error;
   }
 }

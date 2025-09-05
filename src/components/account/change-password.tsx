@@ -65,7 +65,7 @@ type PasswordFormData = z.infer<typeof passwordSchema>;
 export default function ChangePasswordPage() {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [,setSelectedFile] = useState<File | null>(null);
 
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
