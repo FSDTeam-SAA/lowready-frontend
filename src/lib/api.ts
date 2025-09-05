@@ -2,7 +2,6 @@ import {
   ApiResponse,
   Booking,
   ChangePasswordResponse,
-  
   RebookData,
   RebookResponse,
   ReviewData,
@@ -856,20 +855,44 @@ export async function deletePlacement(id: string) {
 
 // --- Types ---
 
-interface dashboardsummer{
+interface dashboardsummer {
   totalBookings?: number;
   totalEarnings?: number;
   referralFee?: number;
-  residentsServed?:number;
+  residentsServed?: number;
 }
 export interface DashboardSummary {
-  data:dashboardsummer;
+  data: dashboardsummer;
 }
 
 // --- API Call ---
 export async function getDashboardSummery(): Promise<DashboardSummary> {
   try {
     const res = await api.get(`/dashboard/org-dashboard`);
+    return res.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error fetching dashboard summary: ${error.message}`);
+    }
+    throw error;
+  }
+}
+
+// dashboard/referral/saving
+interface referreldata{
+referralFees?: number;
+  referralRate?: number;
+  savings?: number;
+  standardReferralFee?: number;
+  subscriptionCost?: number;
+  totalWithModel?: number;
+}
+interface dashboardrefarel {
+  data:referreldata;
+}
+export async function getDashboardreferral(): Promise<dashboardrefarel> {
+  try {
+    const res = await api.get(`dashboard/referral/saving`);
     return res.data;
   } catch (error) {
     if (error instanceof Error) {
