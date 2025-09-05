@@ -13,7 +13,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Eye, Trash2, ChevronLeft, ChevronRight, Star } from "lucide-react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { DeleteReview, getFacilities, getReviewRating } from "@/lib/api";
 import {
   Dialog,
@@ -70,7 +70,7 @@ const ReviewRatingBottom = () => {
 
   console.log('review',data);
   
-  
+  const queryClient=useQueryClient()
 
   const deleteMutation = useMutation({
     mutationKey: ["delete"],
@@ -79,6 +79,9 @@ const ReviewRatingBottom = () => {
       toast.error(error.message);
     },
     onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ['reviews']
+      })
       toast.success(data.message);
     },
   });
