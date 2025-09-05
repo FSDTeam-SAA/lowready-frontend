@@ -14,7 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Eye, Trash2, ChevronLeft, ChevronRight, Star } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { DeleteReview, getFacilities, getReviewRating } from "@/lib/api";
+import { DeleteReview,  getReviewRating } from "@/lib/api";
 import {
   Dialog,
   DialogContent,
@@ -55,12 +55,8 @@ const ReviewRatingBottom = () => {
   const [selectedReview, setSelectedReview] = useState<Review | null>(null);
   const [deleteReview, setDeleteReview] = useState<Review | null>(null);
 
-  const { data: facilityData } = useQuery({
-    queryKey: ["facilities"],
-    queryFn: getFacilities,
-  });
+  
   const {data:session}=useSession();
-  const facilityId = "68b0bdd9d31b6ec6bd244b15";
 
   const { data, isLoading } = useQuery<ReviewResponse>({
     queryKey: ["reviews", session],

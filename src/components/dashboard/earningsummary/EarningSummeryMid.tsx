@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -40,8 +41,18 @@ const chartConfig: ChartConfig = {
 };
 
 const monthNames = [
-  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
 ];
 
 const EarningSummeryMid = () => {
@@ -53,7 +64,7 @@ const EarningSummeryMid = () => {
 
   const fetchEarningsData = async () => {
     if (!session?.accessToken) {
-      setError('Access token not available');
+      setError("Access token not available");
       setIsLoading(false);
       return;
     }
@@ -63,20 +74,23 @@ const EarningSummeryMid = () => {
       setError(null);
 
       const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-      const response = await fetch(`${baseUrl}/dashboard/org-dashboard/total/earnings`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${session.accessToken}`,
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await fetch(
+        `${baseUrl}/dashboard/org-dashboard/total/earnings`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${session.accessToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`Failed to fetch data: ${response.status}`);
       }
 
       const result: ApiResponse = await response.json();
-      
+
       if (!result.success) {
         throw new Error(result.message);
       }
@@ -88,20 +102,21 @@ const EarningSummeryMid = () => {
       }));
 
       setChartData(transformedData);
-      setTotalEarnings(result.data.reduce((sum, item) => sum + item.totalEarnings, 0));
-
+      setTotalEarnings(
+        result.data.reduce((sum, item) => sum + item.totalEarnings, 0)
+      );
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    if (status === 'authenticated' && session?.accessToken) {
+    if (status === "authenticated" && session?.accessToken) {
       fetchEarningsData();
-    } else if (status === 'unauthenticated') {
-      setError('Authentication required');
+    } else if (status === "unauthenticated") {
+      setError("Authentication required");
       setIsLoading(false);
     }
   }, [session, status]);
@@ -109,7 +124,7 @@ const EarningSummeryMid = () => {
   const getCurrentMonth = () => monthNames[new Date().getMonth()];
   const getCurrentYear = () => new Date().getFullYear();
 
-  if (status === 'loading') {
+  if (status === "loading") {
     return (
       <section>
         <div className="pt-6 px-5">
@@ -126,7 +141,7 @@ const EarningSummeryMid = () => {
     );
   }
 
-  if (status === 'unauthenticated') {
+  if (status === "unauthenticated") {
     return (
       <section>
         <div className="pt-6 px-5">
@@ -134,11 +149,23 @@ const EarningSummeryMid = () => {
             <CardContent className="flex items-center justify-center h-96">
               <div className="text-center">
                 <div className="text-amber-500 mb-4">
-                  <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  <svg
+                    className="w-12 h-12 mx-auto"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                    />
                   </svg>
                 </div>
-                <p className="text-gray-600">Please log in to view earnings data</p>
+                <p className="text-gray-600">
+                  Please log in to view earnings data
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -172,8 +199,18 @@ const EarningSummeryMid = () => {
             <CardContent className="flex items-center justify-center h-96">
               <div className="text-center">
                 <div className="text-red-500 mb-4">
-                  <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <svg
+                    className="w-12 h-12 mx-auto"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
                   </svg>
                 </div>
                 <p className="text-red-600 mb-4">{error}</p>
@@ -204,14 +241,15 @@ const EarningSummeryMid = () => {
                 <span className="text-2xl font-bold text-gray-900">
                   ${totalEarnings.toLocaleString()}
                 </span>
-                <span className="text-sm text-gray-500">{getCurrentMonth()}</span>
+                <span className="text-sm text-gray-500">
+                  {getCurrentMonth()}
+                </span>
               </div>
             </div>
             <div className="text-right">
               <span className="text-sm text-gray-500">
                 {getCurrentMonth()}, {getCurrentYear()}
               </span>
-              
             </div>
           </CardHeader>
           <CardContent>
@@ -221,13 +259,33 @@ const EarningSummeryMid = () => {
                 margin={{ left: 0, right: 0, top: 20, bottom: 20 }}
               >
                 <defs>
-                  <linearGradient id="earningsGradient" x1="0" y1="0" x2="0" y2="1">
+                  <linearGradient
+                    id="earningsGradient"
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                  >
                     <stop offset="0%" stopColor="#22c55e" stopOpacity={0.3} />
-                    <stop offset="100%" stopColor="#22c55e" stopOpacity={0.05} />
+                    <stop
+                      offset="100%"
+                      stopColor="#22c55e"
+                      stopOpacity={0.05}
+                    />
                   </linearGradient>
-                  <linearGradient id="bookingsGradient" x1="0" y1="0" x2="0" y2="1">
+                  <linearGradient
+                    id="bookingsGradient"
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                  >
                     <stop offset="0%" stopColor="#E6E7E6" stopOpacity={0.3} />
-                    <stop offset="100%" stopColor="#E6E7E6" stopOpacity={0.05} />
+                    <stop
+                      offset="100%"
+                      stopColor="#E6E7E6"
+                      stopOpacity={0.05}
+                    />
                   </linearGradient>
                 </defs>
 

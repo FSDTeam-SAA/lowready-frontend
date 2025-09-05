@@ -13,7 +13,8 @@ import axios from "axios";
 import { getSession } from "next-auth/react";
 
 export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "https://lowready-backend.onrender.com/api/v1";
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://lowready-backend.onrender.com/api/v1";
 
 // Create axios instance
 const api = axios.create({
@@ -63,7 +64,7 @@ export interface BookingData {
     email: string;
     avatar: string;
   };
-  images:Avatar[];
+  images: Avatar[];
   location: string;
   price: number;
   status: "Paid" | "Cancelled";
@@ -158,8 +159,7 @@ export interface ApiBooking {
 // Mapper: ApiBooking → BookingData
 // -------------------------------
 export function mapApiBookingToBookingData(
-  apiBooking: ApiBooking,
-  index: number
+  apiBooking: ApiBooking
 ): BookingData {
   const facility = apiBooking.facility; // can be null
   return {
@@ -232,7 +232,6 @@ export async function getallFacilitiesdata(
   }
 }
 
-
 // customer/bookings API
 export async function getCustomers(
   facilityId: string,
@@ -252,15 +251,12 @@ export async function getCustomers(
   }
 }
 
-// recent placement 
+// recent placement
 export async function getrecentPlacement(
-  facilityId: string,
- 
+  facilityId: string
 ): Promise<PaginatedResponse<ApiBooking>> {
   try {
-    const res = await api.get(
-      `/bookings/facility/${facilityId}`
-    );
+    const res = await api.get(`/bookings/facility/${facilityId}`);
     return res.data as PaginatedResponse<ApiBooking>;
   } catch (error) {
     if (error instanceof Error) {
@@ -820,7 +816,7 @@ export async function createContactUs(userData: {
   try {
     const res = await api.post(`/contactUs/send-message`, userData);
     return res.data;
-  } catch  {
+  } catch {
     throw new Error("Contact Us Error");
   }
 

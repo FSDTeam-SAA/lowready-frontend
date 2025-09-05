@@ -26,9 +26,6 @@ import {
   BookingData,
   
   getallFacilitiesdata,
-  
-  getFacilities,
-  getrecentPlacement,
   getReviewRating,
   mapApiBookingToBookingData,
 } from "@/lib/api";
@@ -115,7 +112,7 @@ export default function DashboardPage() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage] = useState(1);
   const itemsPerPage = 10;
 
 
@@ -138,7 +135,7 @@ export default function DashboardPage() {
   
 
   const bookings: BookingData[] =
-    recentPlacement?.data.map((b, i) => mapApiBookingToBookingData(b, i)) || [];
+    recentPlacement?.data.map((b) => mapApiBookingToBookingData(b)) || [];
   // console.log("bookinggjggg", bookings);
 
   // Replace with your actual base URL
@@ -229,6 +226,7 @@ export default function DashboardPage() {
     };
 
     fetchData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.accessToken]);
 
   // Transform earnings data for chart
@@ -245,10 +243,10 @@ export default function DashboardPage() {
     0;
 
   // Calculate total year earnings
-  const totalYearEarnings = earningsData.reduce(
-    (sum, item) => sum + item.totalEarnings,
-    0
-  );
+  // const totalYearEarnings = earningsData.reduce(
+  //   (sum, item) => sum + item.totalEarnings,
+  //   0
+  // );
 
   if (loading) {
     return (

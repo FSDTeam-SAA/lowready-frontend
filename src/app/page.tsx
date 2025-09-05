@@ -6,7 +6,8 @@ import FAQ from "@/components/landing/FAQ";
 import HowWorks from "@/components/landing/HowWorks";
 import WhyAlhHub from "@/components/landing/WhyAlhHub";
 // import BlogsCard from "@/components/shared/blogs";
-import FindCare from "@/components/shared/FindPerfectCare";import Hero from "@/components/shared/Hero";
+import FindCare from "@/components/shared/FindPerfectCare";
+import Hero from "@/components/shared/Hero";
 // import Navbar from "@/components/shared/Navbar";
 // import TopBanner from "@/components/shared/TopBanner";
 
@@ -28,8 +29,8 @@ export default function Home() {
         showButton={true}
       />
       <SimilarBlogs />
-      <FAQ />
       <ResidentialFacility />
+      <FAQ />
       {/* <BlogsCard /> */}
       {/* <Footer /> */}
     </main>
