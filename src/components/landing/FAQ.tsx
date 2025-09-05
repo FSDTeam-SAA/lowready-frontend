@@ -68,14 +68,14 @@ const FAQ = () => {
             >
               {faqData.map((faq) => (
                 <AccordionItem key={faq.id} value={faq.id} className="border-b border-gray-300 relative">
-                  <AccordionTrigger className="flex justify-between items-center w-full text-left py-3 sm:py-4 hover:no-underline group [&>svg]:hidden pr-6 sm:pr-8">
+                  <AccordionTrigger className="flex justify-between items-center cursor-pointer w-full text-left py-3 sm:py-4 hover:no-underline group [&>svg]:hidden pr-6 sm:pr-8">
                     <span className="font-medium text-base sm:text-[18px] text-gray-900 pr-4 sm:pr-6 text-left">
                       {faq.question}
                     </span>
                   </AccordionTrigger>
                   
                   {/* Custom icons positioned absolutely */}
-                  <div className="absolute right-2 sm:right-4 top-3 sm:top-4">
+                  <div className="absolute right-2 sm:right-4 top-3 cursor-pointer sm:top-4">
                     {openItem === faq.id ? (
                       <CircleMinus className="h-4 w-4 sm:h-5 sm:w-5 text-primary transition-transform duration-200" />
                     ) : (
