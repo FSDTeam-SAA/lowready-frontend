@@ -5,8 +5,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { MapPin, Star } from "lucide-react";
+import { MapPin, Search, Star } from "lucide-react";
 import Image from "next/image";
 import {
   facilitiesLocation,
@@ -18,39 +17,75 @@ import {
   FacilityCards,
 } from "@/lib/api";
 
-import {
-  Select,
-  SelectContent,
-  SelectTrigger,
-  SelectValue,
-  SelectItem,
-} from "@/components/ui/select";
-
 import Link from "next/link";
 import { ConfirmBookingModal } from "@/components/shared/ConfirmBookingModal";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
+import { FiltersSidebar } from "./sidebar-filter";
 
 interface Location {
   _id: string;
   location: string;
 }
 
+interface SearchFilters {
+  minPrice: number;
+  maxPrice: number;
+  location: string;
+  availability: boolean;
+  rating: number;
+  careServices: string[];
+  amenities: string[];
+  page: number;
+  limit: number;
+}
+
 export default function SearchField() {
   const searchParams = useSearchParams();
 
   const initialLocation = searchParams.get("location") || "Dhaka";
-  const [filters, setFilters] = useState<FacilityFilters>({
+  // Initialize with required fields for FiltersSidebar
+  const [filters, setFilters] = useState<SearchFilters>({
     minPrice: 0,
-    maxPrice: undefined,
+    maxPrice: 1000000,
     location: initialLocation,
     availability: true,
-    rating: undefined,
+    rating: 0,
     careServices: [],
     amenities: [],
     page: 1,
     limit: 6,
+  });
+
+  // Convert our internal filters to the API format
+  const convertToApiFilters = (
+    localFilters: SearchFilters
+  ): FacilityFilters => ({
+    minPrice: localFilters.minPrice,
+    maxPrice: localFilters.maxPrice,
+    location: localFilters.location,
+    availability: localFilters.availability,
+    rating: localFilters.rating,
+    careServices: localFilters.careServices,
+    amenities: localFilters.amenities,
+    page: localFilters.page,
+    limit: localFilters.limit,
+  });
+
+  // Convert API filters to our internal format
+  const convertFromApiFilters = (
+    apiFilters: FacilityFilters
+  ): SearchFilters => ({
+    minPrice: Number(apiFilters.minPrice) || 0,
+    maxPrice: Number(apiFilters.maxPrice) || 1000000,
+    location: apiFilters.location || initialLocation,
+    availability: apiFilters.availability ?? true,
+    rating: Number(apiFilters.rating) || 0,
+    careServices: apiFilters.careServices || [],
+    amenities: apiFilters.amenities || [],
+    page: apiFilters.page || 1,
+    limit: apiFilters.limit || 6,
   });
 
   const { data: session } = useSession();
@@ -99,7 +134,7 @@ export default function SearchField() {
     refetch,
   } = useQuery({
     queryKey: ["facilities", filters],
-    queryFn: () => FacilitySearchData(filters),
+    queryFn: () => FacilitySearchData(convertToApiFilters(filters)),
   });
 
   const createBookingMutation = useMutation({
@@ -162,22 +197,22 @@ export default function SearchField() {
   return (
     <div className="relative container mx-auto w-full min-h-screen bg-white">
       {/* Search Bar */}
-      <div className=" z-50 bg-white  my-10 p-4 shadow-xl  rounded-xl flex items-center mx-auto justify-between w-[85%] lg:w-8/12 gap-2">
+      <div className=" z-50 bg-white  my-10 p-2 rounded-xl border flex items-center mx-auto justify-between w-[85%] lg:w-6/12 gap-2">
         <Input
           placeholder="Enter location..."
           value={filters.location}
           onChange={handleLocationChange}
-          className=" border-none w-[70%] outline-none shadow-none"
+          className=" border-none  outline-none shadow-none bg-gray-100 h-10"
         />
         <Button
-          className="cursor-pointer"
+          className="cursor-pointer w-30 h-10"
           onClick={() => {
             setIsSearching(false);
             setFilters({ ...filters });
             refetch();
           }}
         >
-          Search
+          <Search /> Search
         </Button>
       </div>
 
@@ -189,157 +224,17 @@ export default function SearchField() {
       >
         <div className="flex flex-col lg:flex-row justify-center  lg:justify-between">
           {/* Left Sidebar Filters */}
-          <aside className="lg:w-1/5 p-6 lg:space-y-6 lg:sticky top-16 lg:h-[calc(100vh-4rem)] md:overflow-y-auto border-r">
-            {/* Price Range */}
-            <div>
-              <h3 className="font-semibold mb-2">Price Range</h3>
-              <div className="flex gap-4">
-                <Input
-                  type="number"
-                  placeholder="Min"
-                  value={minPriceInput}
-                  onChange={handleMinPriceChange}
-                />
-                <Input
-                  type="number"
-                  placeholder="Max"
-                  value={maxPriceInput}
-                  onChange={handleMaxPriceChange}
-                />
-              </div>
-            </div>
-
-            {/* Availability */}
-            <div>
-              <h3 className="font-semibold mb-2">Availability</h3>
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  className="cursor-pointer"
-                  checked={filters.availability ?? true}
-                  onCheckedChange={(val) =>
-                    setFilters({ ...filters, availability: !!val })
-                  }
-                />
-                <span>Available</span>
-              </div>
-            </div>
-
-            {/* Locations */}
-            <div>
-              <h3 className="font-semibold mb-2">Location</h3>
-              <Select
-                value={filters.location}
-                onValueChange={(val) =>
-                  setFilters({ ...filters, location: val })
-                }
-              >
-                <SelectTrigger className="w-[200px] cursor-pointer h-[44px] px-3">
-                  <SelectValue placeholder="Select Location" />
-                </SelectTrigger>
-                <SelectContent>
-                  {locations.map((loc) => (
-                    <SelectItem
-                      className="cursor-pointer"
-                      key={loc._id}
-                      value={loc.location}
-                    >
-                      {loc.location}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Ratings */}
-            <div>
-              <h3 className="font-semibold mb-2">Ratings</h3>
-              {[5, 4, 3, 2, 1].map((star) => (
-                <div key={star} className="flex items-center space-x-2">
-                  <Checkbox
-                    className="cursor-pointer"
-                    checked={filters.rating === star}
-                    onCheckedChange={() =>
-                      setFilters({ ...filters, rating: star })
-                    }
-                  />
-                  <span className="flex items-center">
-                    {star} <Star className="w-4 h-4 text-yellow-500 ml-1" />
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            {/* Services */}
-            <div>
-              <h3 className="font-semibold mb-2">Services</h3>
-              {["Personal Care", "Medical Support", "Housekeeping"].map(
-                (service) => (
-                  <div key={service} className="flex items-center space-x-2">
-                    <Checkbox
-                      className="cursor-pointer"
-                      checked={filters.careServices?.includes(service)}
-                      onCheckedChange={(val) =>
-                        setFilters({
-                          ...filters,
-                          careServices: val
-                            ? [...(filters.careServices || []), service]
-                            : (filters.careServices || []).filter(
-                                (s) => s !== service
-                              ),
-                        })
-                      }
-                    />
-                    <span>{service}</span>
-                  </div>
-                )
-              )}
-            </div>
-
-            {/* Amenities */}
-            <div>
-              <h3 className="font-semibold mb-2">Amenities</h3>
-              {["Transportation", "WiFi", "Garden"].map((amenity) => (
-                <div key={amenity} className="flex items-center space-x-2">
-                  <Checkbox
-                    className="cursor-pointer"
-                    checked={filters?.amenities?.includes(amenity)}
-                    onCheckedChange={(val) =>
-                      setFilters({
-                        ...filters,
-                        amenities: val
-                          ? [...(filters.amenities || []), amenity]
-                          : (filters.amenities || []).filter(
-                              (a) => a !== amenity
-                            ),
-                      })
-                    }
-                  />
-                  <span>{amenity}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* Reset */}
-            <Button
-              variant="outline"
-              onClick={() =>
-                setFilters({
-                  minPrice: 0,
-                  maxPrice: 1000000,
-                  location: "Dhaka",
-                  availability: true,
-                  rating: undefined,
-                  careServices: [],
-                  amenities: [],
-                  page: 1,
-                  limit: 6,
-                })
-              }
-              className="w-full text-red-500 cursor-pointer border-red-500"
-            >
-              Clear All Filters
-            </Button>
-          </aside>
+          <FiltersSidebar
+            filters={filters}
+            setFilters={(newFilters: FacilityFilters) => {
+              setFilters(convertFromApiFilters(newFilters));
+            }}
+            locations={locations}
+            minPriceInput={minPriceInput}
+            maxPriceInput={maxPriceInput}
+            handleMinPriceChange={handleMinPriceChange}
+            handleMaxPriceChange={handleMaxPriceChange}
+          />
 
           {/* Facilities List */}
           <main className="flex-1 p-6 space-y-6 overflow-y-auto">
@@ -348,10 +243,10 @@ export default function SearchField() {
             ) : facilities.length > 0 ? (
               <>
                 <div className="pb-[80px]">
-                  <h2 className="text-[40px] font-bold leading-[150%] text-[#343A40]">
+                  <h2 className="text-[40px] font-bold leading-[150%] text-[#343A40] font-playfair">
                     Facilities near {filters.location} -{" "}
                     <span className="text-[#28A745]">
-                      {facilities.length} Round
+                      {facilities.length} found
                     </span>
                   </h2>
                   <p className="text-[16px] text-[#68706A] pt-[4px]">
@@ -361,14 +256,13 @@ export default function SearchField() {
                 </div>
                 {facilities.map((facility: FacilityCards) => (
                   <Card key={facility._id} className="overflow-hidden py-0">
-                    <div></div>
                     <div className="grid md:grid-cols-3 pb-0 gap-4">
                       <Image
                         src={facility.images[0]?.url || "/search.png"}
                         alt={facility.name}
-                        width={200}
-                        height={200}
-                        className="w-full h-[272] object-cover"
+                        width={600}
+                        height={600}
+                        className="w-full h-full object-cover"
                       />
                       <CardContent className="flex flex-col justify-between md:col-span-2">
                         <div>
@@ -378,8 +272,11 @@ export default function SearchField() {
                             </h2>
                             <span className="flex items-center text-sm text-yellow-500">
                               <Star className="w-4 h-4 mr-1" />{" "}
-                              {facility?.rating} ({facility?.ratingCount}
-                              reviews)
+                              {facility?.rating}{" "}
+                              <span className="text-[#424944] ml-1">
+                                ({facility?.ratingCount}
+                                reviews)
+                              </span>
                             </span>
                           </CardTitle>
                           <p className="text-sm flex items-center gap-2  leading-[150%] text-[#68706A] pt-[8px]">
@@ -389,14 +286,14 @@ export default function SearchField() {
                           </p>
                           <div className="flex flex-wrap gap-2 pt-[16px]">
                             {facility?.amenities && (
-                              <button className="text-green-400 hover:text-white hover:bg-green-400 border-green-300 px-3 py-1 border rounded-xl text-xs bg-green-200">
+                              <button className="text-green-800 hover:text-white hover:bg-green-400 border-green-300 px-3 py-1 border rounded-sm text-xs bg-green-100">
                                 Available
                               </button>
                             )}
                             {facility?.amenities?.map((a) => (
                               <span
                                 key={a}
-                                className="px-3 py-1 border rounded-xl text-xs hover:text-white hover:bg-green-400"
+                                className="px-3 py-1 border rounded-sm text-xs  hover:bg-green-100"
                               >
                                 {a}
                               </span>
@@ -404,7 +301,7 @@ export default function SearchField() {
                           </div>
                         </div>
 
-                        <div className="items-center justify-between py-[16px]">
+                        <div className="items-center justify-between overflow-hidden py-[16px]">
                           <span className="text-[32px] font-semibold">
                             ${facility?.price ?? 0}{" "}
                             <span className="text-[16px] font-medium leading-[150%]">
@@ -413,11 +310,11 @@ export default function SearchField() {
                           </span>
                           <div className="flex justify-between gap-5 pt-4 pb-6 ">
                             <Button
-                              className="w-1/2 cursor-pointer"
+                              className="w-full cursor-pointer flex-1 h-10 border-green-600"
                               variant="outline"
                             >
                               <Link
-                                className="w-full h-full cursor-pointer"
+                                className="w-full h-full cursor-pointer text-green-600 "
                                 href={`/facilities/details/${facility?._id}`}
                               >
                                 See Details
@@ -425,7 +322,7 @@ export default function SearchField() {
                             </Button>
                             <Button
                               onClick={() => handleNewBooking(facility)}
-                              className="w-1/2 cursor-pointer"
+                              className="w-full cursor-pointer flex-1 h-10"
                             >
                               Book a Tour
                             </Button>
