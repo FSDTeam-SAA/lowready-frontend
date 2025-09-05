@@ -33,7 +33,7 @@ const SignInAsPage = () => {
         <main className="flex flex-1 container mx-auto justify-center items-center px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8  w-full">
             {/* Facility Provider Card */}
-            <Card className="rounded-2xl shadow-sm hover:shadow-md transition">
+            <Card className="rounded-2xl shadow-sm hover:shadow-md transition py-5">
               <CardHeader>
                 <CardTitle className="text-2xl md:text-[40px] font-playfair leading-[150%]">
                   Sign In as a{" "}
@@ -62,7 +62,7 @@ const SignInAsPage = () => {
             </Card>
 
             {/* User Card */}
-            <Card className="rounded-2xl shadow-sm hover:shadow-md transition">
+            <Card className="rounded-2xl shadow-sm hover:shadow-md transition py-5">
               <CardHeader>
                 <CardTitle className="text-2xl md:text-[40px] font-playfair leading-[150%]">
                   Sign In as a <span className="text-green-600">User</span>

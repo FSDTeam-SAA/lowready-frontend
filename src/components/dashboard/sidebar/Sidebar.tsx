@@ -69,7 +69,7 @@ export function DashboardSidebar() {
 
 
   return (
-    <div className="flex flex-col h-screen w-[312px] fixed shadow-2xl border-r-0 bg-white">
+    <div className="flex flex-col h-screen w-[312px] fixed  border-r-0 bg-white">
       {/* Logo */}
       <div className="px-4 py-6">
         <Link href="/"> <Image
