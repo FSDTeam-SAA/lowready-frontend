@@ -11,7 +11,7 @@ export default function PrivacyPolicy() {
 
         {/* Paragraphs */}
         <p className="text-[#68706A] text-base md:text-lg mb-4 leading-relaxed">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean at
+          This is  ipsum dolor sit amet, consectetur adipiscing elit. Aenean at
           libero ultrices, viverra velit rutrum, egestas erat. Fusce nec lacus
           nec enim ornare volutpat. Phasellus vitae ullamcorper felis. Proin
           venenatis, velit a maximus suscipit, justo nulla blandit tellus, ut
@@ -75,7 +75,7 @@ export default function PrivacyPolicy() {
 
         {/* Additional Paragraphs */}
         <p className="text-[#68706A] text-base md:text-lg mb-4 leading-relaxed">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean at
+          This is  ipsum dolor sit amet, consectetur adipiscing elit. Aenean at
           libero ultrices, viverra velit rutrum, egestas erat. Fusce nec lacus
           nec enim ornare volutpat. Phasellus vitae ullamcorper felis. Proin
           venenatis, velit a maximus suscipit, justo nulla blandit tellus, ut
