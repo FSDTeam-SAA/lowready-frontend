@@ -15,6 +15,8 @@ const PUBLIC_EXACT = [
   "/signinaspage",
   "/signup",
   "/forget-password",
+  "/verify-otp",
+  "/forget-otp",
   "/favicon.ico",
 ];
 const PUBLIC_PREFIX = [
