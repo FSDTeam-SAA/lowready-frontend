@@ -232,6 +232,24 @@ export async function getCustomers(
   }
 }
 
+// recent placement 
+export async function getrecentPlacement(
+  facilityId: string,
+ 
+): Promise<PaginatedResponse<ApiBooking>> {
+  try {
+    const res = await api.get(
+      `/bookings/facility/${facilityId}`
+    );
+    return res.data as PaginatedResponse<ApiBooking>;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error fetching bookings: ${error.message}`);
+    }
+    throw error;
+  }
+}
+
 // -------------------------------
 // Notifications API
 // -------------------------------

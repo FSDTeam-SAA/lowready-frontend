@@ -23,6 +23,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
 
 interface Review {
   _id: string;
@@ -54,17 +55,17 @@ const ReviewRatingBottom = () => {
   const [selectedReview, setSelectedReview] = useState<Review | null>(null);
   const [deleteReview, setDeleteReview] = useState<Review | null>(null);
 
-  const { data: facilityData } = useQuery({
-    queryKey: ["facilities"],
-    queryFn: getFacilities,
-  });
-
-  const facilityId = facilityData?.data?.[0]?._id || "";
+  // const { data: facilityData } = useQuery({
+  //   queryKey: ["facilities"],
+  //   queryFn: getFacilities,
+  // });
+  const {data:session}=useSession();
+  // const facilityId = facilityData?.data?.[0]?._id || "";
 
   const { data, isLoading } = useQuery<ReviewResponse>({
-    queryKey: ["reviews", facilityId],
-    queryFn: () => getReviewRating(facilityId),
-    enabled: !!facilityId,
+    queryKey: ["reviews", session],
+    queryFn: () => getReviewRating(session?.user?.id || ''),
+    enabled: !!session,
   });
 
   

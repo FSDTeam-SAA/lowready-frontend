@@ -1,11 +1,12 @@
 "use client";
 
-import { DeleteRatingReview, getFacilities, reviewRatingsummery } from "@/lib/api";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { error } from "console";
+import { getFacilities, reviewRatingsummery } from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
+
 import { ArrowUp } from "lucide-react";
+import { useSession } from "next-auth/react";
 import React from "react";
-import { toast } from "sonner";
+
 
 interface StatCardProps {
   title: string;
@@ -42,27 +43,18 @@ const ReviewRatingTop = () => {
     });
 
   const facilityId = facilityData?.data?.[0]?._id || "";
-
+   const {data:session}=useSession();
   const {
     data: reviewrating,
     isLoading: isRatingLoading,
     error: ratingError,
   } = useQuery({
     queryKey: ["reviewRating", facilityId],
-    queryFn: () => reviewRatingsummery(facilityId),
+    queryFn: () => reviewRatingsummery(session?.user?.id || ''),
     enabled: !!facilityId,
   });
 
-  const deleteMutation=useMutation({
-    mutationKey:['reviewRating'],
-    mutationFn:(id:string)=> DeleteRatingReview(id),
-    onError:(error)=>{
-      toast.error(error.message)
-    },
-    onSuccess:(data)=>{
-      toast.success(data.message)
-    }
-  })
+
 
   if (isFacilitiesLoading || isRatingLoading) {
     return <p className="p-5 text-gray-500">Loading...</p>;
