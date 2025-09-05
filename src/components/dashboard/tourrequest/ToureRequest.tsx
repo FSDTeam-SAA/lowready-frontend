@@ -155,7 +155,7 @@ const ToureRequest = () => {
       </div>
     );
   }
-  console.log("ddd", tourbookings);
+
 
   // -----------------
   // No Data State

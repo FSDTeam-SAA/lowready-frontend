@@ -2,7 +2,7 @@ import {
   ApiResponse,
   Booking,
   ChangePasswordResponse,
-  PaginatedResponse,
+  
   RebookData,
   RebookResponse,
   ReviewData,
@@ -145,15 +145,15 @@ export interface ApiBooking {
   phoneNumber?: string;
 }
 
-// export interface PaginatedResponse<T> {
-//   data: T[];
-//   meta: {
-//     totalPages: number;
-//     totalItems: number;
-//     currentPage: number;
-//     itemsPerPage: number;
-//   };
-// }
+export interface PaginatedResponse<T> {
+  data: T[];
+  meta: {
+    totalPages: number;
+    totalItems: number;
+    currentPage: number;
+    itemsPerPage: number;
+  };
+}
 
 // -------------------------------
 // Mapper: ApiBooking → BookingData

@@ -1,10 +1,14 @@
-'use client'
+"use client";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BookingData, getallFacilitiesdata, mapApiBookingToBookingData } from "@/lib/api";
+import {
+  BookingData,
+  getallFacilitiesdata,
+  mapApiBookingToBookingData,
+} from "@/lib/api";
 import { AvatarFallback } from "@radix-ui/react-avatar";
 import { useQuery } from "@tanstack/react-query";
-import {  MapPin } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import React, { useState } from "react";
@@ -20,13 +24,13 @@ const EarningSummeryBottom = () => {
       getallFacilitiesdata(session?.user.id || "", currentPage, itemsPerPage),
     enabled: !!session,
   });
-   const bookings: BookingData[] =
-      recentPlacement?.data.map((b) => mapApiBookingToBookingData(b)) || [];
+  const bookings: BookingData[] =
+    recentPlacement?.data.map((b) => mapApiBookingToBookingData(b)) || [];
   return (
     <section className="px-5  py-[24px]">
       <div className="flex justify-between gap-5 ">
         <div className="w-1/2">
-             <Card className="bg-white p-5">
+          <Card className="bg-white p-5">
             <CardHeader className="flex flex-row items-center justify-between pb-4">
               <CardTitle className="text-lg font-semibold text-gray-900">
                 Recent Placements
@@ -77,7 +81,10 @@ const EarningSummeryBottom = () => {
                           ${booking.price.toLocaleString()}
                         </p>
                       </div>
-                      <Link className="cursor-pointer" href={`/dashboard/placements/`}>
+                      <Link
+                        className="cursor-pointer"
+                        href={`/dashboard/placements/`}
+                      >
                         <button className="px-3 py-1.5 cursor-pointer text-xs font-medium rounded-full bg-green-100 text-green-700 hover:bg-green-200 transition-colors">
                           Details
                         </button>
@@ -93,6 +100,8 @@ const EarningSummeryBottom = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* referral fee  */}
         <div className="w-1/2">
           <Card className="bg-white p-5 w-full">
             <CardHeader className="flex flex-row items-center justify-between pb-4 w-full">
@@ -101,37 +110,55 @@ const EarningSummeryBottom = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {[1, 2, 3].map((_, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 gap-2 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
-                      <span className="text-sm font-medium text-gray-600">
-                        OR
-                      </span>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">
-                        Olivia Rhye
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        example@example.com
-                      </p>
-                    </div>
-                  </div>
+              {bookings.length > 0 ? (
+                bookings.slice(0, 3).map((booking) => (
+                  <div
+                    key={booking.id}
+                    className="grid grid-cols-1 md:grid-cols-3  items-center justify-start p-3 rounded-lg hover:bg-gray-50 gap-2 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage
+                            src={booking.images?.[0]?.url}
+                            alt={booking.customer.name}
+                          />
+                          <AvatarFallback>
+                            {booking.customer.name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")}
+                          </AvatarFallback>
+                        </Avatar>
+                      </div>
+                      <div className="">
+                        <p className="text-sm font-medium text-gray-900">
+                          {booking.customer.name}
+                        </p>
 
-                  <div className="text-right">
-                    <p className="text-sm font-semibold text-gray-900">
-                      $2,000
-                    </p>
+                        <p className="text-xs text-gray-500">
+                          {booking.bookerInfo.emailAddress}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-sm  text-center font-semibold text-gray-900">
+                        ${booking.price.toLocaleString()}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-semibold text-red-600">
+                        $
+                        {(booking.price - booking.referralFee).toLocaleString()}
+                      </p>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm font-semibold text-red-600">$2,000</p>
-                  </div>
+                ))
+              ) : (
+                <div className="flex items-center justify-center h-32">
+                  <div className="text-gray-500">No referral fees yet</div>
                 </div>
-              ))}
+              )}
             </CardContent>
           </Card>
         </div>
