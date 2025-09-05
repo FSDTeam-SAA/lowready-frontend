@@ -73,14 +73,14 @@ const ForgatePassword = () => {
         className="relative hidden lg:block"
       >
         <Image
-          src="/loginimage.png"
+          src="/images/loginimage.png"
           alt="Login background"
           width={800}
           height={800}
           className="h-full w-full object-cover"
         />
         <div className="absolute top-6 left-6 text-white text-2xl font-bold">
-          <Image src="/login.png" alt="logo" width={155} height={48} />
+          <Image src="/images/login.png" alt="logo" width={155} height={48} />
         </div>
       </motion.div>
 
