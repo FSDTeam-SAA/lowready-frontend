@@ -23,6 +23,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
 
 interface Review {
   _id: string;
@@ -58,29 +59,31 @@ const ReviewRatingBottom = () => {
     queryKey: ["facilities"],
     queryFn: getFacilities,
   });
-
+  const {data:session}=useSession();
   const facilityId = facilityData?.data?.[0]?._id || "";
 
   const { data, isLoading } = useQuery<ReviewResponse>({
-    queryKey: ["reviews", facilityId],
+    queryKey: ["reviews", session],
     queryFn: () => getReviewRating(facilityId),
-    enabled: !!facilityId,
+    enabled: !!session,
   });
+
+  
   
 
   const deleteMutation = useMutation({
     mutationKey: ["delete"],
     mutationFn: (id: string) => DeleteReview(id),
-    onError: () => {
-      toast.error("Failed to delete review. Please try again.");
+    onError: (error) => {
+      toast.error(error.message);
     },
-    onSuccess: () => {
-      toast.success("Review Deleted Successfully");
+    onSuccess: (data) => {
+      toast.success(data.message);
     },
   });
 
   const reviews = data?.data || [];
-  const totalResults = reviews.length; // ✅ fix here
+  const totalResults = reviews.length; 
 
   const totalPages = Math.ceil(totalResults / pageSize);
   const startItem = (currentPage - 1) * pageSize + 1;
@@ -95,8 +98,8 @@ const ReviewRatingBottom = () => {
 
   if (!reviews || reviews.length === 0) {
     return (
-      <div className="flex items-center justify-center h-64 text-8xl text-muted-foreground">
-        No Data available
+      <div className="flex items-center justify-center h-64 text-xl text-muted-foreground">
+        No Review Data
       </div>
     );
   }
