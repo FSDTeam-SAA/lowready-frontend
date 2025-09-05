@@ -44,7 +44,7 @@ interface SearchFilters {
 export default function SearchField() {
   const searchParams = useSearchParams();
 
-  const initialLocation = searchParams.get("location") || "Dhaka";
+  const initialLocation = searchParams.get("q") || "Dhaka";
   // Initialize with required fields for FiltersSidebar
   const [filters, setFilters] = useState<SearchFilters>({
     minPrice: 0,
