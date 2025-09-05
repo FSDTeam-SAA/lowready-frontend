@@ -115,7 +115,7 @@ const SingupForm = () => {
               className="h-svh w-full object-cover"
             />
             <div className="absolute top-6 left-6 text-white text-2xl font-bold">
-              <Image src="/login.png" alt="logo" width={155} height={48} />
+              <Image src="/images/login.png" alt="logo" width={155} height={48} />
             </div>
           </div>
 
