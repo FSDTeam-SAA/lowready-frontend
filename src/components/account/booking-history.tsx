@@ -219,7 +219,7 @@ export default function BookingHistoryPage() {
 
   const bookings = bookingsData?.data || [];
   const totalPages = Math.ceil(
-    (bookingsData?.pagination?.totalPages || 0) / itemsPerPage
+    (bookingsData?.meta?.totalPages || 0) / itemsPerPage
   );
 
   const getStatusBadge = (status: string) => {
@@ -455,9 +455,9 @@ export default function BookingHistoryPage() {
                       Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
                       {Math.min(
                         currentPage * itemsPerPage,
-                        bookingsData?.pagination?.totalPages || 0
+                        bookingsData?.meta?.totalPages || 0
                       )}{" "}
-                      of {bookingsData?.pagination?.totalPages || 0} results
+                      of {bookingsData?.meta?.totalPages || 0} results
                     </p>
                     <div className="flex items-center gap-2">
                       <Button

@@ -26,6 +26,7 @@ import {
   BookingData,
   
   getallFacilitiesdata,
+  getDashboardreferral,
   getReviewRating,
   mapApiBookingToBookingData,
 } from "@/lib/api";
@@ -131,7 +132,14 @@ export default function DashboardPage() {
     enabled: !!session,
   });
 
-  console.log('pecentplace data',recentPlacement);
+  // getDashboardreferral
+    const { data: dashboardreferral } = useQuery({
+    queryKey: ["dashboardrefarral"],
+    queryFn: () => getDashboardreferral(),
+  });
+ 
+
+  console.log('iftekhar',dashboardreferral);
   
 
   const bookings: BookingData[] =
@@ -431,9 +439,9 @@ export default function DashboardPage() {
                 Referral Savings
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
-              <h2 className="text-[#10421B] font-bold text-6xl mx-auto text-center flex justify-center items-center">
-                $1,234
+            <CardContent className="space-y-3 flex items-center my-auto">
+              <h2 className="text-[#10421B] font-bold text-6xl mx-auto ">
+                {dashboardreferral?.data?.savings}
               </h2>
             </CardContent>
           </Card>

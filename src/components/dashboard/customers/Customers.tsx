@@ -15,70 +15,101 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Eye, ChevronLeft, ChevronRight } from "lucide-react";
 import {
-  getCustomers,
-  getFacilities,
+  getallFacilitiesdata,
   mapApiBookingToBookingData,
   type BookingData,
+  type ApiBooking,
+  type PaginatedResponse,
 } from "@/lib/api";
+import { useSession } from "next-auth/react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function Customers() {
+  const { data: session } = useSession();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  // Fetch facilities
-  const { data: facilityData, isLoading: isFacilitiesLoading } = useQuery({
-    queryKey: ["facilities"],
-    queryFn: getFacilities,
+  // --- Typed useQuery ---
+  const { data, isLoading } = useQuery<PaginatedResponse<ApiBooking>>({
+    queryKey: ["customers", currentPage, itemsPerPage],
+    queryFn: () =>
+      getallFacilitiesdata(session?.user.id || "", currentPage, itemsPerPage),
+   
   });
 
-  const facilityId = facilityData?.data?.[0]?._id || "";
-
-  // Fetch customers/bookings
-  const {
-    data,
-    isLoading: isBookingsLoading,
-    error,
-  } = useQuery({
-    queryKey: ["customers", facilityId, currentPage, itemsPerPage],
-    queryFn: () => getCustomers(facilityId, currentPage, itemsPerPage),
-    enabled: !!facilityId,
-  });
-
+  // --- Map API data to BookingData ---
   const bookings: BookingData[] = useMemo(
     () => data?.data.map((b) => mapApiBookingToBookingData(b)) || [],
     [data]
   );
 
-  const totalPages = data?.pagination?.totalPages || 0;
-  const totalResults = data?.pagination?.totalItems || 0;
+  // --- Pagination info from API meta ---
+  const totalPages = data?.meta?.totalPages ?? 0;
+  const totalResults = data?.meta?.totalItems ?? 0;
+  const currentMetaPage = data?.meta?.currentPage ?? 1;
 
-  // Pagination helpers
-  const startItem = (currentPage - 1) * itemsPerPage + 1;
-  const endItem = Math.min(currentPage * itemsPerPage, totalResults);
+  const startItem = (currentMetaPage - 1) * itemsPerPage + 1;
+  const endItem = Math.min(currentMetaPage * itemsPerPage, totalResults);
 
-  if (isFacilitiesLoading || isBookingsLoading) {
+  if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-muted-foreground">Loading bookings...</div>
-      </div>
+      <section className="p-6 space-y-4">
+        <div className="border rounded-lg">
+          <Table>
+            <TableBody>
+              {Array.from({ length: 5 }).map((_, i) => (
+                <TableRow key={i}>
+                  <TableCell>
+                    <Skeleton className="h-4 w-12" />
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-3">
+                      <Skeleton className="h-8 w-8 rounded-full" />
+                      <div className="space-y-1">
+                        <Skeleton className="h-4 w-24" />
+                        <Skeleton className="h-3 w-32" />
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-20" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-16" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-20" />
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex gap-2">
+                      <Skeleton className="h-8 w-8 rounded-md" />
+                      <Skeleton className="h-8 w-8 rounded-md" />
+                      <Skeleton className="h-8 w-8 rounded-md" />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </section>
     );
   }
 
-  if (error) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-destructive">Error loading bookings</div>
-      </div>
-    );
-  }
 
+
+  // -----------------
+  // No Data State
+  // -----------------
   if (!bookings || bookings.length === 0) {
     return (
       <div className="flex items-center justify-center h-64 text-2xl text-muted-foreground">
-        No Customer available
+        No Data Available
       </div>
     );
   }
+
+
 
   return (
     <div className="space-y-4 p-6">
@@ -97,7 +128,7 @@ export function Customers() {
           <TableBody>
             {bookings.map((booking) => (
               <TableRow key={booking.id} className="hover:bg-muted/50">
-                <TableCell>{booking.invoice}</TableCell>
+                <TableCell>#{booking.invoice}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-3">
                     <Avatar className="h-8 w-8">
@@ -141,44 +172,46 @@ export function Customers() {
       </div>
 
       {/* Pagination */}
-      <div className="flex items-center justify-between px-10">
-        <div className="text-sm text-muted-foreground">
-          Showing {startItem} to {endItem} of {totalResults} results
-        </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between px-10">
+          <div className="text-sm text-muted-foreground">
+            Showing {startItem} to {endItem} of {totalResults} results
+          </div>
+          <div className="flex items-center gap-2">
             <Button
-              key={page}
-              variant={currentPage === page ? "default" : "outline"}
+              variant="outline"
               size="sm"
-              onClick={() => setCurrentPage(page)}
-              className="w-8 h-8 p-0"
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentMetaPage === 1}
             >
-              {page}
+              <ChevronLeft className="h-4 w-4" />
             </Button>
-          ))}
 
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() =>
-              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-            }
-            disabled={currentPage === totalPages}
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <Button
+                key={page}
+                variant={currentMetaPage === page ? "default" : "outline"}
+                size="sm"
+                onClick={() => setCurrentPage(page)}
+                className="w-8 h-8 p-0"
+              >
+                {page}
+              </Button>
+            ))}
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
+              disabled={currentMetaPage === totalPages}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
