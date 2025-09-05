@@ -26,8 +26,6 @@ import {
   BookingData,
   
   getallFacilitiesdata,
-  
-  getFacilities,
   getReviewRating,
   mapApiBookingToBookingData,
 } from "@/lib/api";
@@ -117,15 +115,12 @@ export default function DashboardPage() {
   const [currentPage] = useState(1);
   const itemsPerPage = 10;
 
-  const { data: facilityData,  } = useQuery({
-    queryKey: ["facilityId"],
-    queryFn: () => getFacilities(),
-  });
 
-  const facilityId = facilityData?.data?.[0]?._id || "";
+
+  
   const { data: reviewRating, isLoading } = useQuery<ReviewResponse>({
     queryKey: ["reviews", session],
-    queryFn: () => getReviewRating(facilityId),
+    queryFn: () => getReviewRating(),
     enabled: !!session,
   });
 

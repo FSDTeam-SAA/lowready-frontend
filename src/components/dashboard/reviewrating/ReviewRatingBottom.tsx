@@ -13,8 +13,8 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Eye, Trash2, ChevronLeft, ChevronRight, Star } from "lucide-react";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { DeleteReview, getFacilities, getReviewRating } from "@/lib/api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { DeleteReview,  getReviewRating } from "@/lib/api";
 import {
   Dialog,
   DialogContent,
@@ -55,21 +55,18 @@ const ReviewRatingBottom = () => {
   const [selectedReview, setSelectedReview] = useState<Review | null>(null);
   const [deleteReview, setDeleteReview] = useState<Review | null>(null);
 
-  const { data: facilityData } = useQuery({
-    queryKey: ["facilities"],
-    queryFn: getFacilities,
-  });
+  
   const {data:session}=useSession();
-  const facilityId = facilityData?.data?.[0]?._id || "";
 
   const { data, isLoading } = useQuery<ReviewResponse>({
     queryKey: ["reviews", session],
-    queryFn: () => getReviewRating(facilityId),
+    queryFn: () => getReviewRating(),
     enabled: !!session,
   });
 
+  console.log('review',data);
   
-  
+  const queryClient=useQueryClient()
 
   const deleteMutation = useMutation({
     mutationKey: ["delete"],
@@ -78,6 +75,9 @@ const ReviewRatingBottom = () => {
       toast.error(error.message);
     },
     onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ['reviews']
+      })
       toast.success(data.message);
     },
   });

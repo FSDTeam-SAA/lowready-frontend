@@ -508,9 +508,9 @@ export interface ReviewResponse {
   data: Review[];
 }
 
-export async function getReviewRating(id: string) {
+export async function getReviewRating() {
   try {
-    const res = await api.get(`/review-rating/facility/${id}`);
+    const res = await api.get(`/review-rating/facility/all`);
     return res.data;
   } catch (error) {
     if (error instanceof Error) {
@@ -819,10 +819,10 @@ export async function createContactUs(userData: {
   } catch {
     throw new Error("Contact Us Error");
   }
-}
-export async function reviewRatingsummery(id: string) {
+
+}export async function reviewRatingsummery() {
   try {
-    const res = await api.get(`/review-rating/summary/${id}`);
+    const res = await api.get(`/review-rating/summary/all-reviews`);
     return res.data.data;
   } catch (error) {
     console.error("Error fetching facilities:", error);
