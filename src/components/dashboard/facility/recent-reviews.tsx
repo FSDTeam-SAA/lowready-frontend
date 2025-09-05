@@ -6,6 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { Star } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 interface Review {
   id: string;
@@ -125,12 +126,12 @@ export function RecentReviews({ facilityId }: RecentReviewsProps) {
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-900">Recent Reviews</h3>
-        <Button
+        <Link href="/reviewratings"> <Button
           variant="link"
-          className="text-green-600 text-sm font-medium p-0 h-auto"
+          className="text-green-600 cursor-pointer text-sm font-medium p-0 h-auto"
         >
           See all
-        </Button>
+        </Button></Link> 
       </div>
 
       {/* Reviews List */}

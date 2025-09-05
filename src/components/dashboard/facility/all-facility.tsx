@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Star, MapPin, Dot, Wifi, Trees, Plus, X, Filter } from "lucide-react";
+import { Star, MapPin, Dot, Wifi, Trees, Plus, X } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -194,7 +194,7 @@ const FacilityListing: React.FC<FacilityListingProps> = ({
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [availableAmenities, setAvailableAmenities] = useState<string[]>([]);
-  const [showAmenityFilter, setShowAmenityFilter] = useState<boolean>(false);
+  // const [showAmenityFilter, setShowAmenityFilter] = useState<boolean>(false);
 
   const BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}`;
 

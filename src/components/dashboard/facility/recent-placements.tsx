@@ -3,9 +3,10 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
-import { MapPin, Eye } from "lucide-react"
+import { MapPin } from "lucide-react"
 import { useQuery } from "@tanstack/react-query"
 import { useSession } from "next-auth/react"
+import Link from "next/link"
 
 interface ApiPlacement {
   _id: string;
@@ -97,9 +98,9 @@ export function RecentPlacements({ facilityId }: RecentPlacementsProps) {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold text-gray-900">Recent Placements</h3>
-        <Button variant="link" className="text-green-600 p-0 h-auto">
+        <Link href="/dashboard/placements"><Button variant="link" className="text-green-600 cursor-pointer p-0 h-auto">
           See all
-        </Button>
+        </Button></Link> 
       </div>
 
       {/* Loading State */}
@@ -138,14 +139,7 @@ export function RecentPlacements({ facilityId }: RecentPlacementsProps) {
                   ${placement.amount.toLocaleString()}
                 </div>
 
-                {/* Details Button */}
-                <Button
-                  size="sm"
-                  className="bg-green-50 text-green-600 hover:bg-green-100 flex items-center gap-1"
-                >
-                  <Eye className="h-4 w-4" />
-                  Details
-                </Button>
+                
               </div>
               {index < placements.length - 1 && <Separator className="my-4" />}
             </div>

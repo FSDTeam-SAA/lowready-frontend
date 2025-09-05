@@ -171,8 +171,8 @@ export default function DashboardPage() {
   const currentMonth = new Date().getMonth() + 1;
   const currentMonthEarnings = earningsData.find(item => item.month === currentMonth)?.totalEarnings || 0;
 
-  // Calculate total year earnings
-  const totalYearEarnings = earningsData.reduce((sum, item) => sum + item.totalEarnings, 0);
+  // // Calculate total year earnings
+  // const totalYearEarnings = earningsData.reduce((sum, item) => sum + item.totalEarnings, 0);
 
   if (loading) {
     return (
