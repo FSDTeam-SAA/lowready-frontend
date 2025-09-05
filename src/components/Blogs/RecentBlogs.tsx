@@ -85,14 +85,14 @@ export default function RecentBlogs() {
             {blogs.slice(1, 3).map((blog: Blog) => (
               <div
                 key={blog._id}
-                className="flex bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden"
+                className="flex flex-col md:flex-row bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden"
               >
                 <Image
                   src={blog.image?.url || ""}
                   alt={blog.title}
                   width={176}
                   height={150}
-                  className="object-cover"
+                  className="w-full md:w-[176px] h-48 md:h-[180px] object-cover"
                 />
                 <div className="p-4 flex flex-col justify-between">
                   {/* Meta */}
