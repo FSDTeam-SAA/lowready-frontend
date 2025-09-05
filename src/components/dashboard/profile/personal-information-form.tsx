@@ -31,7 +31,7 @@ const initialFormData: FormDataType = {
   lastName: "Rhye",
   email: "bessieedwards@gmail.com",
   phoneNum: "+1 (555) 123-4567",
-  bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+  bio: "This is  ipsum dolor sit amet, consectetur adipiscing elit.",
   address: "1234 Oak Avenue, San Francisco, CA 94102A",
   location: "Florida, USA",
   postCode: "30301",
