@@ -159,8 +159,7 @@ export interface ApiBooking {
 // Mapper: ApiBooking → BookingData
 // -------------------------------
 export function mapApiBookingToBookingData(
-  apiBooking: ApiBooking,
-  index: number
+  apiBooking: ApiBooking
 ): BookingData {
   const facility = apiBooking.facility; // can be null
   return {

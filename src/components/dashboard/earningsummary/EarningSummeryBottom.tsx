@@ -21,7 +21,7 @@ const EarningSummeryBottom = () => {
     enabled: !!session,
   });
    const bookings: BookingData[] =
-      recentPlacement?.data.map((b, i) => mapApiBookingToBookingData(b, i)) || [];
+      recentPlacement?.data.map((b) => mapApiBookingToBookingData(b)) || [];
   return (
     <section className="px-5  py-[24px]">
       <div className="flex justify-between gap-5 ">

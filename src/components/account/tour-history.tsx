@@ -396,6 +396,18 @@ export default function TourHistoryPage() {
     );
   }
 
+  if (tours?.bookings?.length === 0) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center h-64">
+          <div className="rounded-full text-4xl font-bold text-gray-700">
+            No Tour-History found!
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
   return (
     <DashboardLayout>
       <div className="space-y-6">

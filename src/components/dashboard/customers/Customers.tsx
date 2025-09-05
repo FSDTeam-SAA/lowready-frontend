@@ -47,7 +47,7 @@ export function Customers() {
   });
 
   const bookings: BookingData[] = useMemo(
-    () => data?.data.map((b, i) => mapApiBookingToBookingData(b, i)) || [],
+    () => data?.data.map((b) => mapApiBookingToBookingData(b)) || [],
     [data]
   );
 
