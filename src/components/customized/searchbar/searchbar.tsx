@@ -21,7 +21,7 @@ interface SearchBarProps {
 }
 
 export const SearchBar: React.FC<SearchBarProps> = ({
-  placeholder = "Find assisted living homes near you...",
+  placeholder = "Find assisted living homes near you",
   onSearch,
 }) => {
   const [query, setQuery] = useState("");
@@ -33,16 +33,32 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     queryKey: ["locationdata"],
     queryFn: facilitiesLocation,
   });
-  const locations: Location[] = useMemo(
-    () => locationdata?.data || [],
-    [locationdata]
-  );
+  // Get unique locations by removing duplicates based on location name
+  const locations: Location[] = useMemo(() => {
+    if (!locationdata?.data) return [];
 
-  // initialize location once data is available
+    const uniqueLocations = locationdata.data.reduce(
+      (acc: Location[], current: Location) => {
+        const existingLocation = acc.find(
+          (loc) => loc.location === current.location
+        );
+        if (!existingLocation) {
+          acc.push(current);
+        }
+        return acc;
+      },
+      []
+    );
+
+    return uniqueLocations;
+  }, [locationdata]);
+
+  // Initialize location once data is available - use the same location for both
   useEffect(() => {
     if (locations.length > 0 && !selectedLocation) {
-      setSelectedLocation(locations[locations.length-1].location);
-      setQuery(locations[0].location); 
+      const defaultLocation = locations[0].location; // Use first location consistently
+      setSelectedLocation(defaultLocation);
+      setQuery(defaultLocation);
     }
   }, [locations, selectedLocation]);
 
@@ -64,47 +80,53 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   return (
-    <div className="flex items-center py-3 px-3 w-full bg-white rounded-md overflow-hidden">
-      {/* Location Selector */}
-      <div className="flex items-center gap-1 px-3 border-r">
-        <MapPin className="h-6 w-6 text-primary cursor-pointer" />
-        <Select value={selectedLocation} onValueChange={handleLocationChange}>
-          <SelectTrigger className="p-0 border-none text-[#68706A] w-[125px] overflow-hidden cursor-pointer shadow-none">
-            <SelectValue
-              placeholder={`${selectedLocation} || Location`}
-              className="focus-visible:ring-[0px] outline-none border-none"
-            />
-          </SelectTrigger>
-          <SelectContent className="shadow-none cursor-pointer border-none">
-            {locations.map((loc) => (
-              <SelectItem
-                key={loc._id}
-                value={loc.location}
-                className="shadow-none  cursor-pointer border-none"
-              >
-                {loc.location}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+    <div className="w-full bg-white rounded-lg shadow-sm border border-gray-200">
+      {/* Mobile-first: Stack vertically on small screens, horizontal on larger screens */}
+      <div className="flex flex-col sm:flex-row sm:items-center overflow-hidden">
+        {/* Location Selector */}
+        <div className="flex items-center gap-2 px-4 py-3 sm:py-2 border-b sm:border-b-0 sm:border-r border-gray-200 sm:min-w-0 sm:flex-shrink-0">
+          <MapPin className="h-5 w-5 text-primary flex-shrink-0" />
+          <Select value={selectedLocation} onValueChange={handleLocationChange}>
+            <SelectTrigger className="p-0 border-none text-gray-600 min-w-0 flex-1 sm:w-auto sm:min-w-[120px] sm:max-w-[160px] shadow-none focus:ring-0">
+              <SelectValue placeholder="Location" className="truncate" />
+            </SelectTrigger>
+            <SelectContent className="max-w-[90vw] sm:max-w-none">
+              {locations.map((loc) => (
+                <SelectItem
+                  key={loc._id}
+                  value={loc.location}
+                  className="cursor-pointer"
+                >
+                  {loc.location}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Search Input */}
+        <div className="flex-1 min-w-0">
+          <Input
+            className="border-none focus-visible:ring-0 shadow-none text-gray-700 placeholder:text-gray-400 px-4 py-3 sm:py-2 h-auto rounded-none bg-transparent"
+            placeholder={placeholder}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+          />
+        </div>
+
+        {/* Search Button */}
+        <div className="p-2 sm:p-1">
+          <Button
+            onClick={handleSearch}
+            className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white px-4 py-2 sm:px-6 flex items-center justify-center gap-2 font-medium transition-colors duration-200"
+            size="sm"
+          >
+            <Search className="h-4 w-4" />
+            <span className="sm:inline">Search</span>
+          </Button>
+        </div>
       </div>
-
-      {/* Search Input */}
-      <Input
-        className="flex px-3 rounded-none  focus-visible:ring-[0px] shadow-none text-[#8E938F] outline-none h-full border-none"
-        placeholder={placeholder}
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-      />
-
-      {/* Search Button */}
-      <Button
-        onClick={handleSearch}
-        className="bg-green-600 cursor-pointer hover:bg-green-700 text-white px-4 flex items-center gap-1"
-      >
-        <Search className="h-4 w-4" /> Search
-      </Button>
     </div>
   );
 };

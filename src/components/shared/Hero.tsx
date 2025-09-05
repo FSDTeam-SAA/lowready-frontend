@@ -1,10 +1,10 @@
-import CheckboxHorizontalGroupDemo from "../customized/checkbox/checkbox-04";
+// import CheckboxHorizontalGroupDemo from "../customized/checkbox/checkbox-04";
 import { SearchBar } from "../customized/searchbar/searchbar";
 
 const Hero = () => {
   return (
     <section className="min-h-svh mt-8">
-      <div className="container px-8 mx-auto h-[calc(100vh-150px)] md:h-[calc(100svh-120px)] sm:h-[calc(100svh-100px)] rounded-md bg-cover bg-no-repeat bg-center bg-black/60 bg-blend-overlay bg-[url('/images/hero.jpg')]">
+      <div  className="container px-8 mx-auto h-[calc(100vh-150px)] priority md:h-[calc(100svh-120px)] sm:h-[calc(100svh-100px)] rounded-md bg-cover bg-no-repeat bg-center bg-black/60 bg-blend-overlay bg-[url('/images/hero.jpg')]">
         {/* Content */}
         <div className="flex flex-col items-center justify-center h-full text-white text-center px-6 sm:px-6 lg:px-8">
           <h1 className="text-3xl sm:text-5xl md:text-6xl mb-0 md:mb-6 font-bold max-w-4xl font-playfair leading-tight">
@@ -21,7 +21,7 @@ const Hero = () => {
           {/* Checkbox + SearchBar Container */}
           <div className="my-6 md:my-10 w-full bg-transparent p-4 sm:p-6 rounded-md">
             <div className="max-w-3xl mx-auto space-y-4">
-              <CheckboxHorizontalGroupDemo />
+              {/* <CheckboxHorizontalGroupDemo /> */}
               <SearchBar />
             </div>
           </div>

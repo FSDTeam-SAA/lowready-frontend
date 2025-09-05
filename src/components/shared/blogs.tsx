@@ -23,7 +23,7 @@ const blogsData: Blog[] = [
     id: 1,
     title: "Choosing the Right Assisted Living",
     description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus, elit nibh et nisl Lobortis euismod lacinia maecenas convallis tincidunt pharetra dui, ridiculus nec ultrices non curabitur aliquam, nibh platea vestibulum placerat dapibus nunc. Metus curae erat ac class pulvinar eleifend consequat condimentum sapien, in a mi tristique posuere porttitor laoreet dictum, parturient diam at faucibus massa commodo aliquet ultricies....",
+      "This is the answer for the second question. You can nibh condimentum class. Augue orci conubia suscipit in condimentum consectetur adipiscing elit. Purus, elit nibh et nisl Lobortis euismod lacinia maecenas convallis tincidunt pharetra dui, ridiculus nec ultrices non curabitur aliquam, nibh platea vestibulum placerat dapibus nunc. Metus curae erat ac class pulvinar eleifend consequat condimentum sapien, in a mi tristique posuere porttitor laoreet dictum, parturient diam at faucibus massa commodo aliquet ultricies....",
     date: "14 August, 2025",
     readTime: "12 min read",
     image: "/images/blogImage.jpg",

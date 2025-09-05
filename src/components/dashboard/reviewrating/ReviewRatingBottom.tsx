@@ -13,8 +13,8 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Eye, Trash2, ChevronLeft, ChevronRight, Star } from "lucide-react";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { DeleteReview, getFacilities, getReviewRating } from "@/lib/api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { DeleteReview,  getReviewRating } from "@/lib/api";
 import {
   Dialog,
   DialogContent,
@@ -23,6 +23,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
 
 interface Review {
   _id: string;
@@ -54,33 +55,35 @@ const ReviewRatingBottom = () => {
   const [selectedReview, setSelectedReview] = useState<Review | null>(null);
   const [deleteReview, setDeleteReview] = useState<Review | null>(null);
 
-  const { data: facilityData } = useQuery({
-    queryKey: ["facilities"],
-    queryFn: getFacilities,
-  });
-
-  const facilityId = facilityData?.data?.[0]?._id || "";
+  
+  const {data:session}=useSession();
 
   const { data, isLoading } = useQuery<ReviewResponse>({
-    queryKey: ["reviews", facilityId],
-    queryFn: () => getReviewRating(facilityId),
-    enabled: !!facilityId,
+    queryKey: ["reviews", session],
+    queryFn: () => getReviewRating(),
+    enabled: !!session,
   });
+
+  console.log('review',data);
   
+  const queryClient=useQueryClient()
 
   const deleteMutation = useMutation({
     mutationKey: ["delete"],
     mutationFn: (id: string) => DeleteReview(id),
-    onError: () => {
-      toast.error("Failed to delete review. Please try again.");
+    onError: (error) => {
+      toast.error(error.message);
     },
-    onSuccess: () => {
-      toast.success("Review Deleted Successfully");
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ['reviews']
+      })
+      toast.success(data.message);
     },
   });
 
   const reviews = data?.data || [];
-  const totalResults = reviews.length; // ✅ fix here
+  const totalResults = reviews.length; 
 
   const totalPages = Math.ceil(totalResults / pageSize);
   const startItem = (currentPage - 1) * pageSize + 1;
@@ -95,8 +98,8 @@ const ReviewRatingBottom = () => {
 
   if (!reviews || reviews.length === 0) {
     return (
-      <div className="flex items-center justify-center h-64 text-8xl text-muted-foreground">
-        No Data available
+      <div className="flex items-center justify-center h-64 text-xl text-muted-foreground">
+        No Review Data
       </div>
     );
   }

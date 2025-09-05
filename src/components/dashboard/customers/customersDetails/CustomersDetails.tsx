@@ -6,7 +6,7 @@ interface CustomersDetailsProps {
   id: string;
 }
 
-const CustomersDetails: React.FC<CustomersDetailsProps> = ({ id }) => {
+const CustomersDetails: React.FC<CustomersDetailsProps> = ({  }) => {
   // TODO: Fetch actual customer data using `id` and React Query
   const profileData = {
     name: "John Doe",

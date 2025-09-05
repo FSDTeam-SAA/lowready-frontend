@@ -15,12 +15,13 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Eye, ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
 import {
-  getCustomers,
+  getallFacilitiesdata,
   getFacilities,
   mapApiBookingToBookingData,
   type BookingData,
 } from "@/lib/api";
 import { BookingDetailsDialog } from "./PlacementDialog";
+import { useSession } from "next-auth/react";
 
 export function BookingsTable() {
   const [selectedBooking, setSelectedBooking] = useState<BookingData | null>(
@@ -29,24 +30,25 @@ export function BookingsTable() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  
+
   const { data: facilityData, isLoading: isFacilitiesLoading } = useQuery({
     queryKey: ["facilityId"],
     queryFn: () => getFacilities(),
   });
-  
-  const facilityId = facilityData?.data?.[0]?._id || "";
 
+  const facilityId = facilityData?.data?.[0]?._id || "";
+  const { data: session } = useSession();
   const { data, error, isLoading } = useQuery({
     queryKey: ["bookings", facilityId, currentPage, itemsPerPage],
-    queryFn: () => getCustomers(facilityId, currentPage, itemsPerPage),
+    queryFn: () =>
+      getallFacilitiesdata(session?.user.id || "", currentPage, itemsPerPage),
     enabled: !!facilityId,
   });
- 
-  console.log('placement',data);
-  
+
+  console.log("placement", data);
+
   const bookings: BookingData[] =
-    data?.data.map((b, i) => mapApiBookingToBookingData(b, i)) || [];
+    data?.data.map((b) => mapApiBookingToBookingData(b)) || [];
   const totalPages = data?.pagination?.totalPages || 0;
   const totalResults = data?.pagination?.totalItems || 0;
 
@@ -117,7 +119,7 @@ export function BookingsTable() {
           <TableHeader>
             <TableRow className="bg-[#E6FAEE] text-center">
               <TableHead className="text-center">Invoice</TableHead>
-              <TableHead className="text-center">Customer</TableHead>
+              <TableHead className="">Customer</TableHead>
               <TableHead className="text-center"> Location</TableHead>
               <TableHead className="text-center">Price</TableHead>
               <TableHead className="text-center">Status</TableHead>
@@ -129,9 +131,9 @@ export function BookingsTable() {
           <TableBody className="text-center">
             {bookings.map((booking) => (
               <TableRow key={booking.id} className="hover:bg-muted/50">
-                <TableCell>{booking.invoice}</TableCell>
-                <TableCell className="text-center">
-                  <div className="flex items-center justify-center gap-3">
+                <TableCell>#{booking.invoice}</TableCell>
+                <TableCell className="text-start flex ">
+                  <div className="flex items-center  gap-3">
                     <Avatar className="h-8 w-8">
                       <AvatarImage
                         src={booking.images?.[0]?.url}
@@ -159,8 +161,12 @@ export function BookingsTable() {
                     variant={
                       booking.status === "Paid" ? "default" : "destructive"
                     }
-                    className={`text-[16px] font-medium px-3 py-1 ${booking.status === 'Paid' ? 'bg-[#E6FAEE]  font-medium text-[#27BE69]' : 'bg-[#FEECEE] text-[#E5102E]'}`}
-                  > 
+                    className={`text-[16px] font-medium px-3 py-1 ${
+                      booking.status === "Paid"
+                        ? "bg-[#E6FAEE]  font-medium text-[#27BE69]"
+                        : "bg-[#FEECEE] text-[#E5102E]"
+                    }`}
+                  >
                     {booking.status}
                   </Badge>
                 </TableCell>
