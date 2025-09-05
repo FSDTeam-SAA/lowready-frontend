@@ -13,7 +13,8 @@ import axios from "axios";
 import { getSession } from "next-auth/react";
 
 export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "https://lowready-backend.onrender.com/api/v1";
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://lowready-backend.onrender.com/api/v1";
 
 // Create axios instance
 const api = axios.create({
@@ -63,7 +64,7 @@ export interface BookingData {
     email: string;
     avatar: string;
   };
-  images:Avatar[];
+  images: Avatar[];
   location: string;
   price: number;
   status: "Paid" | "Cancelled";
@@ -232,7 +233,6 @@ export async function getallFacilitiesdata(
   }
 }
 
-
 // customer/bookings API
 export async function getCustomers(
   facilityId: string,
@@ -252,15 +252,12 @@ export async function getCustomers(
   }
 }
 
-// recent placement 
+// recent placement
 export async function getrecentPlacement(
-  facilityId: string,
- 
+  facilityId: string
 ): Promise<PaginatedResponse<ApiBooking>> {
   try {
-    const res = await api.get(
-      `/bookings/facility/${facilityId}`
-    );
+    const res = await api.get(`/bookings/facility/${facilityId}`);
     return res.data as PaginatedResponse<ApiBooking>;
   } catch (error) {
     if (error instanceof Error) {
@@ -820,11 +817,11 @@ export async function createContactUs(userData: {
   try {
     const res = await api.post(`/contactUs/send-message`, userData);
     return res.data;
-  } catch  {
+  } catch {
     throw new Error("Contact Us Error");
   }
-
-}export async function reviewRatingsummery() {
+}
+export async function reviewRatingsummery() {
   try {
     const res = await api.get(`/review-rating/summary/all-reviews`);
     return res.data.data;
@@ -853,5 +850,32 @@ export async function deletePlacement(id: string) {
     if (error instanceof Error) {
       throw new Error(`Error Deleted plecement data: ${error.message}`);
     }
+  }
+}
+
+//dashboard summery
+
+// --- Types ---
+
+interface dashboardsummer{
+  totalBookings?: number;
+  totalEarnings?: number;
+  referralFee?: number;
+  residentsServed?:number;
+}
+export interface DashboardSummary {
+  data:dashboardsummer;
+}
+
+// --- API Call ---
+export async function getDashboardSummery(): Promise<DashboardSummary> {
+  try {
+    const res = await api.get(`/dashboard/org-dashboard`);
+    return res.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error fetching dashboard summary: ${error.message}`);
+    }
+    throw error;
   }
 }

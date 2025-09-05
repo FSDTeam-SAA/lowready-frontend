@@ -15,33 +15,35 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Eye, ChevronLeft, ChevronRight } from "lucide-react";
 import {
-  getCustomers,
-  getFacilities,
+  getallFacilitiesdata,
+ 
   mapApiBookingToBookingData,
   type BookingData,
 } from "@/lib/api";
+import { useSession } from "next-auth/react";
 
 export function Customers() {
+  const {data:session}= useSession()
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
   // Fetch facilities
-  const { data: facilityData, isLoading: isFacilitiesLoading } = useQuery({
-    queryKey: ["facilities"],
-    queryFn: getFacilities,
-  });
+  // const { data: facilityData, isLoading: isFacilitiesLoading } = useQuery({
+  //   queryKey: ["facilities"],
+  //   queryFn: getFacilities,
+  // });
 
-  const facilityId = facilityData?.data?.[0]?._id || "";
+  // const facilityId = facilityData?.data?.[0]?._id || "";
 
   // Fetch customers/bookings
   const {
     data,
-    isLoading: isBookingsLoading,
+   
     error,
   } = useQuery({
-    queryKey: ["customers", facilityId, currentPage, itemsPerPage],
-    queryFn: () => getCustomers(facilityId, currentPage, itemsPerPage),
-    enabled: !!facilityId,
+    queryKey: ["customers", currentPage, itemsPerPage],
+    queryFn: () => getallFacilitiesdata(session?.user.id || '', currentPage, itemsPerPage),
+    
   });
 
   const bookings: BookingData[] = useMemo(
@@ -56,13 +58,7 @@ export function Customers() {
   const startItem = (currentPage - 1) * itemsPerPage + 1;
   const endItem = Math.min(currentPage * itemsPerPage, totalResults);
 
-  if (isFacilitiesLoading || isBookingsLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-muted-foreground">Loading bookings...</div>
-      </div>
-    );
-  }
+
 
   if (error) {
     return (
@@ -97,7 +93,7 @@ export function Customers() {
           <TableBody>
             {bookings.map((booking) => (
               <TableRow key={booking.id} className="hover:bg-muted/50">
-                <TableCell>{booking.invoice}</TableCell>
+                <TableCell>#{booking.invoice}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-3">
                     <Avatar className="h-8 w-8">
