@@ -12,6 +12,9 @@ const PUBLIC_EXACT = [
   "/search",
   "/blogs",
   "/login",
+  "/signinaspage",
+  "/signup",
+  "/forget-password",
   "/favicon.ico",
 ];
 const PUBLIC_PREFIX = [

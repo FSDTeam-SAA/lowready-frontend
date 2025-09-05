@@ -114,7 +114,7 @@ const LoginForm = () => {
           alt="Login background"
           width={800}
           height={800}
-          className="h-full w-full object-cover"
+          className="h-full w-full priority object-cover"
         />
         <div className="absolute top-6 left-6 text-white text-2xl font-bold">
           <Image src="/images/login.png" alt="logo" width={155} height={48} />
