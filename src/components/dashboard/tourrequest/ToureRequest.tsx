@@ -186,7 +186,7 @@ const ToureRequest = () => {
               </TableRow>
             </TableHeader>
             <TableBody className="text-center">
-              {tourbookings.map((booking, index) => (
+              {tourbookings.map((booking) => (
                 <TableRow key={booking._id} className="hover:bg-muted/50">
                   <TableCell>{`#${booking._id.slice(0, 4)}`}</TableCell>
                   <TableCell className="text-start">

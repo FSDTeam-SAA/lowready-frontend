@@ -4,7 +4,6 @@ import { getFacilities, reviewRatingsummery } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 
 import { ArrowUp } from "lucide-react";
-import { useSession } from "next-auth/react";
 import React from "react";
 
 
@@ -43,7 +42,6 @@ const ReviewRatingTop = () => {
     });
 
   const facilityId = facilityData?.data?.[0]?._id || "";
-   const {data:session}=useSession();
   const {
     data: reviewrating,
     isLoading: isRatingLoading,

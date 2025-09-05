@@ -16,7 +16,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Eye, ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
 import {
   getallFacilitiesdata,
-  
   getFacilities,
   mapApiBookingToBookingData,
   type BookingData,
@@ -31,26 +30,25 @@ export function BookingsTable() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  
+
   const { data: facilityData, isLoading: isFacilitiesLoading } = useQuery({
     queryKey: ["facilityId"],
     queryFn: () => getFacilities(),
   });
-  
+
   const facilityId = facilityData?.data?.[0]?._id || "";
-const {data:session}=useSession()
+  const { data: session } = useSession();
   const { data, error, isLoading } = useQuery({
     queryKey: ["bookings", facilityId, currentPage, itemsPerPage],
-    queryFn: () => getallFacilitiesdata(session?.user.id || '', currentPage, itemsPerPage),
+    queryFn: () =>
+      getallFacilitiesdata(session?.user.id || "", currentPage, itemsPerPage),
     enabled: !!facilityId,
   });
- 
- 
 
-  console.log('placement',data);
-  
+  console.log("placement", data);
+
   const bookings: BookingData[] =
-    data?.data.map((b, i) => mapApiBookingToBookingData(b, i)) || [];
+    data?.data.map((b) => mapApiBookingToBookingData(b)) || [];
   const totalPages = data?.pagination?.totalPages || 0;
   const totalResults = data?.pagination?.totalItems || 0;
 
@@ -163,8 +161,12 @@ const {data:session}=useSession()
                     variant={
                       booking.status === "Paid" ? "default" : "destructive"
                     }
-                    className={`text-[16px] font-medium px-3 py-1 ${booking.status === 'Paid' ? 'bg-[#E6FAEE]  font-medium text-[#27BE69]' : 'bg-[#FEECEE] text-[#E5102E]'}`}
-                  > 
+                    className={`text-[16px] font-medium px-3 py-1 ${
+                      booking.status === "Paid"
+                        ? "bg-[#E6FAEE]  font-medium text-[#27BE69]"
+                        : "bg-[#FEECEE] text-[#E5102E]"
+                    }`}
+                  >
                     {booking.status}
                   </Badge>
                 </TableCell>

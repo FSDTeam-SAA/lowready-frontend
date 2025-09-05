@@ -36,7 +36,7 @@ import {
 } from "@/hooks/FormSection";
 import { useCreateFacility } from "@/hooks/useFacilityMutations";
 import { toast } from "sonner";
-import { PricingModal, SubscriptionPlan } from "./pricing-modal";
+import { PricingModal } from "./pricing-modal";
 import { useSubscriptionStatus } from "@/hooks/useSubscriptionStatus";
 
 
@@ -329,7 +329,7 @@ export default function AddFacilityPage() {
       </div>
     );
   }
-  const handleSubscribe = async (plan: SubscriptionPlan) => {
+  const handleSubscribe = async () => {
     try {
       // Your subscription logic here
       
