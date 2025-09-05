@@ -50,7 +50,7 @@ const ReviewRatingTop = () => {
     error: ratingError,
   } = useQuery({
     queryKey: ["reviewRating", facilityId],
-    queryFn: () => reviewRatingsummery(session?.user?.id || ''),
+    queryFn: () => reviewRatingsummery(facilityId),
     enabled: !!facilityId,
   });
 

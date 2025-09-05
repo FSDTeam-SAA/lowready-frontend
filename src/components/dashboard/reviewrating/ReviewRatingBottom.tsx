@@ -55,16 +55,16 @@ const ReviewRatingBottom = () => {
   const [selectedReview, setSelectedReview] = useState<Review | null>(null);
   const [deleteReview, setDeleteReview] = useState<Review | null>(null);
 
-  // const { data: facilityData } = useQuery({
-  //   queryKey: ["facilities"],
-  //   queryFn: getFacilities,
-  // });
+  const { data: facilityData } = useQuery({
+    queryKey: ["facilities"],
+    queryFn: getFacilities,
+  });
   const {data:session}=useSession();
-  // const facilityId = facilityData?.data?.[0]?._id || "";
+  const facilityId = facilityData?.data?.[0]?._id || "";
 
   const { data, isLoading } = useQuery<ReviewResponse>({
     queryKey: ["reviews", session],
-    queryFn: () => getReviewRating(session?.user?.id || ''),
+    queryFn: () => getReviewRating(facilityId),
     enabled: !!session,
   });
 

@@ -114,18 +114,19 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const { data: reviewRating, isLoading } = useQuery<ReviewResponse>({
-    queryKey: ["reviews", session],
-    queryFn: () => getReviewRating(session?.user?.id || ""),
-    enabled: !!session,
-  });
-
   const { data: facilityData,  } = useQuery({
     queryKey: ["facilityId"],
     queryFn: () => getFacilities(),
   });
 
   const facilityId = facilityData?.data?.[0]?._id || "";
+  const { data: reviewRating, isLoading } = useQuery<ReviewResponse>({
+    queryKey: ["reviews", session],
+    queryFn: () => getReviewRating(facilityId),
+    enabled: !!session,
+  });
+
+  
   const { data: recentPlacement } = useQuery({
     queryKey: ["bookings", session],
     queryFn: () => getrecentPlacement(facilityId),
@@ -438,7 +439,7 @@ export default function DashboardPage() {
 
         {/* Recent Placements & Reviews */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Recent Placements */}
+       
           {/* Recent Placements */}
           <Card className="bg-white p-5">
             <CardHeader className="flex flex-row items-center justify-between pb-4">
@@ -491,8 +492,8 @@ export default function DashboardPage() {
                           ${booking.price.toLocaleString()}
                         </p>
                       </div>
-                      <Link href={`/dashboard/placements/${booking.id}`}>
-                        <button className="px-3 py-1.5 text-xs font-medium rounded-full bg-green-100 text-green-700 hover:bg-green-200 transition-colors">
+                      <Link className="cursor-pointer" href={`/dashboard/placements/`}>
+                        <button className="px-3 py-1.5 cursor-pointer text-xs font-medium rounded-full bg-green-100 text-green-700 hover:bg-green-200 transition-colors">
                           Details
                         </button>
                       </Link>
