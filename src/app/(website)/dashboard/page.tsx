@@ -24,7 +24,6 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import {
   BookingData,
-  
   getallFacilitiesdata,
   getDashboardreferral,
   getReviewRating,
@@ -116,31 +115,26 @@ export default function DashboardPage() {
   const [currentPage] = useState(1);
   const itemsPerPage = 10;
 
-
-
-  
   const { data: reviewRating, isLoading } = useQuery<ReviewResponse>({
     queryKey: ["reviews", session],
     queryFn: () => getReviewRating(),
     enabled: !!session,
   });
 
-  
   const { data: recentPlacement } = useQuery({
     queryKey: ["bookings", session],
-    queryFn: () => getallFacilitiesdata(session?.user.id || '',currentPage, itemsPerPage),
+    queryFn: () =>
+      getallFacilitiesdata(session?.user.id || "", currentPage, itemsPerPage),
     enabled: !!session,
   });
 
   // getDashboardreferral
-    const { data: dashboardreferral } = useQuery({
+  const { data: dashboardreferral } = useQuery({
     queryKey: ["dashboardrefarral"],
     queryFn: () => getDashboardreferral(),
   });
- 
 
-  console.log('iftekhar',dashboardreferral);
-  
+  console.log("iftekhar", dashboardreferral);
 
   const bookings: BookingData[] =
     recentPlacement?.data.map((b) => mapApiBookingToBookingData(b)) || [];
@@ -234,7 +228,7 @@ export default function DashboardPage() {
     };
 
     fetchData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.accessToken]);
 
   // Transform earnings data for chart
@@ -441,7 +435,7 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent className="space-y-3 flex items-center my-auto">
               <h2 className="text-[#10421B] font-bold text-6xl mx-auto ">
-                {dashboardreferral?.data?.savings}
+                ${dashboardreferral?.data?.savings}
               </h2>
             </CardContent>
           </Card>
@@ -449,7 +443,6 @@ export default function DashboardPage() {
 
         {/* Recent Placements & Reviews */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-       
           {/* Recent Placements */}
           <Card className="bg-white p-5">
             <CardHeader className="flex flex-row items-center justify-between pb-4">
@@ -467,7 +460,7 @@ export default function DashboardPage() {
                 bookings.slice(0, 3).map((booking) => (
                   <div
                     key={booking.id}
-                    className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                    className="grid grid-cols-1 md:grid-cols-3 md:justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
@@ -493,21 +486,19 @@ export default function DashboardPage() {
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
+                    
                       <div className="text-right">
-                        <p className="text-xs text-gray-500 flex items-center gap-1">
+                        <p className="text-xs text-gray-500 justify-center flex items-center gap-1">
                           <MapPin className="h-3 w-3" /> {booking.location}
                         </p>
+                      </div>
+                      <div className="text-right">
                         <p className="text-sm font-semibold text-gray-900">
                           ${booking.price.toLocaleString()}
                         </p>
                       </div>
-                      <Link className="cursor-pointer" href={`/dashboard/placements/`}>
-                        <button className="px-3 py-1.5 cursor-pointer text-xs font-medium rounded-full bg-green-100 text-green-700 hover:bg-green-200 transition-colors">
-                          Details
-                        </button>
-                      </Link>
-                    </div>
+                  
+                    
                   </div>
                 ))
               ) : (
@@ -571,13 +562,13 @@ export default function DashboardPage() {
                         ))}
                       </div>
                     </div>
-                    <p className="text-sm text-gray-600 leading-relaxed">
+                    <p className="text-sm pl-5 text-gray-600 leading-relaxed">
                       {review.comment}
                     </p>
-                    <p className="text-xs text-gray-400">
+                    {/* <p className="text-xs text-gray-400">
                       {new Date(review.createdAt).toLocaleDateString()} •{" "}
                       {review.facility.name}
-                    </p>
+                    </p> */}
                   </div>
                 ))
               ) : (
