@@ -81,7 +81,7 @@ const ResetPassword = () => {
           {/* Left side - image */}
           <div className="bg-center">
             <Image
-              src={"/loginimage.png"}
+              src={"/images/loginimage.png"}
               alt="signup"
               width={600}
               height={600}

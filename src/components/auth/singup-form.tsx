@@ -108,7 +108,7 @@ const SingupForm = () => {
           {/* Left side - image */}
           <div className="bg-center hidden lg:block">
             <Image
-              src={"/loginimage.png"}
+              src={"/images/loginimage.png"}
               alt="signup"
               width={600}
               height={600}
