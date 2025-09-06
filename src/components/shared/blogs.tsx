@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
-import { CarouselNavigation } from "@/components/shared/carousel-navigation"; // ✅ import navigation
-import { Clock3 } from "lucide-react";
+import { CarouselNavigation } from "@/components/shared/carousel-navigation"; 
+// import { Clock3 } from "lucide-react";
 
 // Blog type
 interface Blog {
@@ -170,10 +170,10 @@ export default function BlogPage() {
                       </svg>
                       <span className="ml-1">{blog.date}</span>
                     </span>
-                    <span className="flex justify-center items-center text-[#8E938F]">
+                    {/* <span className="flex justify-center items-center text-[#8E938F]">
                       <Clock3 className="w-4 h-4" />
                       <span className="ml-1">{blog.readTime}</span>
-                    </span>
+                    </span> */}
                   </div>
                   {/* Title */}
                   <h3 className="text-lg font-semibold text-[#191D23] mb-2">
