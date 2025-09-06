@@ -59,7 +59,7 @@ export default function ContactInformation() {
   }
 
   return (
-    <div className="bg-gray-50 py-16">
+    <div className="bg-gray-50 py-5 md:py-16">
       <div className="mx-auto container ">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
           {/* Map Section */}
@@ -80,8 +80,8 @@ export default function ContactInformation() {
           <div className="space-y-6 p-4 md:p-0">
              
             <div className="max-w-2xl">
-              <h1 className="text-4xl font-bold font-playfair text-primary mb-4" >Contact Information</h1>
-              <p className="text-[#68706A]  text-base">
+              <h1 className="text-2xl md:text-4xl font-bold font-playfair text-primary mb-4" >Contact Information</h1>
+              <p className="text-[#68706A] text-sm  md:text-base">
                 Find all the ways to reach us, including email, phone, and our office address, so you can get the
                 support and answers you need quickly and easily.
               </p>
@@ -90,7 +90,7 @@ export default function ContactInformation() {
  
 
             {/* Static Contact Info */}
-            <div className="space-y-4 pt-6">
+            <div className="space-y-4 pt-1 md:pt-6">
               <div className="flex items-center gap-3">
                 <Mail className="text-green-600 w-5 h-5" />
                 <span className="text-[#343A40] text-base">

@@ -13,10 +13,8 @@ import {
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getNotifications, clearAllNotifications } from "@/lib/api";
 import { useSession } from "next-auth/react";
-
 import { formatDistanceToNow } from "date-fns";
-import { INotification } from "@/types/notifications";
-
+import { NotificationsResponse, INotification } from "@/types/notifications";
 
 export default function Notifications() {
   const [filter, setFilter] = useState("all");
@@ -25,16 +23,14 @@ export default function Notifications() {
   const userId = session?.user.id || "";
 
   const {
-    data: notifications = [],
+    data: notifications,
     isLoading,
     error,
-  } = useQuery<INotification[]>({
+  } = useQuery<NotificationsResponse>({
     queryKey: ["notifications", userId],
     queryFn: () => getNotifications(userId),
-    enabled: !!userId, // Only run query if userId exists
+    enabled: !!userId,
   });
-
-
 
   // Clear all mutation
   const clearAllMutation = useMutation({
@@ -44,45 +40,41 @@ export default function Notifications() {
     },
   });
 
-  // Filter notifications based on selection
-  const filteredNotifications = useMemo(() => {
-    if (filter === "all") return notifications;
-    return notifications.filter((notification) => notification.type === filter);
-  }, [notifications, filter]);
-
-  // Format time using date-fns
+  // Format time
   const formatTime = (dateString: string) => {
     return formatDistanceToNow(new Date(dateString), { addSuffix: true });
   };
 
+  // Apply filter with useMemo
+  const filteredNotifications = useMemo(() => {
+    if (!notifications?.data) return [];
+
+    switch (filter) {
+      case "unread":
+        return notifications.data.filter((n) => !n.isViewed);
+      case "read":
+        return notifications.data.filter((n) => n.isViewed);
+      case "properties-listing":
+        return notifications.data.filter((n) => n.type === "visitBooking");
+      case "properties-booking":
+        return notifications.data.filter((n) => n.type === "booking");
+      case "tour-booking":
+        return notifications.data.filter((n) => n.type === "tour-booking");
+      case "reviews-ratings":
+        return notifications.data.filter(
+          (n) => n.type === "visitBookingCompleted"
+        );
+      default:
+        return notifications.data;
+    }
+  }, [notifications, filter]);
+
   if (isLoading) {
-    return (
-      <div className="flex h-screen">
-        <div className="flex-1">
-          <div className="flex items-center justify-center h-96">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-primary mx-auto"></div>
-              <p className="mt-2 text-gray-600">Loading notifications...</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <p>Loading...</p>;
   }
 
   if (error) {
-    return (
-      <div className="flex h-screen">
-        <div className="flex-1">
-          <div className="flex items-center justify-center h-96">
-            <div className="text-center">
-              <p className="text-red-500">Error loading notifications</p>
-              <p className="text-gray-600 text-sm mt-2">{error.message}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <p className="text-red-500">Error loading notifications</p>;
   }
 
   return (
@@ -90,8 +82,6 @@ export default function Notifications() {
       <div className="flex-1 flex flex-col overflow-hidden">
         <main className="flex-1 overflow-y-auto p-6">
           <div className="flex justify-between items-start mx-auto">
-           
-
             {/* Notifications List */}
             <div className="space-y-4 w-[70%]">
               {filteredNotifications.length === 0 ? (
@@ -111,19 +101,16 @@ export default function Notifications() {
                     }
                   >
                     <CardContent className="p-4">
-                      <div className="flex items-start justify-between">
+                      <div className="flex items-center justify-between">
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
-                            <h3 className="font-semibold text-[#208436] text-[18px] capitalize">
-                              {notification.type.replace("-", " ")}
-                            </h3>
                             {!notification.isViewed && (
-                              <span className="bg-green-primary text-white text-xs px-2 py-1 rounded-full">
+                              <span className="bg-green-primary text-white text-xs rounded-full px-2 py-0.5">
                                 New
                               </span>
                             )}
                           </div>
-                          <p className="text-sm lg-[16px] text-[#68706A] font-normal mt-1">
+                          <p className="text-sm lg:text-[16px] text-[#68706A] font-normal">
                             {notification.message}
                           </p>
                         </div>
@@ -136,26 +123,26 @@ export default function Notifications() {
                 ))
               )}
             </div>
-            
+
             {/* notification side list  */}
             <div className="flex flex-col gap-10 justify-between items-center mb-6 w-[25%]">
               <div className="flex items-center gap-4">
                 <span className="text-sm font-medium">Filter</span>
                 <Select value={filter} onValueChange={setFilter}>
                   <SelectTrigger className="w-48">
-                    <SelectValue />
+                    <SelectValue placeholder="Select Filter" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Notifications</SelectItem>
+                    <SelectItem value="unread">Unread</SelectItem>
+                    <SelectItem value="read">Read</SelectItem>
                     <SelectItem value="properties-listing">
-                      Properties Listing
+                      visitBooking
                     </SelectItem>
-                    <SelectItem value="properties-booking">
-                      Properties Booking
-                    </SelectItem>
+                    <SelectItem value="properties-booking">booking</SelectItem>
                     <SelectItem value="tour-booking">Tour Booking</SelectItem>
                     <SelectItem value="reviews-ratings">
-                      Reviews & Ratings
+                      visitBookingCompleted
                     </SelectItem>
                   </SelectContent>
                 </Select>
@@ -167,14 +154,15 @@ export default function Notifications() {
                   className="text-red-error border-red-error hover:bg-red-bg bg-transparent"
                   onClick={() => clearAllMutation.mutate()}
                   disabled={
-                    clearAllMutation.isPending || notifications.length === 0
+                    clearAllMutation.isPending ||
+                    notifications?.data.length === 0
                   }
                 >
                   {clearAllMutation.isPending ? "Clearing..." : "Clear All"}
                 </Button>
                 <Button
                   className="bg-[#179649] hover:bg-green-secondary"
-                  disabled={notifications.length === 0}
+                  disabled={notifications?.data.length === 0}
                 >
                   Mark as Read
                 </Button>

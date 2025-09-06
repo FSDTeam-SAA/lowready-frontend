@@ -12,6 +12,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import Link from "next/link";
 
 const navigation = [
   {
@@ -94,6 +95,8 @@ export function DashboardHeader() {
     navigation.find((nav) => nav.href.endsWith(currentPage)) ||
     navigation.find((nav) => nav.href === "/dashboard");
 
+  console.log("session check", session);
+
   return (
     <>
       <header className="flex w-full items-center justify-between bg-white text-black p-4 backdrop-blur-xl">
@@ -108,10 +111,9 @@ export function DashboardHeader() {
         </div>
 
         <div className="flex  items-center gap-6 pr-10">
-          <BellDot
-            className="h-6 w-6 text-gray-600 cursor-pointer"
-            onClick={() => setOpen(true)}
-          />
+          <Link href={`/dashboard/notifications`}>
+            <BellDot className="h-6 w-6 text-gray-600 cursor-pointer" />
+          </Link>
 
           <div className="flex items-center gap-4">
             <Image
@@ -140,8 +142,8 @@ export function DashboardHeader() {
           <DialogHeader>
             <DialogTitle>Notifications</DialogTitle>
             <DialogDescription>
-              🎉 You don’t have any new notifications right now.  
-              Stay tuned for updates!
+              🎉 You don’t have any new notifications right now. Stay tuned for
+              updates!
             </DialogDescription>
           </DialogHeader>
         </DialogContent>

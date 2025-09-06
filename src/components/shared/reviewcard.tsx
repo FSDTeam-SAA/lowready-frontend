@@ -18,13 +18,11 @@ export function ReviewCard({ review }: ReviewCardProps) {
   // Use facility address or fallback to facility name
   const location = review.facility.address || review.facility.name;
   
-   
-
   return (
-    <Card className="w-full overflow-hidden bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+    <Card className="w-full h-full overflow-hidden bg-white shadow-xs hover:shadow-sm transition-shadow duration-300">
       <CardContent className="p-4 ">
         {/* Header */}
-        <div className="space-y-4 lg:space-y-8">
+        <div className="space-y-4 lg:space-y-8 ">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-1">
               <Image

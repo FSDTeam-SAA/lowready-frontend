@@ -77,6 +77,9 @@ const Navbar = () => {
 
   const isLoggedIn = !!currentSession?.user;
 
+
+  
+
   return (
     <header className="sticky top-0 h-20 bg-white z-50 shadow-sm">
       <div className="container mx-auto px-4">
@@ -118,7 +121,7 @@ const Navbar = () => {
               <div className="hidden md:block">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="flex items-center gap-2">
+                    <Button variant="ghost" className="flex items-center hover:bg-destructive/0">
                       <Avatar className="h-10 w-10 cursor-pointer">
                         <AvatarImage
                           src={currentSession.user.image || ""}

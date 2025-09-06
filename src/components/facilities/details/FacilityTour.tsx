@@ -11,7 +11,7 @@ export function FacilityTour({ data }: FacilityTourProps) {
   const datas = data.data || [];
 
   return (
-    <section className="my-[80px]">
+    <section className="mt-[30px] md:my-[80px]">
     <div className="container mx-auto">
         {/* Tour Title */}
       <h2 className="text-xl text-[32px] font-playfair font-semibold">
