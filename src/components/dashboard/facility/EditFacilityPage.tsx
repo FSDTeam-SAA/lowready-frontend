@@ -438,7 +438,7 @@ export default function EditFacilityPage() {
       if (updatedData.description !== undefined) updatePayload.description = updatedData.description;
       if (updatedData.price !== undefined) updatePayload.price = updatedData.price;
       if (updatedData.priceType !== undefined) {
-        updatePayload.base = updatedData.priceType.toLowerCase();
+        updatePayload.base = updatedData.priceType === "Monthly" ? "monthly" : "yearly";
       }
       if (updatedData.amenities !== undefined) updatePayload.amenities = updatedData.amenities;
       if (updatedData.careServices !== undefined) updatePayload.careServices = updatedData.careServices;
