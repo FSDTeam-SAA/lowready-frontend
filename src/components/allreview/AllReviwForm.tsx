@@ -69,15 +69,17 @@ const AllReviewForm: React.FC = () => {
     queryFn: () => reviewratinSummery(facilityId),
   });
 
+  console.log("facillitee", facilitie);
+
   // Calculate average rating
-  const averageRating = facilitie?.data
-    ? (facilitie.data.ratings[1] * 1 +
-        facilitie.data.ratings[2] * 2 +
-        facilitie.data.ratings[3] * 3 +
-        facilitie.data.ratings[4] * 4 +
-        facilitie.data.ratings[5] * 5) /
-      facilitie.data.total
-    : 0;
+  // const averageRating = facilitie?.data
+  //   ? (facilitie.data.ratings[1] * 1 +
+  //       facilitie.data.ratings[2] * 2 +
+  //       facilitie.data.ratings[3] * 3 +
+  //       facilitie.data.ratings[4] * 4 +
+  //       facilitie.data.ratings[5] * 5) /
+  //     facilitie.data.total
+  //   : 0;
 
   const handleSubmitReview = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -162,16 +164,16 @@ const AllReviewForm: React.FC = () => {
                 <Star
                   key={star}
                   className={`w-6 h-6 ${
-                    star <= Math.round(averageRating)
+                    star <= Math.round(Number(facilitie?.averageRating || 0))
                       ? "text-yellow-500 fill-yellow-500"
                       : "text-[#C0C3C1] fill-[#C0C3C1]"
                   }`}
                 />
               ))}
-              <span>{averageRating.toFixed(1)}</span>
+              <span>{Number(facilitie?.averageRating || 0).toFixed(1)}</span>
             </p>
             <p className="text-[16px] pt-2 text-[#68706A]">
-              Based on {facilitie?.data?.total || 0} reviews
+              Based on {facilitie?.totalReviews || 0} reviews
             </p>
 
             <div className="mt-[40px] space-y-2">
@@ -184,12 +186,12 @@ const AllReviewForm: React.FC = () => {
                     <div
                       className="h-2 bg-yellow-500 rounded-full"
                       style={{
-                        width: facilitie?.data?.total
+                        width: facilitie?.totalReviews
                           ? `${
-                              (facilitie.data.ratings[
+                              ((facilitie.starCounts[
                                 star as keyof RatingsCount
-                              ] /
-                                facilitie.data.total) *
+                              ] || 0) /
+                                facilitie.totalReviews) *
                               90
                             }%`
                           : "0%",
@@ -197,7 +199,7 @@ const AllReviewForm: React.FC = () => {
                     ></div>
                   </div>
                   <span className="w-8 text-sm text-right">
-                    {facilitie?.data?.ratings[star as keyof RatingsCount] || 0}
+                    {facilitie?.starCounts[star as keyof RatingsCount] || 0}
                   </span>
                 </div>
               ))}

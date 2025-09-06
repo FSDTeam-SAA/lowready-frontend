@@ -561,17 +561,23 @@ export const createReview = async (
 
 //fetch review data
 
-export async function fetchReviews(facilityId: string) {
+export async function fetchReviews(
+  facilityId: string, 
+  page: number, 
+  limit: number
+) {
   try {
-    const response = await api.get(`/review-rating/facility/${facilityId}`);
-    const data = response.data;
-    return data;
+    const response = await api.get(
+      `/review-rating/facility/${facilityId}?page=${page}&limit=${limit}`
+    );
+    return response.data;
   } catch (error) {
     if (error instanceof Error) {
-      throw new Error(`Error Deleted you Review: ${error.message}`);
+      throw new Error(`Error fetching reviews: ${error.message}`);
     }
   }
 }
+
 
 //get facilities review by facilites
 
@@ -795,8 +801,8 @@ export async function fetchSubscription() {
 
 export async function reviewratinSummery(id: string) {
   try {
-    const res = await api.get(`review-rating/summary/${id}`);
-    return res.data;
+    const res = await api.get(`review-rating/facility/count/${id}`);
+    return res.data.data;
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(`Get Booking Error ${error.message}`);
