@@ -6,7 +6,7 @@ const faqData = [
   {
     question: "Is there a free trial available?",
     answer:
-      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ab hic veritatis molestias culpa in, nibh condimentum class. Augue orci conubia suscipit in condimentum maecenas congue magna velit, eros elementum platea semper odio cras feugiat placerat. Massa nibh sed erat ac est viverra nostra tellus, et aenean a phasellus rhoncus penatibus curae leo molestie, dui hendrerit duis vestibulum libero mi nam.",
+      "This is the answer for the second question. You can nibh condimentum class. Augue orci conubia suscipit in condimentum Augue orci conubia suscipit in condimentum maecenas congue magna velit, eros elementum platea semper odio cras feugiat placerat. Massa nibh sed erat ac est viverra nostra tellus, et aenean a phasellus rhoncus penatibus curae leo molestie, dui hendrerit duis vestibulum libero mi nam.",
   },
   {
     question: "Can I change my plan later?",
@@ -35,13 +35,13 @@ const faqData = [
   },
   {
     question:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean at libero ultrices?",
+      "This is the answer for the second question. You can nibh condimentum class. Augue orci conubia suscipit in condimentum at libero ultrices?",
     answer:
       "This is the answer for the long question example. Massa nibh sed erat ac est viverra nostra tellus, et aenean a phasellus rhoncus penatibus curae leo molestie.",
   },
   {
     question:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean at libero ultrices?",
+      "This is the answer for the second question. You can nibh condimentum class. Augue orci conubia suscipit in condimentum Aenean at libero ultrices?",
     answer:
       "Another answer example. Massa nibh sed erat ac est viverra nostra tellus, et aenean a phasellus rhoncus penatibus curae leo molestie.",
   },

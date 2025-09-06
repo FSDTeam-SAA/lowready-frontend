@@ -1,6 +1,63 @@
+
+
+"use client"
+
 import { Mail, MapPin, Phone } from "lucide-react"
+import { useState } from "react"
 
 export default function ContactInformation() {
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneNumber: "",
+    message: "",
+  })
+  const [loading, setLoading] = useState(false)
+  const [responseMessage, setResponseMessage] = useState("")
+
+  const base_url = process.env.NEXT_PUBLIC_API_URL
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value })
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setResponseMessage("")
+
+    try {
+      const res = await fetch(`${base_url}/contactUs/send-message`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      })
+
+      const data = await res.json()
+
+      if (data.success) {
+        setResponseMessage("✅ " + data.message)
+        setFormData({
+          firstName: "",
+          lastName: "",
+          email: "",
+          phoneNumber: "",
+          message: "",
+        })
+      } else {
+        setResponseMessage("❌ Something went wrong. Please try again.")
+      }
+    } catch (error) {
+      console.error(error)
+      setResponseMessage("❌ Server error. Please try later.")
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="bg-gray-50 py-16">
       <div className="mx-auto container ">
@@ -19,41 +76,42 @@ export default function ContactInformation() {
             />
           </div>
 
-          {/* Contact Information Section */}
+          {/* Contact Information + Form Section */}
           <div className="space-y-6 p-4 md:p-0">
-            <div>
-              <h1 className="text-4xl font-bold text-primary mb-4"  style={{ fontFamily: "var(--font-playfair)" }}>Contact Information</h1>
-              <p className="text-[#68706A] text-base">
+             
+            <div className="max-w-2xl">
+              <h1 className="text-4xl font-bold font-playfair text-primary mb-4" >Contact Information</h1>
+              <p className="text-[#68706A]  text-base">
                 Find all the ways to reach us, including email, phone, and our office address, so you can get the
                 support and answers you need quickly and easily.
               </p>
             </div>
 
-            <div className="space-y-4">
-              {/* Email */}
+ 
+
+            {/* Static Contact Info */}
+            <div className="space-y-4 pt-6">
               <div className="flex items-center gap-3">
-                <div className="flex-shrink-0">
-                  <Mail className="text-green-600 w-5 h-5" />
-                </div>
-                <span className="text-[#343A40] text-base">support@alhhub.com</span>
+                <Mail className="text-green-600 w-5 h-5" />
+                <span className="text-[#343A40] text-base">
+                  support@alhhub.com
+                </span>
               </div>
 
-              {/* Phone */}
               <div className="flex items-center gap-3">
-                <div className="flex-shrink-0">
-                  <Phone className="text-green-600 w-5 h-5" />
-                </div>
-                <span className="text-[#343A40] text-base">+1 (555) 123-4567FGHJ</span>
+                <Phone className="text-green-600 w-5 h-5" />
+                <span className="text-[#343A40] text-base">
+                  +1 (555) 123-4567
+                </span>
               </div>
 
-              {/* Address */}
               <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 mt-0.5">
-                  <MapPin className="text-green-600 w-5 h-5" />
-                </div>
+                <MapPin className="text-green-600 w-5 h-5 mt-0.5" />
                 <div className="text-[#343A40] text-base">
                   <div>123 Care Street, City, State, ZIP</div>
-                  <div className="text-base text-[#343A40]">Address: 123 Care Street, City, State, ZIP</div>
+                  <div className="text-base text-[#343A40]">
+                    Address: 123 Care Street, City, State, ZIP
+                  </div>
                 </div>
               </div>
             </div>

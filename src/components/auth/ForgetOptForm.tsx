@@ -119,14 +119,14 @@ const ForgetOptForm = () => {
         {/* Left side image */}
         <div className="relative lg:block hidden">
           <Image
-            src="/verify.png"
+            src="/images/loginimage.png"
             alt="Verification illustration"
             width={600}
             height={600}
             className="h-svh w-full object-cover"
           />
           <div className="absolute top-6 left-6 text-white text-2xl font-bold">
-            <Image src="/login.png" alt="logo" width={155} height={48} />
+            <Image src="/images/login.png" alt="logo" width={155} height={48} />
           </div>
         </div>
 

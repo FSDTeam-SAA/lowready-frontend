@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
-import { CarouselNavigation } from "@/components/shared/carousel-navigation"; // ✅ import navigation
-import { Clock3 } from "lucide-react";
+import { CarouselNavigation } from "@/components/shared/carousel-navigation"; 
+// import { Clock3 } from "lucide-react";
 
 // Blog type
 interface Blog {
@@ -23,7 +23,7 @@ const blogsData: Blog[] = [
     id: 1,
     title: "Choosing the Right Assisted Living",
     description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus, elit nibh et nisl Lobortis euismod lacinia maecenas convallis tincidunt pharetra dui, ridiculus nec ultrices non curabitur aliquam, nibh platea vestibulum placerat dapibus nunc. Metus curae erat ac class pulvinar eleifend consequat condimentum sapien, in a mi tristique posuere porttitor laoreet dictum, parturient diam at faucibus massa commodo aliquet ultricies....",
+      "This is the answer for the second question. You can nibh condimentum class. Augue orci conubia suscipit in condimentum consectetur adipiscing elit. Purus, elit nibh et nisl Lobortis euismod lacinia maecenas convallis tincidunt pharetra dui, ridiculus nec ultrices non curabitur aliquam, nibh platea vestibulum placerat dapibus nunc. Metus curae erat ac class pulvinar eleifend consequat condimentum sapien, in a mi tristique posuere porttitor laoreet dictum, parturient diam at faucibus massa commodo aliquet ultricies....",
     date: "14 August, 2025",
     readTime: "12 min read",
     image: "/images/blogImage.jpg",
@@ -170,10 +170,10 @@ export default function BlogPage() {
                       </svg>
                       <span className="ml-1">{blog.date}</span>
                     </span>
-                    <span className="flex justify-center items-center text-[#8E938F]">
+                    {/* <span className="flex justify-center items-center text-[#8E938F]">
                       <Clock3 className="w-4 h-4" />
                       <span className="ml-1">{blog.readTime}</span>
-                    </span>
+                    </span> */}
                   </div>
                   {/* Title */}
                   <h3 className="text-lg font-semibold text-[#191D23] mb-2">

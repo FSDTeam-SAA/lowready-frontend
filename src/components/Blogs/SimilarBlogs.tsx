@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { CarouselNavigation } from "@/components/shared/carousel-navigation";
-import { Clock3 } from "lucide-react";
+// import { Clock3 } from "lucide-react";
 import { getAllBlogs } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
@@ -64,8 +64,10 @@ export default function SimilarBlogs() {
     setCurrentSlide(index);
   };
 
-  if (isLoading) return <SimilarBlogsSkeleton /> ;
- 
+  // Helper function: strip HTML tags
+  const stripHtml = (html: string) => html.replace(/<[^>]+>/g, "");
+
+  if (isLoading) return <SimilarBlogsSkeleton />;
 
   return (
     <div className="container mx-auto py-16">
@@ -131,12 +133,12 @@ export default function SimilarBlogs() {
                         })}
                       </span>
                     </span>
-                    <span className="flex justify-center items-center text-[#8E938F]">
+                    {/* <span className="flex justify-center items-center text-[#8E938F]">
                       <Clock3 className="w-4 h-4" />
                       <span className="ml-1">
                         {blog.readTime || "5 min read"}
                       </span>
-                    </span>
+                    </span> */}
                   </div>
                   {/* Title */}
                   <Link href={`/blogs/${blog._id}`}>
@@ -148,8 +150,11 @@ export default function SimilarBlogs() {
                   </Link>
                   {/* Description + Read More */}
                   <p className="text-[16px] text-[#68706A] mb-3">
-                    {blog.description.split(" ").slice(0, 25).join(" ")}
-                    {blog.description.split(" ").length > 25 && " ... "}
+                    {stripHtml(blogs[0].description)
+                      .split(" ")
+                      .slice(0, 30)
+                      .join(" ")}
+                    ...
                     <a
                       href={`/blogs/${blog._id}`}
                       className="text-green-600 font-medium hover:underline"

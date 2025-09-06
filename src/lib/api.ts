@@ -2,7 +2,6 @@ import {
   ApiResponse,
   Booking,
   ChangePasswordResponse,
-  PaginatedResponse,
   RebookData,
   RebookResponse,
   ReviewData,
@@ -13,7 +12,8 @@ import axios from "axios";
 import { getSession } from "next-auth/react";
 
 export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "https://lowready-backend.onrender.com/api/v1";
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://lowready-backend.onrender.com/api/v1";
 
 // Create axios instance
 const api = axios.create({
@@ -63,7 +63,7 @@ export interface BookingData {
     email: string;
     avatar: string;
   };
-  images:Avatar[];
+  images: Avatar[];
   location: string;
   price: number;
   status: "Paid" | "Cancelled";
@@ -144,27 +144,26 @@ export interface ApiBooking {
   phoneNumber?: string;
 }
 
-// export interface PaginatedResponse<T> {
-//   data: T[];
-//   meta: {
-//     totalPages: number;
-//     totalItems: number;
-//     currentPage: number;
-//     itemsPerPage: number;
-//   };
-// }
+export interface PaginatedResponse<T> {
+  data: T[];
+  meta: {
+    totalPages: number;
+    totalItems: number;
+    currentPage: number;
+    itemsPerPage: number;
+  };
+}
 
 // -------------------------------
 // Mapper: ApiBooking → BookingData
 // -------------------------------
 export function mapApiBookingToBookingData(
-  apiBooking: ApiBooking,
-  index: number
+  apiBooking: ApiBooking
 ): BookingData {
   const facility = apiBooking.facility; // can be null
   return {
     id: apiBooking._id,
-    invoice: `INV-${index + 1}`,
+    invoice: `${apiBooking._id.slice(0, 4)}`,
     customer: {
       name: `${apiBooking.userId.firstName} ${apiBooking.userId.lastName}`,
       email: apiBooking.userId.email,
@@ -213,6 +212,25 @@ export async function getFacilities() {
   }
 }
 
+// get all facilites data
+export async function getallFacilitiesdata(
+  facilityId: string,
+  page?: number,
+  limit?: number
+) {
+  try {
+    const res = await api.get(
+      `/bookings/organization/${facilityId}?page=${page}&limit=${limit}`
+    );
+    return res.data as PaginatedResponse<ApiBooking>;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error fetching bookings: ${error.message}`);
+    }
+    throw error;
+  }
+}
+
 // customer/bookings API
 export async function getCustomers(
   facilityId: string,
@@ -223,6 +241,21 @@ export async function getCustomers(
     const res = await api.get(
       `/bookings/facility/${facilityId}?page=${page}&limit=${limit}`
     );
+    return res.data as PaginatedResponse<ApiBooking>;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error fetching bookings: ${error.message}`);
+    }
+    throw error;
+  }
+}
+
+// recent placement
+export async function getrecentPlacement(
+  facilityId: string
+): Promise<PaginatedResponse<ApiBooking>> {
+  try {
+    const res = await api.get(`/bookings/facility/${facilityId}`);
     return res.data as PaginatedResponse<ApiBooking>;
   } catch (error) {
     if (error instanceof Error) {
@@ -474,9 +507,9 @@ export interface ReviewResponse {
   data: Review[];
 }
 
-export async function getReviewRating(id: string) {
+export async function getReviewRating() {
   try {
-    const res = await api.get(`/review-rating/facility/${id}`);
+    const res = await api.get(`/review-rating/facility/all`);
     return res.data;
   } catch (error) {
     if (error instanceof Error) {
@@ -489,7 +522,7 @@ export async function getReviewRating(id: string) {
 
 export async function DeleteReview(id: string) {
   try {
-    const res = await api.delete(`/reviews/${id}`);
+    const res = await api.delete(`/review-rating/${id}`);
     return res.data;
   } catch (error) {
     if (error instanceof Error) {
@@ -528,17 +561,23 @@ export const createReview = async (
 
 //fetch review data
 
-export async function fetchReviews(facilityId: string) {
+export async function fetchReviews(
+  facilityId: string, 
+  page: number, 
+  limit: number
+) {
   try {
-    const response = await api.get(`/review-rating/facility/${facilityId}`);
-    const data = response.data;
-    return data;
+    const response = await api.get(
+      `/review-rating/facility/${facilityId}?page=${page}&limit=${limit}`
+    );
+    return response.data;
   } catch (error) {
     if (error instanceof Error) {
-      throw new Error(`Error Deleted you Review: ${error.message}`);
+      throw new Error(`Error fetching reviews: ${error.message}`);
     }
   }
 }
+
 
 //get facilities review by facilites
 
@@ -762,8 +801,8 @@ export async function fetchSubscription() {
 
 export async function reviewratinSummery(id: string) {
   try {
-    const res = await api.get(`review-rating/summary/${id}`);
-    return res.data;
+    const res = await api.get(`review-rating/facility/count/${id}`);
+    return res.data.data;
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(`Get Booking Error ${error.message}`);
@@ -782,11 +821,30 @@ export async function createContactUs(userData: {
   try {
     const res = await api.post(`/contactUs/send-message`, userData);
     return res.data;
-  } catch  {
+  } catch {
     throw new Error("Contact Us Error");
   }
 }
+export async function reviewRatingsummery() {
+  try {
+    const res = await api.get(`/review-rating/summary/all-reviews`);
+    return res.data.data;
+  } catch (error) {
+    console.error("Error fetching facilities:", error);
+    return { data: [], totalPages: 1 };
+  }
+}
 
+export async function DeleteRatingReview(id: string) {
+  try {
+    const res = await api.delete(`/review-rating/${id}`);
+    return res.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error Deleted you Review: ${error.message}`);
+    }
+  }
+}
 // Delete Placement history
 export async function deletePlacement(id: string) {
   try {
@@ -796,5 +854,56 @@ export async function deletePlacement(id: string) {
     if (error instanceof Error) {
       throw new Error(`Error Deleted plecement data: ${error.message}`);
     }
+  }
+}
+
+//dashboard summery
+
+// --- Types ---
+
+interface dashboardsummer {
+  totalBookings?: number;
+  totalEarnings?: number;
+  referralFee?: number;
+  residentsServed?: number;
+}
+export interface DashboardSummary {
+  data: dashboardsummer;
+}
+
+// --- API Call ---
+export async function getDashboardSummery(): Promise<DashboardSummary> {
+  try {
+    const res = await api.get(`/dashboard/org-dashboard`);
+    return res.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error fetching dashboard summary: ${error.message}`);
+    }
+    throw error;
+  }
+}
+
+// dashboard/referral/saving
+interface referreldata{
+referralFees?: number;
+  referralRate?: number;
+  savings?: number;
+  standardReferralFee?: number;
+  subscriptionCost?: number;
+  totalWithModel?: number;
+}
+interface dashboardrefarel {
+  data:referreldata;
+}
+export async function getDashboardreferral(): Promise<dashboardrefarel> {
+  try {
+    const res = await api.get(`dashboard/referral/saving`);
+    return res.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error fetching dashboard summary: ${error.message}`);
+    }
+    throw error;
   }
 }

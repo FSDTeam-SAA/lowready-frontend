@@ -13,7 +13,7 @@ const Footer = () => {
   return (
     <footer className="bg-[#E6F9EB] py-4 lg:py-5">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-12">
           {/* Brand Section */}
           <div className="lg:col-span-1">
             <Image
@@ -155,7 +155,7 @@ const Footer = () => {
         {/* Divider and Copyright */}
         <div className="mt-5 pt-5 border-t border-primary/20">
           <p className="text-center text-sm pb-0 text-muted-foreground">
-            © 2025 Albin Hub. All rights reserved.
+            © 2025 ALH Hub. All rights reserved.
           </p>
         </div>
       </div>

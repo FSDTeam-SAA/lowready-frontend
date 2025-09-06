@@ -2,7 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
-import { Calendar, Clock3, Users } from "lucide-react";
+import { Calendar,  Users } from "lucide-react";
 import { getSingleBlog } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { usePathname } from "next/navigation";
@@ -30,8 +30,8 @@ export default function BlogDetailes() {
   const blog = blogData.data;
 
   // Optional: Calculate reading time dynamically
-  const words = blog.description.split(" ").length;
-  const readTime = Math.ceil(words / 200);
+  // const words = blog.description.split(" ").length;
+  // const readTime = Math.ceil(words / 200);
 
   return (
     <section className="container mx-auto px-4 md:px-6 lg:px-8 py-8">
@@ -51,7 +51,7 @@ export default function BlogDetailes() {
         <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 px-4 md:px-8 py-4">
           <div className="flex items-center gap-2">
             <Users className="w-4 h-4" aria-hidden="true" />
-            <span className="text-[#68706A]">Chris T</span>
+            <span className="text-[#68706A]">{blog.author || "Admin"}</span>
           </div>
           <div className="flex items-center gap-2">
             <Calendar className="w-4 h-4" aria-hidden="true" />
@@ -63,21 +63,22 @@ export default function BlogDetailes() {
               })}
             </span>
           </div>
-          <span className="hidden sm:inline">•</span>
-          <div className="flex items-center gap-2">
+          {/* <span className="hidden sm:inline">•</span> */}
+          {/* <div className="flex items-center gap-2">
             <Clock3 className="w-4 h-4" aria-hidden="true" />
             <span className="text-[#68706A]">{readTime} min read</span>
-          </div>
+          </div> */}
         </div>
 
-        {/* Title & Description */}
+        {/* Title & Full Description */}
         <div className="px-4 md:px-8 py-4">
           <h1 className="text-2xl md:text-3xl font-semibold text-[#191D23] leading-snug mb-3">
             {blog.title}
           </h1>
-          <p className="text-[#68706A] leading-relaxed text-base md:text-lg">
-            {blog.description}
-          </p>
+          <div
+            className="prose prose-lg max-w-none text-[#68706A] leading-relaxed"
+            dangerouslySetInnerHTML={{ __html: blog.description }}
+          />
         </div>
       </article>
     </section>

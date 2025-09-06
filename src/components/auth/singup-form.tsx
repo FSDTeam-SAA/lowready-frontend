@@ -108,14 +108,14 @@ const SingupForm = () => {
           {/* Left side - image */}
           <div className="bg-center hidden lg:block">
             <Image
-              src={"/loginimage.png"}
+              src={"/images/loginimage.png"}
               alt="signup"
               width={600}
               height={600}
               className="h-svh w-full object-cover"
             />
             <div className="absolute top-6 left-6 text-white text-2xl font-bold">
-              <Image src="/login.png" alt="logo" width={155} height={48} />
+              <Image src="/images/login.png" alt="logo" width={155} height={48} />
             </div>
           </div>
 
@@ -201,9 +201,9 @@ const SingupForm = () => {
                               className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
                             >
                               {showPassword ? (
-                                <EyeOff className="w-4 h-4" />
+                                <EyeOff className="w-4 h-4 cursor-pointer" />
                               ) : (
-                                <Eye className="w-4 h-4" />
+                                <Eye className="w-4 h-4 cursor-pointer" />
                               )}
                             </button>
                           </div>
@@ -233,9 +233,9 @@ const SingupForm = () => {
                               className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
                             >
                               {showPassword ? (
-                                <EyeOff className="w-4 h-4" />
+                                <EyeOff className="w-4 h-4 cursor-pointer" />
                               ) : (
-                                <Eye className="w-4 h-4" />
+                                <Eye className="w-4 h-4 cursor-pointer" />
                               )}
                             </button>
                           </div>

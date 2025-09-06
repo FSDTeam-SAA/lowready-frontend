@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { toast } from "sonner";
-import { getSession, signIn } from "next-auth/react";
+import { getSession, signIn, signOut } from "next-auth/react";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react"; // 👈 added icons
 
 import { Input } from "@/components/ui/input";
@@ -47,7 +47,7 @@ const LoginForm = () => {
 
   // ✅ Handle login with NextAuth
   const onSubmit = async (values: LoginSchema) => {
-    setLoading(true)
+  setLoading(true);
     try {
       const res = await signIn("credentials", {
         redirect: false,
@@ -55,35 +55,42 @@ const LoginForm = () => {
         password: values.password,
       });
 
-      if (res?.error) {
+    if (res?.error) {
         toast.error(res.error || "Invalid email or password");
+        return;
+      }
+
+      type SessionUserWithRole = {
+        name?: string | null;
+        email?: string | null;
+        image?: string | null;
+        role?: string | null;
+      };
+
+      const session = await getSession();
+      const user = session?.user as SessionUserWithRole | undefined;
+
+    // Block admin login
+      if (user?.role === "admin") {
+        toast.error("Admin login is not allowed through this portal");
+        // Sign out the user immediately
+        await signOut({ redirect: false });
+        return;
+      }
+
+      toast.success("Login successful!");
+
+      // Redirect based on role
+      if (user?.role === "organization") {
+        window.location.href = "/dashboard";
       } else {
-        toast.success("Login successful!");
-
-        const session = await getSession();
-
-        type SessionUserWithRole = {
-          name?: string | null;
-          email?: string | null;
-          image?: string | null;
-          role?: string | null;
-        };
-
-        const user = session?.user as SessionUserWithRole | undefined;
-
-        if (user?.role === "organization") {
-          router.push("/dashboard");
-        } else if (user?.role === "admin") {
-          router.push("/admin-dashboard");
-        } else {
-          router.push("/");
-        }
+        window.location.href = "/";
       }
     } catch (error) {
       console.error("Login error:", error);
       toast.error("Something went wrong during login. Please try again.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
   return (
@@ -103,14 +110,14 @@ const LoginForm = () => {
         className="relative hidden lg:block"
       >
         <Image
-          src="/loginimage.png"
+          src="/images/loginimage.png"
           alt="Login background"
           width={800}
           height={800}
-          className="h-full w-full object-cover"
+          className="h-full w-full priority object-cover"
         />
         <div className="absolute top-6 left-6 text-white text-2xl font-bold">
-          <Image src="/login.png" alt="logo" width={155} height={48} />
+          <Image src="/images/login.png" alt="logo" width={155} height={48} />
         </div>
       </motion.div>
 
@@ -222,9 +229,7 @@ const LoginForm = () => {
                 className="w-full bg-green-600 hover:bg-green-700 cursor-pointer"
                 disabled={isLoading}
               >
-                {
-                  isLoading ? "Logging In" : "Log In"
-                }
+              {isLoading ? "Logging In" : "Log In"}
               </Button>
             </form>
           </Form>

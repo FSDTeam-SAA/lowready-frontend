@@ -69,7 +69,7 @@ export function DashboardSidebar() {
 
 
   return (
-    <div className="flex flex-col h-screen w-[312px] fixed shadow-2xl border-r-0 bg-white">
+    <div className="flex flex-col h-screen w-[312px] fixed  border-r-0 bg-white">
       {/* Logo */}
       <div className="px-4 py-6">
         <Link href="/"> <Image
@@ -92,7 +92,7 @@ export function DashboardSidebar() {
                 ? "bg-[#179649] text-white hover:bg-[#179649] hover:text-white"
                 : "text-[#68706a] hover:bg-[#f8f9fa] hover:text-[#179649]"
             }`}
-            onClick={() => router.push(`${item.href}?reloadTwice=true`)}
+            onClick={() => router.push(`${item.href} `)}
           >
             <item.icon className="h-5 w-5" />
             {item.name}

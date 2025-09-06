@@ -36,7 +36,7 @@ import {
 } from "@/hooks/FormSection";
 import { useCreateFacility } from "@/hooks/useFacilityMutations";
 import { toast } from "sonner";
-import { PricingModal, SubscriptionPlan } from "./pricing-modal";
+import { PricingModal } from "./pricing-modal";
 import { useSubscriptionStatus } from "@/hooks/useSubscriptionStatus";
 
 
@@ -329,7 +329,7 @@ export default function AddFacilityPage() {
       </div>
     );
   }
-  const handleSubscribe = async (plan: SubscriptionPlan) => {
+  const handleSubscribe = async () => {
     try {
       // Your subscription logic here
       
@@ -367,7 +367,7 @@ export default function AddFacilityPage() {
             <form onSubmit={handleSubmit} className="container mx-auto">
               <div className="grid grid-cols-1 lg:grid-cols-3  gap-8">
                 {/* Left Column - Form Fields */}
-                <div className="lg:col-span-2  ">
+                <div className="lg:col-span-2 space-y-8 ">
                   {/* Basic Information */}
                   <FormSection title="Basic Information">
                     <div className="space-y-6">
@@ -502,10 +502,10 @@ export default function AddFacilityPage() {
                   </FormSection>
 
                   {/* Pricing */}
-                  <FormSection title="Pricing">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="price">Price</Label>
+                  <FormSection title="Pricing ">
+                    <div className="grid grid-cols-2  gap-2">
+                      <div className="mb-3">
+                        <Label htmlFor="price ">Price</Label>
                         <Input
                           id="price"
                           type="number"
@@ -525,7 +525,7 @@ export default function AddFacilityPage() {
                           </p>
                         )}
                       </div>
-                      <div>
+                      <div className="mb-3">
                         <Label htmlFor="priceType">Billed</Label>
                         <Select
                           value={formData.priceType}

@@ -44,6 +44,7 @@ const ToureRequest = () => {
     queryFn: getTourRequest,
   });
 
+ 
   const statusMutation = useMutation({
     mutationKey: ["status"],
     mutationFn: (id: string) => statusTourRequest(id),
@@ -154,7 +155,7 @@ const ToureRequest = () => {
       </div>
     );
   }
-  console.log("ddd", tourbookings);
+
 
   // -----------------
   // No Data State
@@ -177,7 +178,7 @@ const ToureRequest = () => {
             <TableHeader>
               <TableRow className="bg-[#E6FAEE]">
                 <TableHead className="text-center">Invoice</TableHead>
-                <TableHead className="text-center">Customer</TableHead>
+                <TableHead >Customer</TableHead>
                 <TableHead className="text-center">Location</TableHead>
                 <TableHead className="text-center">Time</TableHead>
                 <TableHead className="text-center">Date</TableHead>
@@ -185,11 +186,11 @@ const ToureRequest = () => {
               </TableRow>
             </TableHeader>
             <TableBody className="text-center">
-              {tourbookings.map((booking, index) => (
+              {tourbookings.map((booking) => (
                 <TableRow key={booking._id} className="hover:bg-muted/50">
-                  <TableCell>{`INV-${index + 1}`}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center justify-center gap-3">
+                  <TableCell>{`#${booking._id.slice(0, 4)}`}</TableCell>
+                  <TableCell className="text-start">
+                    <div className="flex items-center  gap-3">
                       <Avatar className="h-8 w-8">
                         <AvatarImage
                         src={booking?.images?.[0]?.url}
