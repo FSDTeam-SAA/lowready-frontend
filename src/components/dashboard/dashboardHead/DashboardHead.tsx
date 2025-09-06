@@ -107,7 +107,7 @@ export function DashboardHeader() {
           </p>
         </div>
 
-        <div className="flex items-center gap-6 pr-10">
+        <div className="flex  items-center gap-6 pr-10">
           <BellDot
             className="h-6 w-6 text-gray-600 cursor-pointer"
             onClick={() => setOpen(true)}

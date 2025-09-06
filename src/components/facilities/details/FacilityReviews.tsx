@@ -55,10 +55,10 @@ export function FacilityReviews({ facilityId, userId }: FacilityReviewsProps) {
   const {
     data: reviewsResponse,
     isLoading: isLoadingReviews,
-    error: reviewsError,
+   
   } = useQuery<ReviewResponse>({
     queryKey: ["reviews", facilityId],
-    queryFn: () => fetchReviews(facilityId),
+    queryFn: () => fetchReviews(facilityId,1,10),
     enabled: !!facilityId,
   });
 
@@ -119,17 +119,17 @@ export function FacilityReviews({ facilityId, userId }: FacilityReviewsProps) {
     );
   }
 
-  if (reviewsError) {
-    return (
-      <section className="my-12 px-4 max-w-6xl mx-auto">
-        <div className="flex justify-center items-center h-64">
-          <div className="text-lg text-red-600">
-            Error loading reviews. Please try again.
-          </div>
-        </div>
-      </section>
-    );
-  }
+  // if (reviewsError) {
+  //   return (
+  //     <section className="my-12 px-4 max-w-6xl mx-auto">
+  //       <div className="flex justify-center items-center h-64">
+  //         <div className="text-lg text-red-600">
+  //           Error loading reviews. Please try again.
+  //         </div>
+  //       </div>
+  //     </section>
+  //   );
+  // }
 
   return (
     <section className="my-12 px-4 max-w-6xl mx-auto">
@@ -178,7 +178,6 @@ export function FacilityReviews({ facilityId, userId }: FacilityReviewsProps) {
               </div>
             )}
 
-            {/* See All Button */}
           </div>
 
           {/* Form Column */}
