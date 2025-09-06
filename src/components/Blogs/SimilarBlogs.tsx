@@ -70,7 +70,7 @@ export default function SimilarBlogs() {
   if (isLoading) return <SimilarBlogsSkeleton />;
 
   return (
-    <div className="container mx-auto py-16">
+    <div className="container mx-auto py-2 md:py-16">
       {/* Header */}
       <div className="text-center mb-12">
         <h2 className="text-3xl md:text-4xl font-bold text-gray-900 font-playfair">
@@ -96,7 +96,7 @@ export default function SimilarBlogs() {
               className="flex-shrink-0 px-3"
               style={{ width: `${100 / slidesToShow}%` }}
             >
-              <Card className="w-full bg-[#F8F9FA] hover:shadow-xl hover:drop-shadow-xl shadow-none border-none transition-shadow duration-300 rounded-lg">
+              <Card className="w-full bg-[#F8F9FA] hover:shadow-sm hover:drop-shadow-xl shadow-none border-none transition-shadow duration-300 rounded-lg">
                 <div className="w-full h-56 md:h-64 lg:h-72 relative">
                   <Image
                     src={blog.image?.url || "/images/blogImage.jpg"}

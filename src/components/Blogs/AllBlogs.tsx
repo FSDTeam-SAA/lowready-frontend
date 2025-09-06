@@ -67,7 +67,7 @@ export default function AllBlogs() {
     return <p className="text-center text-red-500">Failed to load blogs.</p>;
 
   return (
-    <div className="px-6 py-12 mx-auto container">
+    <div className="px-6 py-4 md:py-12 mx-auto container">
       {/* Heading */}
       <div className="text-center mb-12">
         <h2

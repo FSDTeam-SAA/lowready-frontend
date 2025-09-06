@@ -93,7 +93,9 @@ export function DashboardHeader() {
   const activePage =
     navigation.find((nav) => nav.href.endsWith(currentPage)) ||
     navigation.find((nav) => nav.href === "/dashboard");
-
+   
+    console.log('session check',session);
+    
   return (
     <>
       <header className="flex w-full items-center justify-between bg-white text-black p-4 backdrop-blur-xl">

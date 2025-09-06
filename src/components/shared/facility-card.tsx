@@ -60,7 +60,8 @@ export default function FacilityCard({ facility }: FacilityCardProps) {
       toast.error("Only users can book a tour.");
       return;
     }
-
+         
+         
     // Create booking data with the selected facility information
     const newBookingData: BookingType = {
       _id: undefined,
@@ -92,8 +93,8 @@ export default function FacilityCard({ facility }: FacilityCardProps) {
 
   return (
     <section>
-      <Card className="w-full overflow-hidden items-stretch bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 py-0 ">
-        <div className="relative ">
+      <Card className="w-full h-full flex flex-col  overflow-hidden bg-white shadow-sm hover:shadow-lg transition-shadow duration-300 py-0">
+        <div className="relative w-full ">
           <Image
             src={facility?.images?.[0]?.url || "/search.png"}
             alt={facility?.name}
@@ -103,7 +104,7 @@ export default function FacilityCard({ facility }: FacilityCardProps) {
           />
         </div>
 
-        <CardContent className="p-4 space-y-4">
+        <CardContent className="p-4 space-y-4 flex flex-col h-full">
           {/* Header */}
           <div className="space-y-2">
             <div className="flex justify-between ">
@@ -131,11 +132,11 @@ export default function FacilityCard({ facility }: FacilityCardProps) {
           </div>
 
           {/* Categories */}
-          <div className="flex flex-wrap gap-2 items-stretch">
+          <div className="flex flex-wrap gap-2 items-stretch my-auto">
             <Badge
               className={`${
                 facility.availability
-                  ? "bg-[#9CE7AD] text-[#28A745] "
+                  ? "bg-[#E6F9EB] text-[#28A745] border-[#9CE7AD]"
                   : "bg-red-300 text-white"
               } text-[12px] px-4 py-1 rounded-sm`}
             >
@@ -154,7 +155,7 @@ export default function FacilityCard({ facility }: FacilityCardProps) {
           </div>
 
           {/* Price */}
-          <div className="pt-2">
+          <div className="pt-2 my-auto">
             <div className="flex items-baseline gap-1">
               <span className="text-2xl font-bold text-gray-900">
                 ${facility?.price?.toLocaleString()}
@@ -164,17 +165,18 @@ export default function FacilityCard({ facility }: FacilityCardProps) {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-2 pt-2">
-            <Button className="w-1/2" variant="outline">
-              <Link
-                className="w-full h-full cursor-pointer"
-                href={`/facilities/details/${facility?._id}`}
-              >
+          <div className="flex gap-2 pt-2 my-auto">
+            <Link
+              className="w-1/2 h-full cursor-pointer"
+              href={`/facilities/details/${facility?._id}`}
+            >
+            <Button  className="w-full cursor-pointer flex-1 h-10 border-green-600"
+                                variant="outline">
                 See Details
-              </Link>
             </Button>
+              </Link>
             <Button
-              className="flex-1 cursor-pointer bg-green-600 hover:bg-green-700 text-white"
+              className="flex-1 cursor-pointer bg-green-600 hover:bg-green-700 h-10 text-white"
               onClick={() => handleNewBooking(facility)}
             >
               Book a Tour
