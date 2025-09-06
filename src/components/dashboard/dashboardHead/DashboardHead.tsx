@@ -13,6 +13,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
+<<<<<<< HEAD
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -21,6 +22,9 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+=======
+import Link from "next/link";
+>>>>>>> 5dd746afd93f2c091745ae21c8a17e47625b6d90
 
 const navigation = [
   {
@@ -124,6 +128,8 @@ export function DashboardHeader() {
     navigation.find((nav) => nav.href.endsWith(currentPage)) ||
     navigation.find((nav) => nav.href === "/dashboard");
 
+  console.log("session check", session);
+
   return (
     <>
       <header className="flex w-full items-center justify-between bg-white text-black p-4 backdrop-blur-xl">
@@ -137,11 +143,18 @@ export function DashboardHeader() {
           </p>
         </div>
 
+<<<<<<< HEAD
         <div className="flex items-center gap-6 pr-10">
           <BellDot
             className="h-6 w-6 text-gray-600 cursor-pointer"
             onClick={() => setOpenNotifications(true)}
           />
+=======
+        <div className="flex  items-center gap-6 pr-10">
+          <Link href={`/dashboard/notifications`}>
+            <BellDot className="h-6 w-6 text-gray-600 cursor-pointer" />
+          </Link>
+>>>>>>> 5dd746afd93f2c091745ae21c8a17e47625b6d90
 
           {session?.user && (
             <DropdownMenu>

@@ -23,7 +23,7 @@ const CallToAction: React.FC<CallToActionProps> = ({
   buttonlink,
 }) => {
   return (
-    <section className={`py-[80px] `}>
+    <section className={`py-8 md:py-[80px] `}>
       <div className="max-w-5xl mx-auto text-center">
         <h1 className="text-2xl sm:text-3xl md:text-4xl  lg:text-4xl xl:text-6x md:mb-8 font-bold leading-tight  font-playfair text-gray-900 mb-4">
           {title}

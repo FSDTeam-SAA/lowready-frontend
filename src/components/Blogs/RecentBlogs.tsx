@@ -34,7 +34,7 @@ export default function RecentBlogs() {
   const stripHtml = (html: string) => html.replace(/<[^>]+>/g, "");
 
   return (
-    <section className="py-10 md:py-20 lg:py-20 bg-[#F8F9FA]">
+    <section className="py-5 md:py-20 lg:py-20 bg-[#F8F9FA]">
       <div className="mx-auto container">
         <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
           Recent blog posts
