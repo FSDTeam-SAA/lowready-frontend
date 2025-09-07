@@ -14,7 +14,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getNotifications, clearAllNotifications } from "@/lib/api";
 import { useSession } from "next-auth/react";
 import { formatDistanceToNow } from "date-fns";
-import { NotificationsResponse, INotification } from "@/types/notifications";
+import { NotificationsResponse } from "@/types/notifications";
 
 export default function Notifications() {
   const [filter, setFilter] = useState("all");
