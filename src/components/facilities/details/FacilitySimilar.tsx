@@ -82,7 +82,7 @@ export function FacilitySimilar() {
           {/* Carousel Container */}
           <div className="relative overflow-hidden">
             <div
-              className="flex transition-transform duration-500 ease-in-out"
+              className="flex items-stretch py-5  transition-transform duration-500 ease-in-out"
               style={{
                 transform: `translateX(-${
                   currentSlide * (100 / slidesToShow)
@@ -92,7 +92,7 @@ export function FacilitySimilar() {
               {facilities.map((facility) => (
                 <div
                   key={facility._id}
-                  className="flex-shrink-0 px-2"
+                  className="flex-shrink-0  px-2 flex"
                   style={{ width: `${100 / slidesToShow}%` }}
                 >
                   <FacilityCard
