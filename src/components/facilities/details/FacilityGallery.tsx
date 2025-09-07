@@ -87,7 +87,7 @@ export function FacilityGallery({ data }: FacilityTourProps) {
   };
 
   return (
-    <section className="py-[80px]">
+    <section className=" py-[36px] md:py-[80px]">
       <div className="lg:flex items-center container mx-auto  gap-[48px] ">
         {/* Images */}
         <div className="flex flex-col-reverse lg:w-1/2 md:justify-between md:flex-row gap-2 lg:gap-[24px]  items-center mx-auto md:mx-0">
@@ -122,9 +122,15 @@ export function FacilityGallery({ data }: FacilityTourProps) {
 
         {/* Facility Info */}
         <div className="lg:w-1/2 p-4 md:p-0">
-          <Button className="text-[#28A745] bg-[#E6F9EB]   border-1 border-[#9CE7AD] hover:bg-transparent mt-5  flex gap-1 items-center ">
-            <Dot className=""/>
-            Available
+          <Button
+            className={` ${
+              datas.availability
+                ? "text-[#28A745] bg-[#E6F9EB]   border-1 border-[#9CE7AD] "
+                : "bg-red-200 text-red-400"
+            } hover:bg-transparent mt-5  flex gap-1 items-center `}
+          >
+            <Dot className="" />
+            {datas.availability ? "Available" : "unavailable"}
           </Button>
           <h1 className="text-2xl font-bold pt-[24px] text-[#343A40]">
             {datas?.name}
@@ -166,12 +172,15 @@ export function FacilityGallery({ data }: FacilityTourProps) {
                 className="w-1/2 cursor-pointer text-[#28A745]"
                 href={"#requestACall"}
               >
-                <Button className="w-full cursor-pointer" variant="outline">
+                <Button
+                  className="w-full cursor-pointer flex-1 h-10 border-green-600"
+                  variant="outline"
+                >
                   Request a Call
                 </Button>
               </Link>
               <Button
-                className="w-1/2 cursor-pointer"
+                className="flex-1 cursor-pointer bg-green-600 hover:bg-green-700 h-10 text-white"
                 onClick={handleNewBooking}
               >
                 Book a Tour

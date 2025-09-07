@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Calendar, Clock3 } from "lucide-react";
+import { Calendar } from "lucide-react";
 import React from "react";
 import RecentBlogsSkeleton from "./RecentBlogsSkeleton";
 import { getAllBlogs } from "@/lib/api";
@@ -30,8 +30,11 @@ export default function RecentBlogs() {
   // Use the fetched blogs data
   const blogs: Blog[] = allBlogs?.data || [];
 
+  // Helper function: strip HTML tags
+  const stripHtml = (html: string) => html.replace(/<[^>]+>/g, "");
+
   return (
-    <section className="py-10 md:py-20 lg:py-20 bg-[#F8F9FA]">
+    <section className="py-5 md:py-20 lg:py-20 bg-[#F8F9FA]">
       <div className="mx-auto container">
         <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
           Recent blog posts
@@ -55,9 +58,9 @@ export default function RecentBlogs() {
                     <Calendar size={14} />
                     {new Date(blogs[0].createdAt).toLocaleDateString()}
                   </span>
-                  <span className="flex items-center gap-1">
+                  {/* <span className="flex items-center gap-1">
                     <Clock3 size={14} />5 min read
-                  </span>
+                  </span> */}
                 </div>
                 {/* Title */}
                 <Link href={`/blogs/${blogs[0]._id}`}>
@@ -68,10 +71,10 @@ export default function RecentBlogs() {
 
                 {/* Description */}
                 <p className="text-sm text-gray-600 mb-2">
-                  {blogs[0].description.split(" ").slice(0, 30).join(" ")}...
+                  {stripHtml(blogs[0].description).split(" ").slice(0, 30).join(" ")}...
                   <Link
                     href={`/blogs/${blogs[0]._id}`}
-                    className="text-green-600 font-medium hover:underline"
+                    className="text-green-600 font-medium hover:underline ml-1"
                   >
                     Read More
                   </Link>
@@ -85,14 +88,14 @@ export default function RecentBlogs() {
             {blogs.slice(1, 3).map((blog: Blog) => (
               <div
                 key={blog._id}
-                className="flex bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden"
+                className="flex flex-col md:flex-row bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden"
               >
                 <Image
                   src={blog.image?.url || ""}
                   alt={blog.title}
                   width={176}
                   height={150}
-                  className="object-cover"
+                  className="w-full md:w-[176px] h-48 md:h-[180px] object-cover"
                 />
                 <div className="p-4 flex flex-col justify-between">
                   {/* Meta */}
@@ -101,9 +104,9 @@ export default function RecentBlogs() {
                       <Calendar size={14} />
                       {new Date(blog.createdAt).toLocaleDateString()}
                     </span>
-                    <span className="flex items-center gap-1">
+                    {/* <span className="flex items-center gap-1">
                       <Clock3 size={14} />5 min read
-                    </span>
+                    </span> */}
                   </div>
                   {/* Title */}
                   <Link href={`/blogs/${blog._id}`}>
@@ -111,12 +114,12 @@ export default function RecentBlogs() {
                       {blog.title}
                     </h3>
                   </Link>
-                  {/* Desc */}
+                  {/* Description */}
                   <p className="text-sm text-gray-600">
-                    {blog.description.split(" ").slice(0, 33).join(" ")}...
+                    {stripHtml(blog.description).split(" ").slice(0, 33).join(" ")}...
                     <Link
                       href={`/blogs/${blog._id}`}
-                      className="text-green-600 font-medium hover:underline"
+                      className="text-green-600 font-medium hover:underline ml-1"
                     >
                       Read More
                     </Link>

@@ -69,7 +69,7 @@ export function FacilitiesCarousel() {
   return (
     <div className="container mx-auto py-8 lg:py-20">
       {/* Header */}
-      <div className="text-center mb-12">
+      <div className="text-center md:mb-12">
         <h2 className="text-4xl font-bold font-playfair text-gray-900 mb-4">
           Featured <span className="text-green-600">Facilities</span>
         </h2>
@@ -79,9 +79,9 @@ export function FacilitiesCarousel() {
         </p>
       </div>
       {/* Carousel Container */}
-      <div className="relative overflow-hidden">
+      <div className="relative overflow-hidden ">
         <div
-          className="flex transition-transform duration-500 ease-in-out"
+          className="flex items-stretch transition-transform duration-500 ease-in-out pt-3 md:pt-0 md:py-5"
           style={{
             transform: `translateX(-${currentSlide * (100 / slidesToShow)}%)`,
           }}
@@ -89,7 +89,7 @@ export function FacilitiesCarousel() {
           {facilities.map((item) => (
             <div
               key={item._id}
-              className="flex-shrink-0 px-2"
+              className="flex-shrink-0 px-2 flex"
               style={{ width: `${100 / slidesToShow}%` }}
             >
               <FacilityCard

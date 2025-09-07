@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Clock3 } from "lucide-react";
+// import { Clock3 } from "lucide-react";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
@@ -58,13 +58,16 @@ export default function AllBlogs() {
     return pages;
   };
 
+  // Helper function: strip HTML tags
+  const stripHtml = (html: string) => html.replace(/<[^>]+>/g, "");
+
   if (isLoading) return <AllBlogsSkeleton />;
-  if(isLoading) return <div>loading...</div>
+  if (isLoading) return <div>loading...</div>;
   if (isError)
     return <p className="text-center text-red-500">Failed to load blogs.</p>;
 
   return (
-    <div className="px-6 py-12 mx-auto container">
+    <div className="px-6 py-4 md:py-12 mx-auto container">
       {/* Heading */}
       <div className="text-center mb-12">
         <h2
@@ -125,10 +128,10 @@ export default function AllBlogs() {
                   </span>
                 </span>
 
-                <span className="flex justify-center items-center text-[#8E938F]">
+                {/* <span className="flex justify-center items-center text-[#8E938F]">
                   <Clock3 className="w-4 h-4" />
                   <span className="ml-1">{blog.readTime || "5 min read"}</span>
-                </span>
+                </span> */}
               </div>
 
               {/* Title */}
@@ -142,8 +145,11 @@ export default function AllBlogs() {
 
               {/* Description + Read More */}
               <p className="text-[16px] text-[#68706A] mb-3">
-                {blog.description.split(" ").slice(0, 18).join(" ")}
-                {blog.description.split(" ").length > 28 && " ... "}
+                {stripHtml(blogs[0].description)
+                  .split(" ")
+                  .slice(0, 30)
+                  .join(" ")}
+                ...
                 <a
                   href={`/blogs/${blog._id}`}
                   className="text-green-600 font-medium hover:underline"

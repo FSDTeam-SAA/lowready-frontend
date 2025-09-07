@@ -1,16 +1,17 @@
 
+// Notification type
 export interface INotification {
   _id: string;
   to: string;
   message: string;
   isViewed: boolean;
   type: string;
-  id: string; // This seems to reference another entity
+  id: string;
   createdAt: string;
   updatedAt: string;
 }
 
-// The response structure from your API
+// API response type
 export interface NotificationsResponse {
   success: boolean;
   data: INotification[];

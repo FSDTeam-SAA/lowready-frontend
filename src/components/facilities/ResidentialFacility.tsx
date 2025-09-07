@@ -4,7 +4,7 @@ import CallToAction from "../shared/CallToAction";
 const ResidentialFacility = () => {
   return (
     <section>
-      <div className="container mx-auto">
+      <div className="container mx-auto ">
         <CallToAction
           title="Own or manage a residential facility? "
           title1=" Join ALH Hub to connect"

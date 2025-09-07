@@ -165,7 +165,7 @@ export function ReviewFamilyCarousel({
       {/* Carousel Container */}
       <div className="relative overflow-hidden">
         <div
-          className="flex transition-transform duration-500 ease-in-out"
+          className="flex py-5 transition-transform duration-500 ease-in-out"
           style={{
             transform: `translateX(-${currentSlide * (100 / slidesToShow)}%)`,
           }}
@@ -173,7 +173,7 @@ export function ReviewFamilyCarousel({
           {reviews.map((review: Review) => (
             <div
               key={review._id}
-              className="flex-shrink-0 px-2"
+              className="flex-shrink-0  px-2"
               style={{ width: `${100 / slidesToShow}%` }}
             >
               <ReviewCard review={review} />

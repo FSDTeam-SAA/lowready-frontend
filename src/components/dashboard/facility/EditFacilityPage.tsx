@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -28,17 +28,39 @@ import {
 import { ChevronLeft, Upload, X, Plus, MapPin, ImageIcon } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import axios, { AxiosResponse, AxiosError } from "axios";
 import { toast } from "sonner";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
-// Types
-type NewAmenityService = { name: string; photo: File | null };
-type TimeSlot = { hours: number; minutes: number; period: "AM" | "PM" };
+// TypeScript interfaces
+interface Avatar {
+  url?: string;
+  public_id?: string;
+}
 
-// Updated Facility type to match API response
-type FacilityResponse = {
+interface VerificationInfo {
+  token: string;
+  verified: boolean;
+}
+
+interface TimeSlot {
+  hours: number;
+  minutes: number;
+  period: "AM" | "PM";
+}
+
+interface NewAmenityService {
+  name: string;
+  photo: File | null;
+}
+
+interface AmenityServiceWithPhoto {
+  name: string;
+  photo: File;
+}
+
+interface FacilityApiResponse {
   _id: string;
   firstName: string;
   lastName: string;
@@ -47,14 +69,8 @@ type FacilityResponse = {
   street: string;
   postCode: number | null;
   phoneNum: string;
-  avatar?: {
-    url?: string;
-    public_id?: string;
-  };
-  verificationInfo?: {
-    token: string;
-    verified: boolean;
-  };
+  avatar?: Avatar;
+  verificationInfo?: VerificationInfo;
   role?: string;
   gender?: string;
   dateOfBirth?: string;
@@ -63,7 +79,6 @@ type FacilityResponse = {
   updatedAt?: string;
   __v?: number;
   onboardingStatus?: boolean;
-  // Add facility-specific fields
   availability?: boolean;
   name?: string;
   location?: string;
@@ -76,9 +91,14 @@ type FacilityResponse = {
   videoTitle?: string;
   videoDescription?: string;
   uploadVideo?: string;
-};
+  facilityLicenseNumber?: string;
+  medicaidPrograms?: string[];
+  images?: string[];
+  careServices?: string[];
+  amenitiesServices?: string[];
+}
 
-type FacilityFormData = {
+interface FormDataState {
   availability: "Available" | "Unavailable";
   name: string;
   location: string;
@@ -95,38 +115,69 @@ type FacilityFormData = {
     videoUrl?: string;
   };
   availableTimes: string[];
-  // Add user-specific fields for the API update
   firstName: string;
   lastName: string;
   bio: string;
   street: string;
   phoneNum: string;
   postCode: number | null;
-};
+  facilityLicenseNumber: string;
+  medicaidPrograms: string[];
+  amenitiesServices: string[];
+}
+
+interface ApiSuccessResponse<T> {
+  success: true;
+  data: T;
+  message?: string;
+}
+
+interface ApiErrorResponse {
+  success: false;
+  message: string;
+}
+
+interface ValidationErrors {
+  [key: string]: string;
+}
+
+interface UpdatePayload {
+  _id: string;
+  firstName?: string;
+  lastName?: string;
+  bio?: string;
+  street?: string;
+  phoneNum?: string;
+  postCode?: number | null;
+  availability?: boolean;
+  name?: string;
+  location?: string;
+  description?: string;
+  price?: number;
+  base?: string;
+  amenities?: string[];
+  careServices?: string[];
+  about?: string;
+  videoTitle?: string;
+  videoDescription?: string;
+  availableTime?: string[];
+  facilityLicenseNumber?: string;
+  medicaidPrograms?: string[];
+  amenitiesServices?: string[];
+}
 
 // Custom Components
-const FormSection = ({
-  title,
-  children,
-}: {
+const FormSection: React.FC<{
   title: string;
   children: React.ReactNode;
-}) => (
+}> = ({ title, children }) => (
   <Card className="bg-white rounded-lg p-6 border border-gray-200">
     <h3 className="text-lg font-semibold mb-4">{title}</h3>
     {children}
   </Card>
 );
 
-const FileUploadZone = ({
-  id,
-  accept,
-  onFileChange,
-  label,
-  description,
-  selectedFile,
-  children,
-}: {
+const FileUploadZone: React.FC<{
   id: string;
   accept: string;
   onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -134,6 +185,14 @@ const FileUploadZone = ({
   description: string;
   selectedFile?: string;
   children?: React.ReactNode;
+}> = ({
+  id,
+  accept,
+  onFileChange,
+  label,
+  description,
+  selectedFile,
+  children,
 }) => (
   <div className="space-y-4">
     <Label htmlFor={id}>{label}</Label>
@@ -180,20 +239,17 @@ const FileUploadZone = ({
   </div>
 );
 
-const LoadingSpinner = ({ text }: { text: string }) => (
+const LoadingSpinner: React.FC<{ text: string }> = ({ text }) => (
   <div className="flex items-center justify-center h-screen">
     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mr-3"></div>
     <p className="text-gray-600 text-lg">{text}</p>
   </div>
 );
 
-const ErrorDisplay = ({
-  message,
-  onRetry,
-}: {
+const ErrorDisplay: React.FC<{
   message: string;
   onRetry: () => void;
-}) => (
+}> = ({ message, onRetry }) => (
   <div className="flex flex-col items-center justify-center h-screen space-y-4">
     <p className="text-red-500 text-lg text-center">{message}</p>
     <div className="flex space-x-4">
@@ -209,12 +265,11 @@ export default function EditFacilityPage() {
   const router = useRouter();
   const { id } = useParams<{ id: string }>();
   const { data: session, status } = useSession();
-  // const userId = session?.user.id
   const queryClient = useQueryClient();
 
   const token = session?.accessToken as string;
 
-  const [formData, setFormData] = useState<FacilityFormData>({
+  const [formData, setFormData] = useState<FormDataState>({
     availability: "Available",
     name: "",
     location: "",
@@ -232,18 +287,22 @@ export default function EditFacilityPage() {
     street: "",
     phoneNum: "",
     postCode: null,
+    facilityLicenseNumber: "",
+    medicaidPrograms: [],
+    amenitiesServices: [],
   });
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<ValidationErrors>({});
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [selectedVideo, setSelectedVideo] = useState<File | null>(null);
-  const [facilityLicenseNumber, setFacilityLicenseNumber] = useState("");
   const [medicalDocument, setMedicalDocument] = useState<File | null>(null);
   const [showAmenitiesServicesModal, setShowAmenitiesServicesModal] =
-    useState(false);
-  const [newAmenityService, setNewAmenityService] = useState<NewAmenityService>(
-    { name: "", photo: null }
-  );
+    useState<boolean>(false);
+  const [newAmenityService, setNewAmenityService] =
+    useState<NewAmenityService>({
+      name: "",
+      photo: null,
+    });
   const [currentTimeSlot, setCurrentTimeSlot] = useState<TimeSlot>({
     hours: 12,
     minutes: 0,
@@ -251,10 +310,10 @@ export default function EditFacilityPage() {
   });
   const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
   const [amenityServicesWithPhotos, setAmenityServicesWithPhotos] = useState<
-    { name: string; photo: File }[]
+    AmenityServiceWithPhoto[]
   >([]);
 
-  const predefinedAmenities = [
+  const predefinedAmenities: string[] = [
     "Room and Board",
     "Private or Shared Rooms",
     "Activities of Daily Living",
@@ -266,7 +325,7 @@ export default function EditFacilityPage() {
     "Health Monitoring and Coordination",
   ];
 
-  const careServiceOptions = [
+  const careServiceOptions: string[] = [
     "Personal Care",
     "Directed Care",
     "Supervisory Care",
@@ -275,166 +334,194 @@ export default function EditFacilityPage() {
     "Behavioural Care",
   ];
 
-  // ✅ Fetch facility details
+  // Utility functions
+  const parseAmenities = useCallback((amenities: string[] | undefined): string[] => {
+    if (!amenities || amenities.length === 0) return [];
+
+    try {
+      return amenities
+        .flatMap((amenity) => {
+          try {
+            return typeof amenity === "string" 
+              ? JSON.parse(amenity) 
+              : [amenity];
+          } catch {
+            return [amenity];
+          }
+        })
+        .filter((item): item is string => typeof item === "string" && Boolean(item));
+    } catch (error) {
+      console.warn("Failed to parse amenities:", error);
+      return amenities.filter((a): a is string => typeof a === "string");
+    }
+  }, []);
+
+  const formatTimeSlots = useCallback((availableTime: string[] | undefined): string[] => {
+    if (!availableTime || availableTime.length === 0) return [];
+
+    return availableTime.map((time) => {
+      try {
+        const date = new Date(time);
+        if (isNaN(date.getTime())) return time; // Return original if invalid date
+        
+        const hours = date.getHours();
+        const minutes = date.getMinutes();
+        const period = hours >= 12 ? "PM" : "AM";
+        const displayHours = hours % 12 || 12;
+        
+        return `${String(displayHours).padStart(2, "0")}:${String(minutes).padStart(2, "0")} ${period}`;
+      } catch {
+        return time; // Return original string if parsing fails
+      }
+    });
+  }, []);
+
+  // Fetch facility details
   const {
     data: facility,
     isLoading,
     isError,
     error,
     refetch,
-  } = useQuery({
+  } = useQuery<FacilityApiResponse, AxiosError<ApiErrorResponse>>({
     queryKey: ["facility", id],
-    queryFn: async () => {
+    queryFn: async (): Promise<FacilityApiResponse> => {
       if (!token || !id) {
         throw new Error("Missing authentication or facility ID");
       }
 
-      const { data } = await axios.get(`${API_BASE_URL}/facility/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response: AxiosResponse<ApiSuccessResponse<FacilityApiResponse>> = 
+        await axios.get(`${API_BASE_URL}/facility/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-      if (!data.success) {
-        throw new Error(data.message || "Failed to fetch facility data");
+      if (!response.data.success) {
+        throw new Error(response.data.message || "Failed to fetch facility data");
       }
 
-      return data.data as FacilityResponse;
+      return response.data.data;
     },
     enabled: !!token && !!id,
     retry: 3,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 
-  // ✅ Update facility mutation
-  const updateFacilityMutation = useMutation({
-    mutationFn: async (updatedData: Partial<FacilityFormData>) => {
+  // Update facility mutation
+  const updateFacilityMutation = useMutation<
+    ApiSuccessResponse<FacilityApiResponse>,
+    AxiosError<ApiErrorResponse>,
+    Partial<FormDataState>
+  >({
+    mutationFn: async (updatedData: Partial<FormDataState>) => {
       if (!token) {
         throw new Error("Authentication required");
       }
 
-      // Map form data to API expected format
-      const updatePayload = {
+      const updatePayload: UpdatePayload = {
         _id: id,
-        firstName:
-          updatedData.firstName || updatedData.name?.split(" ")[0] || "",
-        lastName:
-          updatedData.lastName ||
-          updatedData.name?.split(" ").slice(1).join(" ") ||
-          "",
-        bio: updatedData.description || updatedData.bio || "",
-        street: updatedData.address || updatedData.street || "",
-        phoneNum: updatedData.phoneNum || "",
-        postCode: updatedData.postCode,
-        // Add any other fields that the API accepts
       };
 
-      const { data } = await axios.put(
-        `${API_BASE_URL}/facility/update/${id}`,
-        updatePayload,
-        {
+      // Map form data to API expected format
+      if (updatedData.firstName !== undefined) updatePayload.firstName = updatedData.firstName;
+      if (updatedData.lastName !== undefined) updatePayload.lastName = updatedData.lastName;
+      if (updatedData.bio !== undefined) updatePayload.bio = updatedData.bio;
+      if (updatedData.street !== undefined) updatePayload.street = updatedData.street;
+      if (updatedData.phoneNum !== undefined) updatePayload.phoneNum = updatedData.phoneNum;
+      if (updatedData.postCode !== undefined) updatePayload.postCode = updatedData.postCode;
+      if (updatedData.availability !== undefined) {
+        updatePayload.availability = updatedData.availability === "Available";
+      }
+      if (updatedData.name !== undefined) updatePayload.name = updatedData.name;
+      if (updatedData.location !== undefined) updatePayload.location = updatedData.location;
+      if (updatedData.description !== undefined) updatePayload.description = updatedData.description;
+      if (updatedData.price !== undefined) updatePayload.price = updatedData.price;
+      if (updatedData.priceType !== undefined) {
+        updatePayload.base = updatedData.priceType === "Monthly" ? "monthly" : "yearly";
+      }
+      if (updatedData.amenities !== undefined) updatePayload.amenities = updatedData.amenities;
+      if (updatedData.careServices !== undefined) updatePayload.careServices = updatedData.careServices;
+      if (updatedData.about?.description !== undefined) updatePayload.about = updatedData.about.description;
+      if (updatedData.about?.videoTitle !== undefined) updatePayload.videoTitle = updatedData.about.videoTitle;
+      if (updatedData.about?.videoDescription !== undefined) updatePayload.videoDescription = updatedData.about.videoDescription;
+      if (updatedData.availableTimes !== undefined) updatePayload.availableTime = updatedData.availableTimes;
+      if (updatedData.facilityLicenseNumber !== undefined) updatePayload.facilityLicenseNumber = updatedData.facilityLicenseNumber;
+      if (updatedData.medicaidPrograms !== undefined) updatePayload.medicaidPrograms = updatedData.medicaidPrograms;
+      if (updatedData.amenitiesServices !== undefined) updatePayload.amenitiesServices = updatedData.amenitiesServices;
+
+      const response: AxiosResponse<ApiSuccessResponse<FacilityApiResponse>> = 
+        await axios.put(`${API_BASE_URL}/facility/update/${id}`, updatePayload, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-        }
-      );
+        });
 
-      if (!data.success) {
-        throw new Error(data.message || "Failed to update facility");
+      if (!response.data.success) {
+        throw new Error(response.data.message || "Failed to update facility");
       }
 
-      return data.data;
+      return response.data;
     },
     onSuccess: (data) => {
-      // Invalidate and refetch the facility data
       queryClient.invalidateQueries({ queryKey: ["facility", id] });
-
-      // Show success message
-      toast.success(data.message)
-
-      // Navigate back or to facility list
+      toast.success(data.message || "Facility updated successfully");
       router.push("/dashboard/facility");
     },
-    onError: (error: unknown) => {
+    onError: (error: AxiosError<ApiErrorResponse>) => {
       console.error("Update error:", error);
       const errorMessage =
-        (error as { response?: { data?: { message?: string } } })?.response
-          ?.data?.message ||
-        (error as Error).message ||
+        error.response?.data?.message || 
+        error.message || 
         "Failed to update facility";
-      toast.error(errorMessage)
+      toast.error(errorMessage);
       setErrors({ general: errorMessage });
     },
   });
 
-  // ✅ Prefill form data when facility data is loaded
+  // Prefill form data when facility data is loaded
   useEffect(() => {
     if (facility) {
-      // Parse amenities if they're stringified JSON
-      let parsedAmenities: string[] = [];
-      if (facility.amenities && facility.amenities.length > 0) {
-        try {
-          parsedAmenities = facility.amenities
-            .flatMap((amenity) =>
-              typeof amenity === "string" ? JSON.parse(amenity) : [amenity]
-            )
-            .filter(Boolean);
-        } catch (error) {
-          console.warn("Failed to parse amenities:", error);
-          parsedAmenities = facility.amenities.filter(
-            (a) => typeof a === "string"
-          );
-        }
-      }
-
-      // Format available times
-      let formattedTimes: string[] = [];
-      if (facility.availableTime && facility.availableTime.length > 0) {
-        formattedTimes = facility.availableTime.map((time) => {
-          const date = new Date(time);
-          const hours = date.getHours();
-          const minutes = date.getMinutes();
-          const period = hours >= 12 ? "PM" : "AM";
-          const displayHours = hours % 12 || 12;
-          return `${String(displayHours).padStart(2, "0")}:${String(
-            minutes
-          ).padStart(2, "0")} ${period}`;
-        });
-        setSelectedTimes(formattedTimes);
-      }
+      const parsedAmenities = parseAmenities(facility.amenities);
+      const formattedTimes = formatTimeSlots(facility.availableTime);
+      
+      setSelectedTimes(formattedTimes);
 
       setFormData((prev) => ({
         ...prev,
         availability: facility.availability ? "Available" : "Unavailable",
-        name: facility.firstName || "",
-        location: facility.street || "",
-        address: facility.location || "", // Using location as address since that's what the API provides
-        description: facility.description || "",
+        name: facility.name || `${facility.firstName || ""} ${facility.lastName || ""}`.trim(),
+        location: facility.location || facility.street || "",
+        address: facility.street || facility.location || "",
+        description: facility.description || facility.bio || "",
         price: facility.price || 0,
         priceType: facility.base === "monthly" ? "Monthly" : "Yearly",
         amenities: parsedAmenities,
-        careServices: [], // This might need mapping if your API provides care services
+        careServices: facility.careServices || [],
         about: {
-          description: facility.about || facility.description || "",
+          description: facility.about || facility.description || facility.bio || "",
           videoTitle: facility.videoTitle || "",
           videoDescription: facility.videoDescription || "",
           videoUrl: facility.uploadVideo || "",
         },
         availableTimes: formattedTimes,
-        firstName: facility.name?.split(" ")[0] || "",
-        lastName: facility.name?.split(" ").slice(1).join(" ") || "",
-        bio: facility.about || facility.description || "",
-        street: facility.location || "",
-        phoneNum: "", // Not provided in the API response
-        postCode: null, // Not provided in the API response
+        firstName: facility.firstName || facility.name?.split(" ")[0] || "",
+        lastName: facility.lastName || facility.name?.split(" ").slice(1).join(" ") || "",
+        bio: facility.bio || facility.about || facility.description || "",
+        street: facility.street || facility.location || "",
+        phoneNum: facility.phoneNum || "",
+        postCode: facility.postCode || null,
+        facilityLicenseNumber: facility.facilityLicenseNumber || "",
+        medicaidPrograms: facility.medicaidPrograms || [],
+        amenitiesServices: facility.amenitiesServices || [],
       }));
     }
-  }, [facility]);
+  }, [facility, parseAmenities, formatTimeSlots]);
 
   // Form validation
-  const validateForm = (): boolean => {
-    const newErrors: Record<string, string> = {};
+  const validateForm = useCallback((): boolean => {
+    const newErrors: ValidationErrors = {};
 
     if (!formData.name.trim()) {
       newErrors.name = "Name is required";
@@ -448,10 +535,10 @@ export default function EditFacilityPage() {
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
+  }, [formData.name, formData.address, formData.phoneNum]);
 
   // Handlers
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
       const validImages = Array.from(files).filter((file) => {
@@ -462,9 +549,9 @@ export default function EditFacilityPage() {
       setSelectedImages((prev) => [...prev, ...validImages]);
     }
     e.target.value = "";
-  };
+  }, []);
 
-  const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleVideoUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const isValidType = file.type.startsWith("video/");
@@ -472,19 +559,20 @@ export default function EditFacilityPage() {
       if (isValidType && isValidSize) {
         setSelectedVideo(file);
       } else {
-        alert("Invalid video file. Please select a video file under 100MB.");
+        toast.error("Invalid video file. Please select a video file under 100MB.");
       }
     }
     e.target.value = "";
-  };
+  }, []);
 
-  const handleDocumentUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDocumentUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const validTypes = [
         "application/pdf",
-        "application/msword",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "image/jpeg",
+        "image/jpg", 
+        "image/png"
       ];
       const isValidType = validTypes.includes(file.type);
       const isValidSize = file.size <= 10 * 1024 * 1024; // 10MB limit
@@ -492,17 +580,16 @@ export default function EditFacilityPage() {
       if (isValidType && isValidSize) {
         setMedicalDocument(file);
       } else {
-        alert(
-          "Invalid document file. Please select a PDF, DOC, or DOCX file under 10MB."
-        );
+        toast.error("Invalid document file. Please select a JPG, PNG, or PDF file under 10MB.");
       }
     }
-  };
+  }, []);
 
-  const removeImage = (index: number) =>
+  const removeImage = useCallback((index: number) => {
     setSelectedImages((prev) => prev.filter((_, i) => i !== index));
+  }, []);
 
-  const handleCareServiceChange = (service: string, checked: boolean) => {
+  const handleCareServiceChange = useCallback((service: string, checked: boolean) => {
     setFormData((prev) => {
       const current = prev.careServices || [];
       return {
@@ -512,11 +599,9 @@ export default function EditFacilityPage() {
           : current.filter((s) => s !== service),
       };
     });
-  };
+  }, []);
 
-  const handleAmenitiesServicePhotoChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleAmenitiesServicePhotoChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const isValidType = file.type.startsWith("image/");
@@ -525,12 +610,12 @@ export default function EditFacilityPage() {
       if (isValidType && isValidSize) {
         setNewAmenityService((prev) => ({ ...prev, photo: file }));
       } else {
-        alert("Invalid image file. Please select an image file under 5MB.");
+        toast.error("Invalid image file. Please select an image file under 5MB.");
       }
     }
-  };
+  }, []);
 
-  const addAmenitiesServiceWithPhoto = () => {
+  const addAmenitiesServiceWithPhoto = useCallback(() => {
     if (newAmenityService.name.trim() && newAmenityService.photo) {
       setAmenityServicesWithPhotos((prev) => [
         ...prev,
@@ -542,18 +627,17 @@ export default function EditFacilityPage() {
       setNewAmenityService({ name: "", photo: null });
       setShowAmenitiesServicesModal(false);
     }
-  };
+  }, [newAmenityService]);
 
-  const removeAmenitiesServiceWithPhoto = (index: number) =>
+  const removeAmenitiesServiceWithPhoto = useCallback((index: number) => {
     setAmenityServicesWithPhotos((prev) => prev.filter((_, i) => i !== index));
+  }, []);
 
-  const addTimeSlot = () => {
-    const formatted = `${String(currentTimeSlot.hours).padStart(
-      2,
-      "0"
-    )}:${String(currentTimeSlot.minutes).padStart(2, "0")} ${
-      currentTimeSlot.period
-    }`;
+  const addTimeSlot = useCallback(() => {
+    const formatted = `${String(currentTimeSlot.hours).padStart(2, "0")}:${String(
+      currentTimeSlot.minutes
+    ).padStart(2, "0")} ${currentTimeSlot.period}`;
+    
     if (!selectedTimes.includes(formatted)) {
       setSelectedTimes((prev) => [...prev, formatted]);
       setFormData((prev) => ({
@@ -561,17 +645,17 @@ export default function EditFacilityPage() {
         availableTimes: [...prev.availableTimes, formatted],
       }));
     }
-  };
+  }, [currentTimeSlot, selectedTimes]);
 
-  const removeTimeSlot = (time: string) => {
+  const removeTimeSlot = useCallback((time: string) => {
     setSelectedTimes((prev) => prev.filter((t) => t !== time));
     setFormData((prev) => ({
       ...prev,
       availableTimes: prev.availableTimes.filter((t) => t !== time),
     }));
-  };
+  }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!validateForm()) {
@@ -579,7 +663,7 @@ export default function EditFacilityPage() {
     }
 
     updateFacilityMutation.mutate(formData);
-  };
+  }, [formData, validateForm, updateFacilityMutation]);
 
   // Loading states
   if (status === "loading") {
@@ -588,7 +672,7 @@ export default function EditFacilityPage() {
 
   if (status === "unauthenticated") {
     router.push("/login");
-    return null;
+    return <div>Redirecting to login...</div>;
   }
 
   if (isLoading) {
@@ -624,9 +708,23 @@ export default function EditFacilityPage() {
               </h1>
             </div>
 
-            {errors.general && (
+            {(errors.general || Object.keys(errors).length > 0) && (
               <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-red-800">{errors.general}</p>
+                {errors.general && (
+                  <p className="text-red-800 font-semibold mb-2">{errors.general}</p>
+                )}
+                {Object.keys(errors).filter(key => key !== 'general').length > 0 && (
+                  <div>
+                    <p className="text-red-800 font-semibold mb-2">Please fix the following errors:</p>
+                    <ul className="list-disc list-inside space-y-1">
+                      {Object.entries(errors).filter(([key]) => key !== 'general').map(([field, message]) => (
+                        <li key={field} className="text-red-700 text-sm">
+                          {field.charAt(0).toUpperCase() + field.slice(1)}: {message}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             )}
 
@@ -900,6 +998,26 @@ export default function EditFacilityPage() {
                     </div>
                   </FormSection>
 
+                  {/* Facility License */}
+                  <FormSection title="Facility License">
+                    <div>
+                      <Label htmlFor="facilityLicenseNumber">
+                        License Number
+                      </Label>
+                      <Input
+                        id="facilityLicenseNumber"
+                        placeholder="Enter license number"
+                        value={formData.facilityLicenseNumber}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            facilityLicenseNumber: e.target.value,
+                          }))
+                        }
+                      />
+                    </div>
+                  </FormSection>
+
                   {/* Amenities Services */}
                   <FormSection title="Amenities Services">
                     <Dialog
@@ -1040,31 +1158,16 @@ export default function EditFacilityPage() {
                     </div>
                   </FormSection>
 
-                  {/* License & Medical Documents */}
-                  <FormSection title="License & Medical Documents">
-                    <div className="space-y-4">
-                      <div>
-                        <Label htmlFor="facilityLicenseNumber">
-                          License Number
-                        </Label>
-                        <Input
-                          id="facilityLicenseNumber"
-                          placeholder="Enter license number"
-                          value={facilityLicenseNumber}
-                          onChange={(e) =>
-                            setFacilityLicenseNumber(e.target.value)
-                          }
-                        />
-                      </div>
-                      <FileUploadZone
-                        id="medical-document-upload"
-                        accept=".pdf, .doc, .docx"
-                        onFileChange={handleDocumentUpload}
-                        label="Medical Document"
-                        description="Browse and choose a PDF, DOC, or DOCX file (max 10MB)"
-                        selectedFile={medicalDocument?.name}
-                      />
-                    </div>
+                  {/* Medical Documents */}
+                  <FormSection title="Medical Documents">
+                    <FileUploadZone
+                      id="medical-document-upload"
+                      accept=".pdf, .doc, .docx"
+                      onFileChange={handleDocumentUpload}
+                      label="Medical Document"
+                      description="Browse and choose a PDF, DOC, or DOCX file (max 10MB)"
+                      selectedFile={medicalDocument?.name}
+                    />
                   </FormSection>
 
                   {/* Available Times */}
@@ -1145,7 +1248,11 @@ export default function EditFacilityPage() {
                             </SelectContent>
                           </Select>
                         </div>
-                        <Button className="cursor-pointer" type="button" onClick={addTimeSlot}>
+                        <Button
+                          className="cursor-pointer"
+                          type="button"
+                          onClick={addTimeSlot}
+                        >
                           <Plus className="h-4 w-4 mr-1" />
                           Add
                         </Button>
@@ -1171,6 +1278,25 @@ export default function EditFacilityPage() {
                   </FormSection>
 
                   {/* Final Action Buttons */}
+                  {(errors.general || Object.keys(errors).length > 0) && (
+                    <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                      {errors.general && (
+                        <p className="text-red-800 font-semibold mb-2">{errors.general}</p>
+                      )}
+                      {Object.keys(errors).filter(key => key !== 'general').length > 0 && (
+                        <div>
+                          <p className="text-red-800 font-semibold mb-2">Please fix the following errors:</p>
+                          <ul className="list-disc list-inside space-y-1">
+                            {Object.entries(errors).filter(([key]) => key !== 'general').map(([field, message]) => (
+                              <li key={field} className="text-red-700 text-sm">
+                                {field.charAt(0).toUpperCase() + field.slice(1)}: {message}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  )}
                   <div className="flex space-x-4 mt-8">
                     <Button
                       type="button"

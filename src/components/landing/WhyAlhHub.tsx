@@ -39,7 +39,7 @@ const WhyAlhHub = () => {
 
     {/* Secondary images */}
     <div className="w-full md:w-1/2 flex flex-col gap-3 md:gap-4">
-      <div className="relative w-full h-64 sm:h-80 md:h-[220px] lg:h-1/2 rounded-lg overflow-hidden">
+      <div className="relative w-full h-64 sm:h-80 md:h-[220px] lg:h-1/2 rounded-lg overflow-hidden ">
         <Image
           src="/images/Alh-hub-2.jpg"
           alt="ALH Hub care"
@@ -61,7 +61,7 @@ const WhyAlhHub = () => {
   </div>
 
   {/* Right Content - full width on mobile/tablet, half on desktop */}
-  <div className="w-full lg:w-1/2 px-0 md:px-4 lg:px-10 space-y-6 md:space-y-12 lg:space-y-16">
+  <div className="w-full lg:w-1/2 px-0 md:px-4 lg:px-10 space-y-0 md:space-y-12 lg:space-y-16">
     {[
       {
         img: "/images/01.png",
