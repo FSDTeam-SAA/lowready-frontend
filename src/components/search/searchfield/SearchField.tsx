@@ -48,7 +48,7 @@ export default function SearchField() {
   // Initialize with required fields for FiltersSidebar
   const [filters, setFilters] = useState<SearchFilters>({
     minPrice: 0,
-    maxPrice: 10000000000000000000,
+    maxPrice: 100000000000000,
     location: initialLocation,
     availability: true,
     rating: 0,

@@ -216,46 +216,6 @@ export function ConfirmBookingModal({
                       )}
                     />
 
-                    {/* Date of Birth */}
-                    <FormField
-                      control={form.control}
-                      name="dob"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-sm text-[#434C45] font-medium leading-[150%]">
-                            Date of Birth
-                          </FormLabel>
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <FormControl>
-                                <Button
-                                  variant="outline"
-                                  className={cn(
-                                    "w-full pl-3 text-left font-normal",
-                                    !field.value && "text-muted-foreground"
-                                  )}
-                                >
-                                  {field.value
-                                    ? format(field.value, "dd MMM, yyyy")
-                                    : "Pick a date"}
-                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                </Button>
-                              </FormControl>
-                            </PopoverTrigger>
-                            <PopoverContent>
-                              <Calendar
-                                mode="single"
-                                selected={field.value}
-                                onSelect={field.onChange}
-                                initialFocus
-                              />
-                            </PopoverContent>
-                          </Popover>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
                     {/* Gender */}
                     <FormField
                       control={form.control}
