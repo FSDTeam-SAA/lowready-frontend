@@ -69,17 +69,17 @@ export default function GetInTouch() {
     }
   }
   return (
-    <div className="bg-[#F8F9FA] py-10">
+    <div className="bg-[#F8F9FA] py-2 md:py-10">
       <div className="container mx-auto bg-[#FFF] rounded-2xl shadow-sm grid grid-cols-1 md:grid-cols-2">
         {/* Left side: Form */}
         <div className="p-10 order-1 md:order-1">
           <h2
-            className="text-4xl font-bold text-green-600"
+            className="text-2xl md:text-4xl font-bold text-green-600"
             style={{ fontFamily: "var(--font-playfair)" }}
           >
             Get in Touch
           </h2>
-          <p className="text-[#6C757D] text-base mb-6">
+          <p className="text-[#6C757D] text-sm pt-2 md:text-base mb-6">
             Our friendly team would love to hear from you.
           </p>
 

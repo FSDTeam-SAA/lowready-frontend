@@ -81,7 +81,7 @@ export function FacilityBooking({ data, facilityId }: FacilityTourProps) {
   return (
     <section className="">
       <div
-        className="container mx-auto  pt-[30px] shadow-[10px] rounded-2xl p-[40px] bg-[#FFF] border-none"
+        className="container mx-auto pt-[15px] md:pt-[30px] shadow-[10px] rounded-2xl p-[40px] bg-[#FFF] border-none"
         id="requestACall"
       >
         <h2 className="text-xl text-[32px] font-playfair font-semibold">

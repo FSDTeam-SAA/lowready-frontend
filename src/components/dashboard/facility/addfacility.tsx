@@ -25,7 +25,15 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-import { ChevronLeft, Upload, X, Plus, MapPin, ImageIcon, AlertCircle } from "lucide-react";
+import {
+  ChevronLeft,
+  Upload,
+  X,
+  Plus,
+  MapPin,
+  ImageIcon,
+  AlertCircle,
+} from "lucide-react";
 import { useSession } from "next-auth/react";
 import {
   AmenityManager,
@@ -38,7 +46,6 @@ import { useCreateFacility } from "@/hooks/useFacilityMutations";
 import { toast } from "sonner";
 import { PricingModal } from "./pricing-modal";
 import { useSubscriptionStatus } from "@/hooks/useSubscriptionStatus";
-
 
 // Types
 type NewAmenityService = { name: string; photo: File | null };
@@ -63,9 +70,8 @@ type FacilityFormData = {
 };
 
 export default function AddFacilityPage() {
-
   const router = useRouter();
-   const { status: sessionStatus } = useSession();
+  const { status: sessionStatus } = useSession();
   const createFacilityMutation = useCreateFacility();
 
   // Use the subscription hook for all subscription-related state
@@ -77,13 +83,22 @@ export default function AddFacilityPage() {
     closePricingModal,
     openPricingModal,
   } = useSubscriptionStatus();
-    
+
   useEffect(() => {
     // Show pricing modal if user is authenticated but doesn't have active subscription
-    if (sessionStatus === 'authenticated' && !isSubscriptionActive && !subscriptionLoading) {
+    if (
+      sessionStatus === "authenticated" &&
+      !isSubscriptionActive &&
+      !subscriptionLoading
+    ) {
       openPricingModal();
     }
-  }, [sessionStatus, isSubscriptionActive, subscriptionLoading, openPricingModal]);
+  }, [
+    sessionStatus,
+    isSubscriptionActive,
+    subscriptionLoading,
+    openPricingModal,
+  ]);
 
   const [formData, setFormData] = useState<FacilityFormData>({
     availability: "Available",
@@ -137,7 +152,7 @@ export default function AddFacilityPage() {
     "Supervisory Care",
     "Memory Care",
     "Respite and Short Term Care",
-    "Behavioural Care",
+    // "Behavioural Care",
   ];
 
   // Show loading spinner while session is loading
@@ -186,10 +201,8 @@ export default function AddFacilityPage() {
   };
 
   const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    
     const file = e.target.files?.[0];
     if (file) {
-      
       const isValidType =
         file.type.startsWith("video/") ||
         file.name.toLowerCase().match(/\.(mp4|mov|avi|mkv|webm|flv|wmv)$/i);
@@ -207,10 +220,10 @@ export default function AddFacilityPage() {
         e.target.value = "";
         return;
       }
-      
+
       setSelectedVideo(file);
     } else {
-      toast.error('somting error handelvideo upload')
+      toast.error("somting error handelvideo upload");
     }
     // Reset input value to allow selecting the same file again
     e.target.value = "";
@@ -304,9 +317,6 @@ export default function AddFacilityPage() {
     createFacilityMutation.mutate(facilityData);
   };
 
-
-  
-
   // Redirect to login if not authenticated
   if (sessionStatus === "unauthenticated") {
     router.push("/login");
@@ -320,9 +330,14 @@ export default function AddFacilityPage() {
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4 mx-auto">
             <AlertCircle className="h-8 w-8 text-red-500" />
           </div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">Unable to Load Subscription Status</h3>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            Unable to Load Subscription Status
+          </h3>
           <p className="text-gray-600 mb-4">{subscriptionError}</p>
-          <Button onClick={() => window.location.reload()} className="bg-green-600 hover:bg-green-700">
+          <Button
+            onClick={() => window.location.reload()}
+            className="bg-green-600 hover:bg-green-700"
+          >
             Try Again
           </Button>
         </div>
@@ -332,24 +347,25 @@ export default function AddFacilityPage() {
   const handleSubscribe = async () => {
     try {
       // Your subscription logic here
-      
-      
+
       closePricingModal();
-      toast.success('Subscription activated! You can now add facilities.');
+      toast.success("Subscription activated! You can now add facilities.");
     } catch (error) {
-      console.error('Subscription error:', error);
-      toast.error('Failed to activate subscription. Please try again.');
+      console.error("Subscription error:", error);
+      toast.error("Failed to activate subscription. Please try again.");
     }
   };
-  
-
 
   return (
     <div className="flex min-h-screen bg-gray-50">
       <div className="flex-1 flex flex-col justify-between overflow-hidden">
         <main className="flex-1 overflow-auto">
           <div className="p-8">
-            <div>{!isSubscriptionActive ? "Your Subscription has ended, subscribe to add new facility": ""}</div>
+            <div>
+              {!isSubscriptionActive
+                ? "Your Subscription has ended, subscribe to add new facility"
+                : ""}
+            </div>
 
             <div className="flex items-center mb-6">
               <Button
@@ -363,7 +379,20 @@ export default function AddFacilityPage() {
                 Add Facility
               </h1>
             </div>
-            
+
+            {Object.keys(errors).length > 0 && (
+              <p className="mb-4 p-3 rounded-md bg-red-100 text-red-700 font-medium text-sm">
+                Please fix the errors below before submitting.
+              </p>
+            )}
+
+            {createFacilityMutation.isError && (
+              <p className="mb-4 p-3 rounded-md bg-red-100 text-red-700 font-medium text-sm">
+                {createFacilityMutation.error?.message ||
+                  "Failed to create facility. Please try again."}
+              </p>
+            )}
+
             <form onSubmit={handleSubmit} className="container mx-auto">
               <div className="grid grid-cols-1 lg:grid-cols-3  gap-8">
                 {/* Left Column - Form Fields */}
@@ -549,7 +578,7 @@ export default function AddFacilityPage() {
                   </FormSection>
 
                   {/* Amenities */}
-                  <FormSection title="Amenities"   >
+                  <FormSection title="Amenities">
                     <AmenityManager
                       amenities={formData.amenities}
                       onAmenitiesChange={(amenities) =>
@@ -758,7 +787,6 @@ export default function AddFacilityPage() {
                               <button
                                 type="button"
                                 onClick={() => {
-                                  
                                   setSelectedVideo(null);
                                 }}
                                 className="text-red-500 hover:text-red-700 p-1"
@@ -777,6 +805,9 @@ export default function AddFacilityPage() {
                   <FormSection title="License & Medical Documents">
                     <div className="space-y-4">
                       <div>
+                        <p className="p-3 bg-amber-200 text-sm text-center font-bold rounded-md mb-3">
+                          Either License Number or Upload Document{" "}
+                        </p>
                         <Label htmlFor="facilityLicenseNumber">
                           License Number
                         </Label>
@@ -996,11 +1027,24 @@ export default function AddFacilityPage() {
                 </div>
               </div>
             </form>
+
+            {Object.keys(errors).length > 0 && (
+              <p className="mt-6 p-3 rounded-md bg-red-100 text-red-700 font-medium text-sm">
+                Please review the highlighted fields above.
+              </p>
+            )}
+
+            {createFacilityMutation.isError && (
+              <p className="mt-6 p-3 rounded-md bg-red-100 text-red-700 font-medium text-sm">
+                {createFacilityMutation.error?.message ||
+                  "Failed to create facility. Please try again."}
+              </p>
+            )}
           </div>
         </main>
-              {/* Pricing Modal */}
-        <PricingModal 
-          open={showPricingModal} 
+        {/* Pricing Modal */}
+        <PricingModal
+          open={showPricingModal}
           onOpenChange={(open) => {
             if (!open && !isSubscriptionActive) {
               // Prevent closing if subscription is required
@@ -1012,14 +1056,9 @@ export default function AddFacilityPage() {
               closePricingModal();
             }
           }}
-          onSubscribe={handleSubscribe} 
+          onSubscribe={handleSubscribe}
         />
-        
       </div>
-
-      
     </div>
-
-
   );
 }

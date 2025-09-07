@@ -2,7 +2,7 @@
 
 export function FacilityAbout() {
   return (
-    <section className="mt-[120px]">
+    <section className="mt-[40px] md:mt-[120px]">
       <div className="container mx-auto">
       <h2 className="text-xl md:text-[32px] font-playfair font-semibold">
         About{" "}

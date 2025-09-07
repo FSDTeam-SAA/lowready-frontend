@@ -165,9 +165,9 @@ export function mapApiBookingToBookingData(
     id: apiBooking._id,
     invoice: `${apiBooking._id.slice(0, 4)}`,
     customer: {
-      name: `${apiBooking.userId.firstName} ${apiBooking.userId.lastName}`,
-      email: apiBooking.userId.email,
-      avatar: apiBooking.userId.avatar?.url || "/placeholder.svg",
+      name: `${apiBooking?.userId?.firstName} ${apiBooking?.userId?.lastName}`,
+      email: apiBooking?.userId?.email,
+      avatar: apiBooking?.userId?.avatar?.url || "/placeholder.svg",
     },
     images: facility?.images || [], // ✅ Added
     location: facility?.location || "N/A",
@@ -182,10 +182,10 @@ export function mapApiBookingToBookingData(
       specialNeeds: apiBooking.specialNeeds || "N/A",
     },
     bookerInfo: {
-      fullName: `${apiBooking.userId.firstName} ${apiBooking.userId.lastName}`,
+      fullName: `${apiBooking?.userId?.firstName} ${apiBooking?.userId?.lastName}`,
       relationToResident: apiBooking.relationToResident || "N/A",
       phoneNumber: apiBooking.phoneNumber || "N/A",
-      emailAddress: apiBooking.userId.email,
+      emailAddress: apiBooking?.userId?.email,
     },
     bookingDetails: {
       facilityName: facility?.name || "N/A",

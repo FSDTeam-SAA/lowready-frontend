@@ -350,7 +350,7 @@ const DesktopFiltersSidebar = ({
     setFilters({
       minPrice: 0,
       maxPrice: 1000000,
-      location: "Dhaka",
+      location: "USA",
       availability: true,
       rating: undefined,
       careServices: [],

@@ -44,11 +44,11 @@ interface SearchFilters {
 export default function SearchField() {
   const searchParams = useSearchParams();
 
-  const initialLocation = searchParams.get("q") || "Dhaka";
+  const initialLocation = searchParams.get("q") || "";
   // Initialize with required fields for FiltersSidebar
   const [filters, setFilters] = useState<SearchFilters>({
     minPrice: 0,
-    maxPrice: 1000000,
+    maxPrice: 100000000000000,
     location: initialLocation,
     availability: true,
     rating: 0,
@@ -242,8 +242,8 @@ export default function SearchField() {
               <p>Loading facilities...</p>
             ) : facilities.length > 0 ? (
               <>
-                <div className="pb-[80px]">
-                  <h2 className="text-[40px] font-bold leading-[150%] text-[#343A40] font-playfair">
+                <div className="pb-6 md:pb-[80px]">
+                  <h2 className="text-[24px] md:text-[40px] font-bold leading-[150%] text-[#343A40] font-playfair">
                     Facilities near {filters.location} -{" "}
                     <span className="text-[#28A745]">
                       {facilities.length} found
@@ -256,15 +256,17 @@ export default function SearchField() {
                 </div>
                 {facilities.map((facility: FacilityCards) => (
                   <Card key={facility._id} className="overflow-hidden py-0">
-                    <div className="grid md:grid-cols-3 pb-0 gap-4">
-                      <Image
-                        src={facility.images[0]?.url || "/search.png"}
-                        alt={facility.name}
-                        width={600}
-                        height={600}
-                        className="w-full h-full object-cover"
-                      />
-                      <CardContent className="flex flex-col justify-between md:col-span-2">
+                    <div className="grid md:grid-cols-3 pb-0 gap-4 items-center">
+                      <div className="col-span-1">
+                        <Image
+                          src={facility.images[0]?.url || "/search.png"}
+                          alt={facility.name}
+                          width={600}
+                          height={272}
+                          className="w-full aspect-[5/4]  object-cover"
+                        />
+                      </div>
+                      <CardContent className="flex flex-col md:col-span-2">
                         <div>
                           <CardTitle className="flex items-center justify-between">
                             <h2 className="text-xl font-semibold leading-[150%] text-[#343A40] pt-[24px]">
@@ -309,20 +311,20 @@ export default function SearchField() {
                             </span>
                           </span>
                           <div className="flex justify-between gap-5 pt-4 pb-6 ">
-                            <Button
-                              className="w-full cursor-pointer flex-1 h-10 border-green-600"
-                              variant="outline"
+                            <Link
+                              className="w-1/2 h-full cursor-pointer text-green-600 "
+                              href={`/facilities/details/${facility?._id}`}
                             >
-                              <Link
-                                className="w-full h-full cursor-pointer text-green-600 "
-                                href={`/facilities/details/${facility?._id}`}
+                              <Button
+                                className="w-full cursor-pointer flex-1 h-10 border-green-600"
+                                variant="outline"
                               >
                                 See Details
-                              </Link>
-                            </Button>
+                              </Button>
+                            </Link>
                             <Button
                               onClick={() => handleNewBooking(facility)}
-                              className="w-full cursor-pointer flex-1 h-10"
+                              className="w-1/2 cursor-pointer flex-1 h-10"
                             >
                               Book a Tour
                             </Button>

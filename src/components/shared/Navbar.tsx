@@ -15,20 +15,70 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { usePathname } from "next/navigation";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "../ui/dialog";
+
+const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+interface UserAvatar {
+  url: string;
+}
+
+interface UserResponse {
+  success: boolean;
+  message: string;
+  data: {
+    avatar?: UserAvatar;
+    name?: string;
+    role?: string;
+    _id: string;
+  };
+}
 
 const Navbar = () => {
   const { data: session, status } = useSession();
   const [currentSession, setCurrentSession] = useState(session);
-  const pathname = usePathname();
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [logoutModalOpen, setLogoutModalOpen] = useState(false);
 
-  const [isOpen, setIsOpen] = useState(false); // Mobile menu
+  const pathname = usePathname();
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
-  // Update local session whenever NextAuth session changes
+  // Update session locally
   useEffect(() => {
     setCurrentSession(session);
   }, [session]);
+
+  // Fetch user avatar
+  useEffect(() => {
+    const fetchUser = async () => {
+      if (!session?.user?.id) return;
+
+      try {
+        const res = await fetch(`${baseUrl}/user/${session.user.id}`);
+        if (!res.ok) throw new Error("Failed to fetch user");
+        const data: UserResponse = await res.json();
+        if (data.success && data.data.avatar?.url) {
+          setAvatarUrl(data.data.avatar.url);
+        } else {
+          setAvatarUrl(null);
+        }
+      } catch (error) {
+        console.error("Error fetching user avatar:", error);
+        setAvatarUrl(null);
+      }
+    };
+
+    fetchUser();
+  }, [session?.user?.id]);
 
   // Close mobile menu when clicking outside
   useEffect(() => {
@@ -46,6 +96,7 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Prevent scrolling when mobile menu is open
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "auto";
     return () => {
@@ -76,13 +127,17 @@ const Navbar = () => {
   );
 
   const isLoggedIn = !!currentSession?.user;
+  const displayAvatar = avatarUrl || currentSession?.user?.image || undefined;
+
+
+  
 
   return (
     <header className="sticky top-0 h-20 bg-white z-50 shadow-sm">
       <div className="container mx-auto px-4">
         <nav className="flex justify-between items-center py-[15px]">
           {/* Logo */}
-          <div className="flex-shrink-0 cursor-pointer flex pb-6 items-center">
+          <div className="flex-shrink-0 cursor-pointer flex items-center">
             <Link href="/">
               <Image src="/images/Logo.png" alt="logo" width={150} height={48} />
             </Link>
@@ -110,24 +165,27 @@ const Navbar = () => {
           </div>
 
           {/* Right Section */}
-          <div className="flex-shrink-0 cursor-pointer px-6 py-2 flex items-center gap-4">
-            {/* Desktop Profile / Sign In */}
+          <div className="flex-shrink-0 flex items-center gap-4">
             {status === "loading" ? (
               <LoadingPlaceholder />
             ) : isLoggedIn ? (
               <div className="hidden md:block">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="flex items-center gap-2">
+                    <Button variant="ghost" className="flex items-center hover:bg-destructive/0">
                       <Avatar className="h-10 w-10 cursor-pointer">
                         <AvatarImage
-                          src={currentSession.user.image || ""}
+                          src={displayAvatar}
                           alt={currentSession.user.name || ""}
                         />
-                        <AvatarFallback>{getInitials(currentSession.user.name)}</AvatarFallback>
+                        <AvatarFallback>
+                          {getInitials(currentSession.user.name)}
+                        </AvatarFallback>
                       </Avatar>
                       <div className="flex flex-col text-left">
-                        <div className="font-medium cursor-pointer">{currentSession.user.name}</div>
+                        <div className="font-medium cursor-pointer">
+                          {currentSession.user.name}
+                        </div>
                         <div className="text-sm text-muted-foreground cursor-pointer">
                           {currentSession.user.role}
                         </div>
@@ -136,12 +194,12 @@ const Navbar = () => {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-56" align="end" forceMount>
                     <Link href="/account" passHref>
-                      <DropdownMenuItem className="cursor-pointer">Profile</DropdownMenuItem>
+                      <DropdownMenuItem>Profile</DropdownMenuItem>
                     </Link>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
-                      className="cursor-pointer"
-                      onClick={() => signOut()}
+                      onClick={() => setLogoutModalOpen(true)}
+                      className="text-red-500"
                     >
                       Log out
                     </DropdownMenuItem>
@@ -161,7 +219,7 @@ const Navbar = () => {
               {isLoggedIn && (
                 <Avatar className="h-8 w-8">
                   <AvatarImage
-                    src={currentSession.user.image || ""}
+                    src={displayAvatar}
                     alt={currentSession.user.name || ""}
                   />
                   <AvatarFallback>{getInitials(currentSession.user.name)}</AvatarFallback>
@@ -173,7 +231,7 @@ const Navbar = () => {
                 size="icon"
                 onClick={() => setIsOpen((prev) => !prev)}
                 aria-label="Toggle menu"
-                className="z-60 relative"
+                className="relative z-50"
               >
                 {isOpen ? <X size={24} /> : <Menu size={24} />}
               </Button>
@@ -184,12 +242,12 @@ const Navbar = () => {
         {/* Mobile Menu */}
         <div
           ref={menuRef}
-          className={`mobile-menu md:hidden fixed top-20 left-0 w-full h-[calc(100vh-5rem)] bg-white z-50 overflow-y-auto transition-transform duration-300 ease-in-out ${
+          className={`md:hidden fixed top-20 left-0 w-full h-[calc(100vh-5rem)] bg-white z-40 overflow-y-auto transition-transform duration-300 ease-in-out ${
             isOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
           <div className="container mx-auto px-4 py-6">
-            <ul className="flex flex-col justify-start gap-6 font-poppins text-lg">
+            <ul className="flex flex-col gap-6 font-poppins text-lg">
               {navItems.map((item) => {
                 const isActive = pathname === item.path;
                 return (
@@ -209,51 +267,27 @@ const Navbar = () => {
               })}
             </ul>
 
-            {/* Mobile Dropdown / Sign In */}
             <div className="mt-8">
               {status === "loading" ? (
                 <LoadingPlaceholder />
               ) : isLoggedIn ? (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      className="w-full text-primary flex items-center justify-center gap-2"
-                      variant="ghost"
-                    >
-                      <Avatar className="h-8 w-8">
-                        <AvatarImage
-                          src={currentSession.user.image || ""}
-                          alt={currentSession.user.name || ""}
-                        />
-                        <AvatarFallback>{getInitials(currentSession.user.name)}</AvatarFallback>
-                      </Avatar>
-                      <div className="flex flex-col text-left">
-                        <div className="font-medium">{currentSession.user.name}</div>
-                        <div className="text-sm text-muted-foreground">{currentSession.user.role}</div>
-                      </div>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-full" align="end" forceMount>
-                    <Link href="/account" passHref>
-                      <DropdownMenuItem
-                        className="cursor-pointer"
-                        onClick={() => setIsOpen(false)}
-                      >
-                        Profile
-                      </DropdownMenuItem>
-                    </Link>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      className="cursor-pointer"
-                      onClick={() => {
-                        signOut();
-                        setIsOpen(false);
-                      }}
-                    >
-                      Log out
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <Button
+                  className="w-full text-primary flex items-center justify-center gap-2"
+                  variant="ghost"
+                  onClick={() => setLogoutModalOpen(true)}
+                >
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage
+                      src={displayAvatar}
+                      alt={currentSession.user.name || ""}
+                    />
+                    <AvatarFallback>{getInitials(currentSession.user.name)}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col text-left">
+                    <div className="font-medium">{currentSession.user.name}</div>
+                    <div className="text-sm text-muted-foreground">{currentSession.user.role}</div>
+                  </div>
+                </Button>
               ) : (
                 <Button className="bg-primary w-full">
                   <Link href="/login" onClick={() => setIsOpen(false)}>
@@ -265,6 +299,32 @@ const Navbar = () => {
           </div>
         </div>
       </div>
+
+      {/* Logout Confirmation Modal */}
+      <Dialog open={logoutModalOpen} onOpenChange={setLogoutModalOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Are you sure?</DialogTitle>
+            <DialogDescription>
+              You are about to log out of your account.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex justify-end gap-4">
+            <Button variant="outline" onClick={() => setLogoutModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                signOut();
+                setLogoutModalOpen(false);
+              }}
+            >
+              Yes, Log out
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </header>
   );
 };
