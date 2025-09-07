@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { BellDot, Key, LogOut, User } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
-import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import {
   Dialog,
@@ -22,6 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const navigation = [
   {
@@ -37,7 +37,8 @@ const navigation = [
   {
     name: "Tour Requests",
     href: "/tourrequest",
-    description: "Easily manage upcoming tours and provide a smooth experience.",
+    description:
+      "Easily manage upcoming tours and provide a smooth experience.",
   },
   {
     name: "Customers",
@@ -47,7 +48,8 @@ const navigation = [
   {
     name: "Manage Facility",
     href: "/facility",
-    description: "Keep track of all your facilities, update details, and stay organized.",
+    description:
+      "Keep track of all your facilities, update details, and stay organized.",
   },
   {
     name: "Earnings Summary",
@@ -67,17 +69,20 @@ const navigation = [
   {
     name: "Profile",
     href: "/profile",
-    description: "Keep track of all your facilities, update details, and stay organized.",
+    description:
+      "Keep track of all your facilities, update details, and stay organized.",
   },
   {
     name: "Change Password",
     href: "/change-password",
-    description: "Keep track of all your facilities, update details, and stay organized.",
+    description:
+      "Keep track of all your facilities, update details, and stay organized.",
   },
   {
     name: "Document",
     href: "/document",
-    description: "Upload and manage your verification documents to get approved on our platform",
+    description:
+      "Upload and manage your verification documents to get approved on our platform",
   },
   {
     name: "Subscription",
@@ -92,7 +97,7 @@ export function DashboardHeader() {
   const router = useRouter();
   const [openNotifications, setOpenNotifications] = useState(false);
   const [openLogoutModal, setOpenLogoutModal] = useState(false);
-  const [profileImage, setProfileImage] = useState("/dashboard/profile.png");
+  const [profileImage, setProfileImage] = useState();
 
   // Fetch organization avatar if role is "organization"
   useEffect(() => {
@@ -108,13 +113,14 @@ export function DashboardHeader() {
             }
           );
           const data = await res.json();
+          console.log("This is data", data);
           const imageUrl = data?.data?.avatar?.url;
-          if (imageUrl) setProfileImage(imageUrl);
+          setProfileImage(imageUrl);
         } catch (err) {
           console.error("Failed to fetch organization avatar:", err);
         }
       } else if (session?.user?.image) {
-        setProfileImage(session.user.image);
+        // setProfileImage(session.user.image);
       }
     }
     fetchOrgImage();
@@ -124,8 +130,6 @@ export function DashboardHeader() {
   const activePage =
     navigation.find((nav) => nav.href.endsWith(currentPage)) ||
     navigation.find((nav) => nav.href === "/dashboard");
-
-  console.log("session check", session);
 
   return (
     <>
@@ -149,15 +153,22 @@ export function DashboardHeader() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <div className="flex items-center gap-4 cursor-pointer">
-                  <div className="h-12 w-12 rounded-full overflow-hidden">
-                    <Image
+                  {/* <div className="h-12 w-12 rounded-full overflow-hidden"> */}
+                  {/* <Image
                       src={profileImage}
                       alt="profile"
                       width={48}
                       height={48}
                       className="object-cover w-full h-full"
-                    />
-                  </div>
+                    /> */}
+                  <Avatar className="h-12 w-12 border-4 border-white shadow-lg object-cover">
+                    <AvatarImage src={profileImage} alt={session.user.name} />
+                    <AvatarFallback className="text-base font-semibold">
+                      {session.user.name[0]?.toUpperCase() || ""}
+                      {session.user.name[0]?.toUpperCase() || ""}
+                    </AvatarFallback>
+                  </Avatar>
+                  {/* </div> */}
                   <div className="hidden md:flex flex-col">
                     <h2 className="text-[16px] font-medium text-[#343A40] leading-[150%]">
                       {session.user.name}
@@ -221,10 +232,7 @@ export function DashboardHeader() {
             <Button variant="outline" onClick={() => setOpenLogoutModal(false)}>
               Cancel
             </Button>
-            <Button
-              variant="destructive"
-              onClick={() => signOut()}
-            >
+            <Button variant="destructive" onClick={() => signOut()}>
               Logout
             </Button>
           </DialogFooter>

@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { Button } from "../ui/button";
+// import { Button } from "../ui/button";
 import {
   Accordion,
   AccordionContent,
@@ -8,7 +8,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { CirclePlus, CircleMinus } from "lucide-react";
-import Link from "next/link";
+// import Link from "next/link";
 
 const FAQ = () => {
   const faqData = [
@@ -91,7 +91,7 @@ const FAQ = () => {
             </Accordion>
           </div>
         </div>
-        <div className="">
+        {/* <div className="">
           <div className="flex flex-col items-center justify-center text-center px-2 sm:px-4 md:px-6">
             <h2
               className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-4 sm:mb-5 md:mb-6"
@@ -113,7 +113,7 @@ const FAQ = () => {
               </Link>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
