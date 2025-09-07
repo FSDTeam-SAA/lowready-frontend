@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import Image from "next/image";
+import Link from "next/link";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -58,13 +59,14 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           )}
         >
           <div className="flex flex-col h-full">
-            <div className="flex items-center mx-auto">
-              <Image
+             <div className="flex items-center mx-auto">
+              <Link href="/"><Image
                 src="/images/Logo.png"
                 alt="log"
                 width={100}
                 height={100}
               />
+              </Link>
             </div>
             {/* Navigation */}
             <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import {
@@ -29,7 +29,7 @@ import {
 import { toast } from "sonner";
 import {
   Eye,
-  Trash2,
+  // Trash2,
   FileText,
   ImageIcon,
   File,
@@ -41,6 +41,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import Image from "next/image";
+import { DeleteModal } from "./DeleteModal";
 
 interface Document {
   _id: string;
@@ -48,13 +49,6 @@ interface Document {
   uploader: { _id: string; firstName: string; lastName: string; email: string };
   type: string;
   createdAt: string;
-}
-
-interface DocumentMetadata {
-  size?: number;
-  contentType?: string;
-  lastModified?: string;
-  accessible: boolean;
 }
 
 interface ApiResponse<T> {
@@ -66,205 +60,145 @@ interface ErrorResponse {
   message: string;
 }
 
+type DocumentMetadata = {
+  size?: number;
+  contentType?: string;
+  lastModified?: string;
+  accessible: boolean;
+};
+
 const BASE_API = process.env.NEXT_PUBLIC_API_URL;
+
+const isPdfUrl = (url: string): boolean => /\.pdf(\?|#|$)/i.test(url);
+const isImageUrl = (url: string): boolean =>
+  /\.(jpe?g|png|gif|webp|bmp|svg)(\?|#|$)/i.test(url);
+
+const formatFileSize = (bytes: number): string => {
+  if (!Number.isFinite(bytes) || bytes < 0) return "";
+  if (bytes === 0) return "0 Bytes";
+  const k = 1024;
+  const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return `${(bytes / Math.pow(k, i)).toFixed(2)} ${sizes[i]}`;
+};
 
 export function DocumentManager() {
   const { data: session } = useSession();
   const queryClient = useQueryClient();
   const uploaderId = session?.user?.id || "";
 
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [documentToDelete, setDocumentToDelete] = useState<Document | null>(
+    null
+  );
+
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [documentType, setDocumentType] = useState("");
   const [viewingDocument, setViewingDocument] = useState<Document | null>(null);
 
-  // Fetch documents with TanStack Query
-  const { 
-    data: documentsResponse, 
+  // Simple metadata state (no react-query complexity)
+  const [metadata, setMetadata] = useState<DocumentMetadata | null>(null);
+  const [isLoadingMetadata, setIsLoadingMetadata] = useState(false);
+
+  // Fetch documents
+  const {
+    data: documentsResponse,
     isLoading: isLoadingDocuments,
     error: documentsError,
-    refetch: refetchDocuments 
+    refetch: refetchDocuments,
   } = useQuery({
     queryKey: ["documents"],
     queryFn: async (): Promise<ApiResponse<Document[]>> => {
       const res = await fetch(`${BASE_API}/document`);
       if (!res.ok) {
-        const errorData: ErrorResponse = await res.json().catch(() => ({ 
-          message: `Failed to fetch documents: ${res.status}` 
+        const errorData: ErrorResponse = await res.json().catch(() => ({
+          message: `Failed to fetch documents: ${res.status}`,
         }));
         throw new Error(errorData.message);
       }
       return res.json();
     },
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 1000 * 60 * 5,
     retry: 2,
-    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 
-  // Fetch document metadata when viewing a document
-  const { 
-    data: documentMetadata,
-    isLoading: isLoadingMetadata,
-    error: metadataError 
-  } = useQuery({
-    queryKey: ["documentMetadata", viewingDocument?.file.url],
-    queryFn: async (): Promise<DocumentMetadata> => {
-      if (!viewingDocument?.file.url) {
-        throw new Error("No document URL provided");
-      }
-
-      try {
-        // Try to fetch document headers to check accessibility
-        const response = await fetch(viewingDocument.file.url, { 
-          method: 'HEAD',
-          mode: 'cors'
-        });
-        
-        return {
-          size: response.headers.get('content-length') ? 
-            parseInt(response.headers.get('content-length')!) : undefined,
-          contentType: response.headers.get('content-type') || undefined,
-          lastModified: response.headers.get('last-modified') || undefined,
-          accessible: response.ok
-        };
-      } catch (error) {
-        console.warn("Failed to fetch document metadata:", error);
-        // Return minimal metadata if HEAD request fails
-        return {
-          accessible: true // Assume accessible, will handle in component
-        };
-      }
-    },
-    enabled: !!viewingDocument?.file.url,
-    staleTime: 1000 * 60 * 10, // 10 minutes
-    retry: 1,
-  });
-
-  // Prefetch document metadata on hover
-  const prefetchDocumentMetadata = (document: Document) => {
-    queryClient.prefetchQuery({
-      queryKey: ["documentMetadata", document.file.url],
-      queryFn: async (): Promise<DocumentMetadata> => {
-        try {
-          const response = await fetch(document.file.url, { 
-            method: 'HEAD',
-            mode: 'cors'
-          });
-          
-          return {
-            size: response.headers.get('content-length') ? 
-              parseInt(response.headers.get('content-length')!) : undefined,
-            contentType: response.headers.get('content-type') || undefined,
-            lastModified: response.headers.get('last-modified') || undefined,
-            accessible: response.ok
-          };
-        } catch {
-          return { accessible: true };
-        }
-      },
-      staleTime: 1000 * 60 * 10,
-    });
-  };
-
-  // Upload mutation with better error handling
+  // Upload
   const uploadMutation = useMutation({
     mutationFn: async (formData: FormData) => {
       const res = await fetch(`${BASE_API}/document/upload`, {
         method: "POST",
         body: formData,
       });
-
       if (!res.ok) {
-        const errorData: ErrorResponse = await res.json().catch(() => ({ 
-          message: `Upload failed: ${res.status} ${res.statusText}` 
+        const errorData: ErrorResponse = await res.json().catch(() => ({
+          message: `Upload failed: ${res.status} ${res.statusText}`,
         }));
         throw new Error(errorData.message);
       }
-
       return res.json();
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["documents"] });
       setSelectedFile(null);
       setDocumentType("");
       toast.success("Document uploaded successfully");
-      
-      // Optionally prefetch the new document's metadata
-      if (data?.data?.file?.url) {
-        queryClient.prefetchQuery({
-          queryKey: ["documentMetadata", data.data.file.url],
-        });
-      }
     },
     onError: (error: Error) => {
-      console.error("Upload error:", error);
       toast.error(error.message || "Upload failed");
     },
   });
 
-  // Delete mutation with optimistic updates - FIXED: Properly typed query data
+  // Delete (optimistic)
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
       const res = await fetch(`${BASE_API}/document/${id}`, {
         method: "DELETE",
       });
-
       if (!res.ok) {
-        const errorData: ErrorResponse = await res.json().catch(() => ({ 
-          message: `Delete failed: ${res.status} ${res.statusText}` 
+        const errorData: ErrorResponse = await res.json().catch(() => ({
+          message: `Delete failed: ${res.status} ${res.statusText}`,
         }));
         throw new Error(errorData.message);
       }
-
       return res.json();
     },
     onMutate: async (deletingId) => {
-      // Cancel outgoing refetches
       await queryClient.cancelQueries({ queryKey: ["documents"] });
-      
-      // Snapshot the previous value
-      const previousDocuments = queryClient.getQueryData<ApiResponse<Document[]>>(["documents"]);
-      
-      // Optimistically update to remove the document
-      queryClient.setQueryData<ApiResponse<Document[]>>(["documents"], (old) => {
-        if (!old) return old;
-        return {
-          ...old,
-          data: old.data.filter((doc: Document) => doc._id !== deletingId)
-        };
-      });
-      
-      return { previousDocuments };
+      const previous = queryClient.getQueryData<ApiResponse<Document[]>>([
+        "documents",
+      ]);
+      queryClient.setQueryData<ApiResponse<Document[]>>(["documents"], (old) =>
+        old
+          ? { ...old, data: old.data.filter((d) => d._id !== deletingId) }
+          : old
+      );
+      return { previous };
     },
-    onError: (error: Error, deletingId, context) => {
-      // Rollback on error
-      if (context?.previousDocuments) {
-        queryClient.setQueryData(["documents"], context.previousDocuments);
-      }
-      console.error("Delete error:", error);
-      toast.error(error.message || "Delete failed");
+    onError: (error, _id, ctx) => {
+      if (ctx?.previous) queryClient.setQueryData(["documents"], ctx.previous);
+      toast.error((error as Error).message || "Delete failed");
     },
-    onSuccess: () => {
-      toast.success("Document deleted successfully");
-    },
-    onSettled: () => {
-      // Always refetch after error or success
-      queryClient.invalidateQueries({ queryKey: ["documents"] });
-    },
+    onSuccess: () => toast.success("Document deleted successfully"),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["documents"] }),
   });
 
   const handleFileSelect = (file: File) => {
-    const allowedTypes = ["application/pdf", "image/jpeg", "image/png"];
-    if (!allowedTypes.includes(file.type))
-      return toast.error("Only PDF, JPG, PNG files are allowed");
-    if (file.size > 10 * 1024 * 1024)
-      return toast.error("File size must be less than 10MB");
+    const allowed = ["application/pdf", "image/jpeg", "image/png"];
+    if (!allowed.includes(file.type)) {
+      toast.error("Only PDF, JPG, PNG files are allowed");
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("File size must be less than 10MB");
+      return;
+    }
     setSelectedFile(file);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      handleFileSelect(e.target.files[0]);
-    }
+    const f = e.target.files?.[0];
+    if (f) handleFileSelect(f);
   };
 
   const handleUpload = () => {
@@ -276,46 +210,92 @@ export function DocumentManager() {
     formData.append("file", selectedFile);
     formData.append("type", documentType);
     formData.append("uploader", uploaderId);
-
     uploadMutation.mutate(formData);
   };
 
   const handleDelete = (id: string) => {
-    if (confirm("Are you sure you want to delete this document?"))
+    if (confirm("Are you sure you want to delete this document?")) {
       deleteMutation.mutate(id);
+    }
   };
 
   const handleView = (doc: Document) => {
     setViewingDocument(doc);
-    // Prefetch metadata when opening modal
-    prefetchDocumentMetadata(doc);
   };
 
-  const getFileIcon = (name: string) => {
-    if (name.endsWith(".pdf")) return <FileText className="h-4 w-4" />;
-    if (
-      name.endsWith(".jpg") ||
-      name.endsWith(".png") ||
-      name.endsWith(".jpeg")
-    )
-      return <ImageIcon className="h-4 w-4" />;
-    return <File className="h-4 w-4" />;
+  // Fetch metadata via simple HEAD when modal opens / url changes
+  useEffect(() => {
+    let aborted = false;
+    const run = async () => {
+      if (!viewingDocument?.file.url) {
+        setMetadata(null);
+        return;
+      }
+      setIsLoadingMetadata(true);
+      try {
+        const controller = new AbortController();
+        const res = await fetch(viewingDocument.file.url, {
+          method: "HEAD",
+          mode: "cors",
+          signal: controller.signal,
+        });
+        if (aborted) return;
+
+        const sizeHeader = res.headers.get("content-length");
+        const contentType = res.headers.get("content-type") || undefined;
+        const lastModified = res.headers.get("last-modified") || undefined;
+
+        setMetadata({
+          size: sizeHeader ? Number.parseInt(sizeHeader) : undefined,
+          contentType,
+          lastModified,
+          accessible: res.ok,
+        });
+      } catch {
+        if (!aborted) {
+          setMetadata({ accessible: true });
+        }
+      } finally {
+        if (!aborted) setIsLoadingMetadata(false);
+      }
+    };
+    run();
+    return () => {
+      aborted = true;
+    };
+  }, [viewingDocument?.file.url]);
+
+  const documents = documentsResponse?.data ?? [];
+
+  const currentUrl = viewingDocument?.file.url ?? "";
+  const isPdf = useMemo(
+    () => (currentUrl ? isPdfUrl(currentUrl) : false),
+    [currentUrl]
+  );
+  const isImage = useMemo(
+    () => (currentUrl ? isImageUrl(currentUrl) : false),
+    [currentUrl]
+  );
+
+  const openInNewTab = () => {
+    if (!currentUrl) return;
+    window.open(currentUrl, "_blank", "noopener,noreferrer");
   };
 
-  const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return "0 Bytes";
-    const k = 1024;
-    const sizes = ["Bytes", "KB", "MB", "GB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return (bytes / Math.pow(k, i)).toFixed(2) + " " + sizes[i];
+  const downloadFile = () => {
+    if (!currentUrl) return;
+    const a = document.createElement("a");
+    a.href = currentUrl;
+    a.download = currentUrl.split("/").pop() || "document";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
   };
-
-  const documents = documentsResponse?.data || [];
 
   return (
     <div className="space-y-6">
       {/* Upload Section */}
-      <Card>
+      <Card className="p-5">
         <CardHeader>
           <CardTitle>Business & License Documents</CardTitle>
           <CardDescription>
@@ -339,7 +319,8 @@ export function DocumentManager() {
                 <Plus className="h-6 w-6" />
               </div>
               <p className="text-sm">
-                Browse and choose the files you want to upload from your computer
+                Browse and choose the files you want to upload from your
+                computer
               </p>
               <UploadCloud className="mt-2" />
               <p className="text-base">Click to select a file</p>
@@ -353,7 +334,13 @@ export function DocumentManager() {
           {selectedFile && (
             <div className="space-y-4 p-4 border rounded-lg bg-muted/50 mt-4">
               <div className="flex items-center gap-2">
-                {getFileIcon(selectedFile.name)}
+                {isPdfUrl(selectedFile.name) ? (
+                  <FileText className="h-4 w-4" />
+                ) : isImageUrl(selectedFile.name) ? (
+                  <ImageIcon className="h-4 w-4" />
+                ) : (
+                  <File className="h-4 w-4" />
+                )}
                 <span className="text-sm font-medium">{selectedFile.name}</span>
                 <span className="text-xs text-muted-foreground">
                   ({formatFileSize(selectedFile.size)})
@@ -368,7 +355,7 @@ export function DocumentManager() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Identity & Legal Documents">
-                      Identity & Legal Documents
+                      Identity &amp; Legal Documents
                     </SelectItem>
                     <SelectItem value="Business Registration">
                       Business Registration
@@ -440,7 +427,7 @@ export function DocumentManager() {
               <AlertTriangle className="h-8 w-8 text-destructive mx-auto mb-2" />
               <p className="text-destructive mb-2">Failed to load documents</p>
               <p className="text-sm text-muted-foreground mb-4">
-                {documentsError.message}
+                {(documentsError as Error).message}
               </p>
               <Button variant="outline" onClick={() => refetchDocuments()}>
                 Try Again
@@ -456,10 +443,15 @@ export function DocumentManager() {
                 <div
                   key={doc._id}
                   className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors"
-                  onMouseEnter={() => prefetchDocumentMetadata(doc)}
                 >
                   <div className="flex items-center gap-3">
-                    {getFileIcon(doc.file.url)}
+                    {isPdfUrl(doc.file.url) ? (
+                      <FileText className="h-4 w-4" />
+                    ) : isImageUrl(doc.file.url) ? (
+                      <ImageIcon className="h-4 w-4" />
+                    ) : (
+                      <File className="h-4 w-4" />
+                    )}
                     <div>
                       <p className="font-medium text-sm">{doc.type}</p>
                       <p className="text-xs text-muted-foreground">
@@ -475,7 +467,7 @@ export function DocumentManager() {
                     >
                       <Eye className="h-4 w-4" />
                     </Button>
-                    <Button
+                    {/* <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => handleDelete(doc._id)}
@@ -486,7 +478,17 @@ export function DocumentManager() {
                       ) : (
                         <Trash2 className="h-4 w-4 text-destructive" />
                       )}
-                    </Button>
+                    </Button> 
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setDocumentToDelete(doc);
+                        setDeleteModalOpen(true);
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>*/}
                   </div>
                 </div>
               ))}
@@ -495,7 +497,7 @@ export function DocumentManager() {
         </CardContent>
       </Card>
 
-      {/* Document Preview Modal */}
+      {/* Document Preview Modal – simplified to mirror Admin behavior */}
       <Dialog
         open={!!viewingDocument}
         onOpenChange={() => setViewingDocument(null)}
@@ -508,30 +510,11 @@ export function DocumentManager() {
                 {isLoadingMetadata && (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 )}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    if (viewingDocument?.file.url) {
-                      window.open(viewingDocument.file.url, '_blank');
-                    }
-                  }}
-                >
+                <Button variant="outline" size="sm" onClick={openInNewTab}>
                   <ExternalLink className="h-4 w-4 mr-2" />
                   Open in New Tab
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    if (viewingDocument?.file.url) {
-                      const link = document.createElement('a');
-                      link.href = viewingDocument.file.url;
-                      link.download = viewingDocument.file.url.split('/').pop() || 'document';
-                      link.click();
-                    }
-                  }}
-                >
+                <Button variant="outline" size="sm" onClick={downloadFile}>
                   <Download className="h-4 w-4 mr-2" />
                   Download
                 </Button>
@@ -542,99 +525,45 @@ export function DocumentManager() {
           {viewingDocument && (
             <div className="flex-1 min-h-0 flex flex-col">
               <div className="flex-1 overflow-auto border rounded-lg bg-muted/20">
-                {(() => {
-                  const url = viewingDocument.file.url;
-                  const isPdf = url.toLowerCase().endsWith(".pdf");
-                  const isImage = /\.(jpg|jpeg|png|gif|webp|bmp)$/i.test(url);
-
-                  if (isPdf) {
-                    return (
-                      <div className="w-full h-full min-h-[70vh]">
-                        <iframe
-                          src={`${url}#toolbar=1&navpanes=1&scrollbar=1`}
-                          className="w-full h-full border-0"
-                          title={`Preview of ${viewingDocument.type}`}
-                          loading="lazy"
-                          onError={() => {
-                            console.error("PDF iframe failed to load");
-                          }}
-                        />
-                        
-                        {/* Fallback for PDF */}
-                        <div className="w-full h-full  flex-col items-center justify-center p-8 text-center hidden">
-                          <FileText className="h-16 w-16 text-muted-foreground mb-4" />
-                          <p className="text-lg font-medium mb-2">PDF Preview Unavailable</p>
-                          <p className="text-muted-foreground mb-4">
-                            Your browser or server settings prevent PDF preview
-                          </p>
-                          <div className="space-x-2">
-                            <Button
-                              onClick={() => window.open(url, '_blank')}
-                              className="flex items-center gap-2"
-                            >
-                              <ExternalLink className="h-4 w-4" />
-                              Open in New Tab
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  } else if (isImage) {
-                    return (
-                      <div className="w-full h-full flex items-center justify-center p-4 min-h-[70vh]">
-                        <div className="relative w-full h-full max-w-full max-h-full">
-                          <Image
-                            src={url}
-                            alt={`Preview of ${viewingDocument.type}`}
-                            fill
-                            className="object-contain"
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
-                            onError={(e) => {
-                              console.error("Image failed to load:", url);
-                              const target = e.target as HTMLImageElement;
-                              const container = target.parentElement;
-                              if (container) {
-                                container.innerHTML = `
-                                  <div class="flex flex-col items-center justify-center h-full text-muted-foreground">
-                                    <div class="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
-                                      <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                      </svg>
-                                    </div>
-                                    <p class="text-lg font-medium mb-2">Image Preview Unavailable</p>
-                                    <p class="text-center mb-4">Failed to load image. The file might be corrupted or access restricted.</p>
-                                  </div>
-                                `;
-                              }
-                            }}
-                            unoptimized
-                            priority
-                          />
-                        </div>
-                      </div>
-                    );
-                  } else {
-                    return (
-                      <div className="flex flex-col items-center justify-center h-full text-muted-foreground p-8 min-h-[70vh]">
-                        <File className="h-16 w-16 mb-4" />
-                        <p className="text-lg font-medium mb-2">Preview Not Available</p>
-                        <p className="text-center mb-4">
-                          Preview not supported for this file type: {url.split('.').pop()?.toUpperCase()}
-                        </p>
-                        <Button
-                          onClick={() => window.open(url, '_blank')}
-                          className="flex items-center gap-2"
-                        >
-                          <ExternalLink className="h-4 w-4" />
-                          Open in New Tab
-                        </Button>
-                      </div>
-                    );
-                  }
-                })()}
+                <div className="relative w-full h-[70vh] bg-gray-100 rounded-lg overflow-hidden">
+                  {isPdf ? (
+                    <iframe
+                      src={currentUrl}
+                      className="w-full h-full"
+                      title="PDF Preview"
+                    />
+                  ) : isImage ? (
+                    <Image
+                      src={currentUrl}
+                      alt={`Preview of ${viewingDocument.type}`}
+                      fill
+                      className="object-contain"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
+                      unoptimized
+                      priority
+                    />
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center p-8 text-center">
+                      <File className="h-16 w-16 mb-4 text-muted-foreground" />
+                      <p className="text-lg font-medium mb-2">
+                        Preview Not Available
+                      </p>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        This file type can’t be previewed here.
+                      </p>
+                      <Button
+                        onClick={openInNewTab}
+                        className="flex items-center gap-2"
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                        Open in New Tab
+                      </Button>
+                    </div>
+                  )}
+                </div>
               </div>
 
-              {/* Document Details with Metadata */}
+              {/* Metadata (kept same styling) */}
               <div className="mt-4 p-3 bg-muted/30 rounded-lg text-sm">
                 <div className="grid grid-cols-2 gap-2">
                   <div>
@@ -646,29 +575,33 @@ export function DocumentManager() {
                     <span className="font-medium">Date:</span>{" "}
                     {new Date(viewingDocument.createdAt).toLocaleDateString()}
                   </div>
-                  <div>
+                  <div className="col-span-2 md:col-span-1">
                     <span className="font-medium">File Name:</span>{" "}
-                    {viewingDocument.file.url.split("/").pop()}
+                    {currentUrl.split("/").pop()}
                   </div>
-                  {documentMetadata?.size && (
+                  {typeof metadata?.size === "number" && (
                     <div>
                       <span className="font-medium">File Size:</span>{" "}
-                      {formatFileSize(documentMetadata.size)}
+                      {formatFileSize(metadata.size)}
                     </div>
                   )}
-                  {documentMetadata?.contentType && (
+                  {metadata?.contentType && (
                     <div className="col-span-2">
                       <span className="font-medium">Content Type:</span>{" "}
-                      {documentMetadata.contentType}
-                    </div>
-                  )}
-                  {metadataError && (
-                    <div className="col-span-2 text-yellow-600">
-                      <span className="font-medium">Note:</span> Could not fetch file metadata
+                      {metadata.contentType}
                     </div>
                   )}
                 </div>
               </div>
+              <DeleteModal
+                isOpen={deleteModalOpen}
+                onClose={() => setDeleteModalOpen(false)}
+                documentName={documentToDelete?.type}
+                onConfirm={() => {
+                  if (documentToDelete) handleDelete(documentToDelete._id);
+                  setDocumentToDelete(null);
+                }}
+              />
             </div>
           )}
         </DialogContent>
