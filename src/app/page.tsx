@@ -8,6 +8,7 @@ import WhyAlhHub from "@/components/landing/WhyAlhHub";
 
 import FindCare from "@/components/shared/FindPerfectCare";
 import Hero from "@/components/shared/Hero";
+import StillHaveQuestions from "@/components/shared/StillHaveQuestions";
 
 export default function Home() {
   return (
@@ -27,6 +28,7 @@ export default function Home() {
       <SimilarBlogs />
       <ResidentialFacility />
       <FAQ />
+      <StillHaveQuestions />
     </main>
   );
 }

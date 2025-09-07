@@ -562,8 +562,8 @@ export const createReview = async (
 //fetch review data
 
 export async function fetchReviews(
-  facilityId: string, 
-  page: number, 
+  facilityId: string,
+  page: number,
   limit: number
 ) {
   try {
@@ -577,7 +577,6 @@ export async function fetchReviews(
     }
   }
 }
-
 
 //get facilities review by facilites
 
@@ -885,8 +884,8 @@ export async function getDashboardSummery(): Promise<DashboardSummary> {
 }
 
 // dashboard/referral/saving
-interface referreldata{
-referralFees?: number;
+interface referreldata {
+  referralFees?: number;
   referralRate?: number;
   savings?: number;
   standardReferralFee?: number;
@@ -894,7 +893,7 @@ referralFees?: number;
   totalWithModel?: number;
 }
 interface dashboardrefarel {
-  data:referreldata;
+  data: referreldata;
 }
 export async function getDashboardreferral(): Promise<dashboardrefarel> {
   try {
@@ -903,6 +902,24 @@ export async function getDashboardreferral(): Promise<dashboardrefarel> {
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(`Error fetching dashboard summary: ${error.message}`);
+    }
+    throw error;
+  }
+}
+
+// Renew Subscription API
+export async function createRenewSubscription() {
+  try {
+    const payload = {
+      type: "subscription",
+      billingCycle: "monthly",
+      referenceId: "68b4ed69a567031ce353a880",
+    };
+    const res = await api.post(`/payment/pay`, payload);
+    return res.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Renew Subscription Error: ${error.message}`);
     }
     throw error;
   }
