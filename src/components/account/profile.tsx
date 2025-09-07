@@ -305,7 +305,7 @@ export default function ProfilePage() {
           </Card>
 
           {/* Profile Form */}
-          <Card className="lg:w-2/3 p-[33px]">
+          <Card className="lg:w-2/3 p-[33px] ">
             <CardHeader>
               <CardTitle className="text-[32px] text-[#343A40]">
                 Personal Information
