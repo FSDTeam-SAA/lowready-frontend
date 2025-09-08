@@ -62,7 +62,7 @@ export function ReviewCard({ review }: ReviewCardProps) {
             </div>
           </div>
 
-          <div className="flex items-center gap-1 text-gray-600">
+          <div className="flex items-center gap-1 text-gray-600 italic">
             <span className="text-sm">{review.comment}</span>
           </div>
         </div>
