@@ -25,6 +25,7 @@ const AllReviewCard = () => {
     queryFn: () => fetchReviews(facilityId, page, REVIEWS_PER_PAGE),
   });
 
+  console.log(reviewsResponse)
   const reviews = reviewsResponse?.data || [];
   const totalPages = reviewsResponse?.meta.totalPages || 1;
 

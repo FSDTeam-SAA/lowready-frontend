@@ -753,7 +753,7 @@ export default function AddFacilityPage() {
                           />
                           <p className="text-xs text-gray-500">
                             Supported formats: MP4, MOV, AVI, MKV, WebM, FLV,
-                            WMV (Max: 100MB)
+                            WMV (Max: 5MB)
                           </p>
                         </div>
                       </div>
@@ -762,10 +762,20 @@ export default function AddFacilityPage() {
                         id="video-upload"
                         accept="video/*"
                         onFileChange={handleVideoUpload}
-                        label="Upload Video (Drag & Drop)"
+                        label="Upload Video (Choose File)"
                         selectedFile={selectedVideo?.name}
-                        description="Browse and choose a video file to upload (max 100MB)"
+                        description="Browse and choose a video file to upload (max 5MB)"
                       >
+                        <Button
+                          type="button"
+                          onClick={() =>
+                            document.getElementById("video-upload")?.click()
+                          }
+                          className="w-[3/4] mb-4"
+                        >
+                           Upload Video (Choose File)
+                        </Button>
+
                         {selectedVideo && (
                           <div className="mt-4 p-3 bg-blue-50 rounded-lg">
                             <div className="flex items-center justify-between">
@@ -784,16 +794,14 @@ export default function AddFacilityPage() {
                                   Type: {selectedVideo.type || "Unknown"}
                                 </p>
                               </div>
-                              <button
+                              <Button
                                 type="button"
-                                onClick={() => {
-                                  setSelectedVideo(null);
-                                }}
+                                onClick={() => handleVideoUpload}
                                 className="text-red-500 hover:text-red-700 p-1"
                                 title="Remove video"
                               >
                                 <X className="h-4 w-4" />
-                              </button>
+                              </Button>
                             </div>
                           </div>
                         )}
@@ -978,7 +986,7 @@ export default function AddFacilityPage() {
                     </div>
 
                     {/* Photo Grid */}
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className="grid grid-cols-3 sticky gap-2">
                       {selectedImages.map((image, index) => {
                         const imageUrl = URL.createObjectURL(image);
                         return (

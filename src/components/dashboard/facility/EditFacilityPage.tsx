@@ -331,7 +331,7 @@ export default function EditFacilityPage() {
     "Supervisory Care",
     "Memory Care",
     "Respite and Short Term Care",
-    "Behavioural Care",
+    
   ];
 
   // Utility functions

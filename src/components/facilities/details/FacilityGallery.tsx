@@ -165,7 +165,7 @@ export function FacilityGallery({ data }: FacilityTourProps) {
             <p className="text-[20px] font-semibold text-[#343A40]">Pricing</p>
             <p className="text-3xl md:text-[40px] font-bold text-green-600">
               ${datas?.price || 2200}{" "}
-              <span className="text-[16px] font-medium">/ month</span>
+              <span className="text-[16px] font-medium text-[#8E938F]">/ month</span>
             </p>
             <div className="space-x-2 pt-[20px] md:pt-[80px] flex cursor-pointer justify-between">
               <Link

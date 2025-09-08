@@ -170,7 +170,7 @@ export default function FacilityCard({ facility }: FacilityCardProps) {
               className="w-1/2 h-full cursor-pointer"
               href={`/facilities/details/${facility?._id}`}
             >
-            <Button  className="w-full cursor-pointer flex-1 h-10 border-green-600"
+            <Button  className="w-full cursor-pointer flex-1 h-10 border-[#28A745] text-[#28A745] hover:text-[#28A745]"
                                 variant="outline">
                 See Details
             </Button>
