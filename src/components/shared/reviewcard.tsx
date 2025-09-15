@@ -13,10 +13,10 @@ interface ReviewCardProps {
 
 export function ReviewCard({ review }: ReviewCardProps) {
   // Concatenate first and last name
-  const fullName = `${review.userId.firstName} ${review.userId.lastName}`;
+  const fullName = `${review.userId?.firstName} ${review.userId?.lastName}`;
   
   // Use facility address or fallback to facility name
-  const location = review.facility.address || review.facility.name;
+  const location = review.facility?.address || review.facility?.name;
   
   return (
     <Card className="w-full h-full overflow-hidden bg-white shadow-xs hover:shadow-sm transition-shadow duration-300">
@@ -62,7 +62,7 @@ export function ReviewCard({ review }: ReviewCardProps) {
             </div>
           </div>
 
-          <div className="flex items-center gap-1 text-gray-600">
+          <div className="flex items-center gap-1 text-gray-600 italic">
             <span className="text-sm">{review.comment}</span>
           </div>
         </div>
