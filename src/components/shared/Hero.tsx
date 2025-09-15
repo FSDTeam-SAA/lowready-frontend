@@ -1,17 +1,31 @@
-// import CheckboxHorizontalGroupDemo from "../customized/checkbox/checkbox-04";
+"use client";
+
+import Image from "next/image";
 import { SearchBar } from "../customized/searchbar/searchbar";
 
 const Hero = () => {
   return (
     <section className="md:min-h-svh mt-8">
-      <div  className="container px-8 mx-auto h-[calc(100vh-150px)] priority md:h-[calc(100svh-120px)] sm:h-[calc(100svh-100px)] rounded-md bg-cover bg-no-repeat bg-center bg-black/60 bg-blend-overlay bg-[url('/images/hero.jpg')]">
+      <div className="relative container px-8 mx-auto h-[calc(100vh-150px)] md:h-[calc(100svh-120px)] sm:h-[calc(100svh-100px)] rounded-md overflow-hidden">
+        {/* Optimized Background Image */}
+        <Image
+          src="/images/hero.jpg"
+          alt="Hero background"
+          fill
+          className="object-cover brightness-75"
+          priority
+        />
+
+        {/* Dark Overlay */}
+        <div className="absolute inset-0 bg-black/40" />
+
         {/* Content */}
-        <div className="flex flex-col items-center justify-center h-full text-white text-center px-6 sm:px-6 lg:px-8">
+        <div className="relative flex flex-col items-center justify-center h-full text-white text-center px-6 sm:px-6 lg:px-8">
           <h1 className="text-xl sm:text-2xl md:text-6xl mb-0 md:mb-6 font-bold max-w-4xl font-playfair leading-tight">
             Every Senior Deserves a Place That{" "}
             <span className="text-green-500">Feels Like Home</span>
           </h1>
-          <p className="mt-6 md:mt-10 text-sm sm:text-[12px] md:text-base max-w-5xl leading-relaxed ">
+          <p className="mt-6 md:mt-10 text-sm sm:text-[12px] md:text-base max-w-5xl leading-relaxed">
             At ALH Hub, we believe every senior deserves a place where care
             meets comfort. Our platform helps families connect directly with
             trusted assisted living facilities, making it easier to find a safe

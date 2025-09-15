@@ -3,12 +3,8 @@
 
 import { ConfirmBookingModal } from "@/components/shared/ConfirmBookingModal";
 import { Button } from "@/components/ui/button";
-import {
-  AmenityService,
-  BookingType,
-  createBooking,
-  Facility,
-} from "@/lib/api";
+import { Skeleton } from "@/components/ui/skeleton"; // ✅ import Skeleton
+import { BookingType, createBooking, Facility, ImageType } from "@/lib/api";
 import { useMutation } from "@tanstack/react-query";
 import { Dot, MapPin } from "lucide-react";
 import { useSession } from "next-auth/react";
@@ -20,9 +16,10 @@ import { toast } from "sonner";
 
 interface FacilityTourProps {
   data: { data: Facility };
+  isLoading: boolean;
 }
 
-export function FacilityGallery({ data }: FacilityTourProps) {
+export function FacilityGallery({ data, isLoading }: FacilityTourProps) {
   const datas = data?.data || {};
   const router = useRouter();
   const { data: session } = useSession();
@@ -31,19 +28,17 @@ export function FacilityGallery({ data }: FacilityTourProps) {
   const userRole = session?.user?.role || "";
 
   const [previewImage, setPreviewImage] = useState(
-    datas?.images?.[0]?.url || "/default-image.png"
+    datas?.images?.[0]?.url || "/"
   );
   const [modalOpen, setModalOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [bookingData, setBookingData] = useState<BookingType | undefined>();
 
   useEffect(() => {
-    if ((datas?.amenitiesServices ?? []).length > 0) {
-      setPreviewImage(
-        datas.amenitiesServices?.[0]?.image?.url || "/default-image.png"
-      );
+    if ((datas?.images ?? []).length > 0) {
+      setPreviewImage(datas?.images?.[0]?.url || "/default-image.png");
     }
-  }, [datas.amenitiesServices]);
+  }, [datas.images]);
 
   const createBookingMutation = useMutation({
     mutationKey: ["booking"],
@@ -62,20 +57,17 @@ export function FacilityGallery({ data }: FacilityTourProps) {
   }
 
   const handleNewBooking = () => {
-    // ✅ Authentication check
     if (!session) {
       toast.error("Please login first to book a tour.");
-      router.push("/login"); // redirect to login
+      router.push("/login");
       return;
     }
 
-    // ✅ Role check
     if (userRole !== "user") {
       toast.error("Only users can book a tour.");
       return;
     }
 
-    // Open booking modal with default data
     setBookingData(undefined);
     setIsEdit(false);
     setModalOpen(true);
@@ -86,6 +78,38 @@ export function FacilityGallery({ data }: FacilityTourProps) {
     setBookingData(undefined);
   };
 
+  if (isLoading) {
+    // Skeleton Loader
+    return (
+      <section className="py-[36px] md:py-[80px] container mx-auto">
+        <div className="lg:flex items-center gap-[48px]">
+          {/* Skeleton Images */}
+          <div className="flex flex-col-reverse lg:w-1/2 md:flex-row gap-2 lg:gap-[24px] items-center">
+            <div className="flex overflow-hidden gap-3 md:flex-col">
+              {[1, 2, 3].map((i) => (
+                <Skeleton
+                  key={i}
+                  className="w-[105px] h-[80px] rounded-xl bg-gradient-to-r from-gray-100 via-gray-300 to-gray-200 animate-pulse"
+                />
+              ))}
+            </div>
+            <Skeleton className="w-[400px] h-[400px] lg:w-[600px] lg:h-[600px] rounded-2xl bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse" />
+          </div>
+
+          {/* Skeleton Text */}
+          <div className="lg:w-1/2 p-4 md:p-0 space-y-4">
+            <Skeleton className="w-32 h-8 rounded-md bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse" />
+            <Skeleton className="w-2/3 h-10 rounded-md bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse" />
+            <Skeleton className="w-1/2 h-6 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse" />
+            <Skeleton className="w-full h-20 rounded-md bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse" />
+            <Skeleton className="w-full h-10 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse" />
+            <Skeleton className="w-1/3 h-8 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse" />
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className=" py-[36px] md:py-[80px]">
       <div className="lg:flex items-center container mx-auto  gap-[48px] ">
@@ -93,19 +117,17 @@ export function FacilityGallery({ data }: FacilityTourProps) {
         <div className="flex flex-col-reverse lg:w-1/2 md:justify-between md:flex-row gap-2 lg:gap-[24px]  items-center mx-auto md:mx-0">
           {/* Thumbnails */}
           <div className="flex overflow-hidden gap-3 md:flex-col">
-            {datas?.amenitiesServices?.map(
-              (img: AmenityService, id: number) => (
-                <Image
-                  onClick={() => setPreviewImage(img.image.url)}
-                  key={id}
-                  src={img.image.url}
-                  alt={`${id}`}
-                  width={105}
-                  height={80}
-                  className="rounded-xl object-cover w-full h-full cursor-pointer"
-                />
-              )
-            )}
+            {datas?.images?.map((img: ImageType, id: number) => (
+              <Image
+                onClick={() => setPreviewImage(img.url)}
+                key={id}
+                src={img.url}
+                alt={`${id}`}
+                width={105}
+                height={80}
+                className="rounded-xl object-cover w-full h-full cursor-pointer"
+              />
+            ))}
           </div>
 
           {/* Main Preview */}
