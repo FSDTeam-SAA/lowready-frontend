@@ -35,7 +35,7 @@ const LayoutVisibilityWrapper = ({
   );
   return (
     <>
-        {!shouldHideLayout && <TopBanner />}
+        {/* {!shouldHideLayout && <TopBanner />} */}
       {!shouldHideLayout && <Navbar />}
       {children}
       {!shouldHideLayout && <Footer />}

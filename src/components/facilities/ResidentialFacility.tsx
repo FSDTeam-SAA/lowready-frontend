@@ -11,7 +11,7 @@ const ResidentialFacility = () => {
           title2="with families directly."
           description="Showcase your residential facility, manage tour bookings seamlessly, and build direct, meaningful connections with families looking for trusted assisted living care for their loved ones."
           buttonText="List Your Facility"
-          buttonlink="/facilities"
+          buttonlink="/signup"
         />
       </div>
     </section>
