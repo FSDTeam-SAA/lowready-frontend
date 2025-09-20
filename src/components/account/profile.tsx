@@ -484,14 +484,14 @@ export default function ProfilePage() {
                     type="button"
                     variant="outline"
                     onClick={handleDiscard}
-                    disabled={updateProfileMutation.isPending}
+                    disabled={updateProfileMutation.isPending || !isDirty}
                     className="flex-1 md:flex-none bg-transparent cursor-pointer"
                   >
                     Discard Changes
                   </Button>
                   <Button
                     type="submit"
-                    disabled={updateProfileMutation.isPending}
+                    disabled={updateProfileMutation.isPending || !isDirty}
                     className="flex-1 md:flex-none cursor-pointer bg-[#179649] hover:bg-[#33b34c]"
                   >
                     {updateProfileMutation.isPending
