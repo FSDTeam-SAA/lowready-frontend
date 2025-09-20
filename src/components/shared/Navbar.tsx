@@ -135,7 +135,6 @@ const Navbar = () => {
   const isLoggedIn = !!currentSession?.user;
   const displayAvatar = avatarUrl || undefined;
 
-  console.log("user name from navbar:", userName);
   return (
     <header className="sticky top-0 h-20 bg-white z-50 shadow-sm">
       <div className="container mx-auto px-4">
