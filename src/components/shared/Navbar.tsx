@@ -185,8 +185,12 @@ const Navbar = () => {
                       variant="ghost"
                       className="flex items-center hover:bg-destructive/0"
                     >
-                      <Avatar className="h-10 w-10 cursor-pointer">
-                        <AvatarImage src={displayAvatar} alt={userName || ""} />
+                      <Avatar className="cursor-pointer">
+                        <AvatarImage
+                          src={displayAvatar}
+                          alt={userName || ""}
+                          className="h-10 w-10 object-cover"
+                        />
                         <AvatarFallback>
                           {getInitials(userName || "")}
                         </AvatarFallback>

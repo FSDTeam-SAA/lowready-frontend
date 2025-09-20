@@ -29,12 +29,13 @@ interface ExtendedUser {
   email: string;
   gender: "male" | "female";
   bio?: string;
-  street: string;
+  street?: string;
   postCode?: number;
-  phoneNum: string;
+  phoneNum?: string;
   avatar?: {
     url: string;
   };
+  location?: string;
   createdAt: string;
 }
 
@@ -43,16 +44,25 @@ interface ExtendedSession {
   user: ExtendedUser;
 }
 
+// ✅ Updated schema with optional fields
 const profileSchema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  email: z.string().email("Invalid email address"),
-  gender: z.enum(["male", "female"]),
+  firstName: z
+    .string()
+    .min(1, "First name is required")
+    .optional()
+    .or(z.literal("")),
+  lastName: z
+    .string()
+    .min(1, "Last name is required")
+    .optional()
+    .or(z.literal("")),
+  email: z.string().email("Invalid email address").optional().or(z.literal("")),
+  gender: z.enum(["male", "female"]).optional(),
   bio: z.string().optional(),
-  street: z.string().min(1, "Street address is required"),
-  location: z.string().min(1, "Location is required"),
-  postCode: z.string().min(1, "Postal code is required"),
-  phoneNum: z.string().min(1, "Phone number is required"),
+  street: z.string().optional(),
+  location: z.string().optional(),
+  postCode: z.string().optional(),
+  phoneNum: z.string().optional(),
 });
 
 type ProfileFormData = z.infer<typeof profileSchema>;
@@ -63,7 +73,7 @@ export default function ProfilePage() {
   const queryClient = useQueryClient();
   const { data: session } = useSession();
 
-  // ✅ Fixed: Properly typed session casting
+  // ✅ Properly typed session casting
   const extendedSession = session as ExtendedSession | null;
   const accessToken = extendedSession?.accessToken;
   const userId = extendedSession?.user?.id;
@@ -110,7 +120,7 @@ export default function ProfilePage() {
         gender: userProfile.gender,
         bio: userProfile.bio || "",
         street: userProfile.street,
-        location: "Florida, USA", // static for now
+        location: userProfile.location || "",
         postCode: userProfile.postCode?.toString() || "",
         phoneNum: userProfile.phoneNum,
       });
@@ -134,7 +144,7 @@ export default function ProfilePage() {
       toast.success("Profile updated successfully");
       queryClient.invalidateQueries({ queryKey: ["userProfile", userId] });
     },
-    // ✅ Fixed: Properly typed error parameter
+    // ✅ Properly typed error parameter
     onError: (error: Error) => {
       toast.error(error.message || "Failed to update profile");
     },
@@ -151,11 +161,14 @@ export default function ProfilePage() {
 
   const onSubmit = (data: ProfileFormData) => {
     const formData = new FormData();
-    formData.append("firstName", data.firstName);
-    formData.append("lastName", data.lastName);
-    formData.append("phoneNum", data.phoneNum);
-    formData.append("address", data.street);
-    formData.append("gender", data.gender);
+
+    // Only append fields that have values
+    if (data.firstName) formData.append("firstName", data.firstName);
+    if (data.lastName) formData.append("lastName", data.lastName);
+    if (data.phoneNum) formData.append("phoneNum", data.phoneNum);
+    if (data.street) formData.append("street", data.street);
+    if (data.gender) formData.append("gender", data.gender);
+    if (data.location) formData.append("location", data.location);
     if (data.bio) formData.append("bio", data.bio);
     if (data.postCode) formData.append("postCode", data.postCode);
 
@@ -175,7 +188,7 @@ export default function ProfilePage() {
         gender: userProfile.gender,
         bio: userProfile.bio || "",
         street: userProfile.street,
-        location: "Florida, USA",
+        location: userProfile.location || "",
         postCode: userProfile.postCode?.toString() || "",
         phoneNum: userProfile.phoneNum,
       });
@@ -285,7 +298,7 @@ export default function ProfilePage() {
                   </div>
                   <div>
                     <span className="font-medium text-[#343A40] text-sm leading-[150%]">
-                      Location:
+                      Address:
                     </span>{" "}
                     <span className="text-[#68706A] text-sm">
                       {userProfile?.street}
@@ -386,11 +399,13 @@ export default function ProfilePage() {
                     htmlFor="email"
                     className="text-[16px] text-[#434C45] leading-[150%] font-medium"
                   >
-                    Email Address
+                    Email Address{" "}
+                    <span className="opacity-50 text-xs">(not editable)</span>
                   </Label>
                   <Input
                     id="email"
                     type="email"
+                    disabled
                     {...register("email")}
                     className={errors.email ? "border-[#e5102e]" : ""}
                   />
@@ -440,24 +455,6 @@ export default function ProfilePage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label
-                      htmlFor="location"
-                      className="text-[16px] text-[#434C45] leading-[150%] font-medium"
-                    >
-                      Location
-                    </Label>
-                    <Input
-                      id="location"
-                      {...register("location")}
-                      className={errors.location ? "border-[#e5102e]" : ""}
-                    />
-                    {errors.location && (
-                      <p className="text-sm text-[#e5102e]">
-                        {errors.location.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="space-y-2">
-                    <Label
                       htmlFor="postCode"
                       className="text-[16px] text-[#434C45] leading-[150%] font-medium"
                     >
@@ -468,32 +465,17 @@ export default function ProfilePage() {
                       {...register("postCode")}
                       className={errors.postCode ? "border-[#e5102e]" : ""}
                     />
-                    {errors.postCode && (
-                      <p className="text-sm text-[#e5102e]">
-                        {errors.postCode.message}
-                      </p>
-                    )}
                   </div>
-                </div>
-
-                {/* Phone */}
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="phoneNum"
-                    className="text-[16px] text-[#434C45] leading-[150%] font-medium"
-                  >
-                    Phone Number
-                  </Label>
-                  <Input
-                    id="phoneNum"
-                    {...register("phoneNum")}
-                    className={errors.phoneNum ? "border-[#e5102e]" : ""}
-                  />
-                  {errors.phoneNum && (
-                    <p className="text-sm text-[#e5102e]">
-                      {errors.phoneNum.message}
-                    </p>
-                  )}
+                  {/* Phone */}
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="phoneNum"
+                      className="text-[16px] text-[#434C45] leading-[150%] font-medium"
+                    >
+                      Phone Number
+                    </Label>
+                    <Input id="phoneNum" {...register("phoneNum")} />
+                  </div>
                 </div>
 
                 {/* Action Buttons */}
@@ -502,17 +484,14 @@ export default function ProfilePage() {
                     type="button"
                     variant="outline"
                     onClick={handleDiscard}
-                    disabled={!isDirty && !selectedFile}
+                    disabled={updateProfileMutation.isPending}
                     className="flex-1 md:flex-none bg-transparent cursor-pointer"
                   >
                     Discard Changes
                   </Button>
                   <Button
                     type="submit"
-                    disabled={
-                      updateProfileMutation.isPending ||
-                      (!isDirty && !selectedFile)
-                    }
+                    disabled={updateProfileMutation.isPending}
                     className="flex-1 md:flex-none cursor-pointer bg-[#179649] hover:bg-[#33b34c]"
                   >
                     {updateProfileMutation.isPending
