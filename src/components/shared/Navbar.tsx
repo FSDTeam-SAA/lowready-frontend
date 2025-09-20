@@ -39,6 +39,7 @@ interface UserResponse {
     lastName?: string;
     role?: string;
     _id: string;
+    email?: string;
   };
 }
 
@@ -50,6 +51,7 @@ const Navbar = () => {
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
   const [userName, setUserName] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
 
   const pathname = usePathname();
   const menuRef = useRef<HTMLDivElement>(null);
@@ -76,6 +78,7 @@ const Navbar = () => {
         }
         setUserName(data.data.firstName + " " + data.data.lastName);
         setUserRole(data.data.role || null);
+        setUserEmail(data.data.email || null);
       } catch (error) {
         console.error("Error fetching user avatar:", error);
         setAvatarUrl(null);
@@ -83,7 +86,7 @@ const Navbar = () => {
     };
 
     fetchUser();
-  }, [session?.user?.id]);
+  }, [session?.user?.id, session?.user?.email]);
 
   // Close mobile menu when clicking outside
   useEffect(() => {
@@ -195,7 +198,7 @@ const Navbar = () => {
                           {userName}
                         </div>
                         <div className="text-sm text-muted-foreground cursor-pointer">
-                          {userRole}
+                          {userEmail}
                         </div>
                       </div>
                     </Button>
@@ -226,10 +229,7 @@ const Navbar = () => {
             <div className="md:hidden flex items-center gap-2">
               {isLoggedIn && (
                 <Avatar className="h-8 w-8">
-                  <AvatarImage
-                    src={displayAvatar}
-                    alt={currentSession.user.name || ""}
-                  />
+                  <AvatarImage src={displayAvatar} alt={userName || ""} />
                   <AvatarFallback>{getInitials(userName || "")}</AvatarFallback>
                 </Avatar>
               )}
@@ -293,7 +293,7 @@ const Navbar = () => {
                   <div className="flex flex-col text-left">
                     <div className="font-medium">{userName}</div>
                     <div className="text-sm text-muted-foreground">
-                      {userRole}
+                      {userEmail}
                     </div>
                   </div>
                 </Button>
