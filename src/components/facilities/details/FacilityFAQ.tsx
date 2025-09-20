@@ -114,11 +114,13 @@ const FacilityFAQ = () => {
             </p>
 
             <div className="mt-6 sm:mt-8">
-              <Link href='/contact-us'>
-              
-              <Button size="lg" className="w-full sm:w-[200px] cursor-pointer">
-                Contact Us
-              </Button>
+              <Link href="/contact-us">
+                <Button
+                  size="lg"
+                  className="w-full sm:w-[200px] cursor-pointer"
+                >
+                  Contact Us
+                </Button>
               </Link>
             </div>
           </div>
