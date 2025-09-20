@@ -8,7 +8,6 @@ import { createReview, fetchReviews } from "@/lib/api";
 import { toast } from "sonner";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 
 // ---------------- Types ----------------
 export interface Review {
@@ -121,18 +120,6 @@ export function FacilityReviews({ facilityId, userId }: FacilityReviewsProps) {
       </section>
     );
   }
-
-  // if (reviewsError) {
-  //   return (
-  //     <section className="my-12 px-4 max-w-6xl mx-auto">
-  //       <div className="flex justify-center items-center h-64">
-  //         <div className="text-lg text-red-600">
-  //           Error loading reviews. Please try again.
-  //         </div>
-  //       </div>
-  //     </section>
-  //   );
-  // }
 
   return (
     <section className="my-12 px-4 max-w-6xl mx-auto">

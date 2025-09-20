@@ -35,7 +35,8 @@ interface UserResponse {
   message: string;
   data: {
     avatar?: UserAvatar;
-    name?: string;
+    firstName?: string;
+    lastName?: string;
     role?: string;
     _id: string;
   };
@@ -47,6 +48,8 @@ const Navbar = () => {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
+  const [userName, setUserName] = useState<string | null>(null);
+  const [userRole, setUserRole] = useState<string | null>(null);
 
   const pathname = usePathname();
   const menuRef = useRef<HTMLDivElement>(null);
@@ -71,6 +74,8 @@ const Navbar = () => {
         } else {
           setAvatarUrl(null);
         }
+        setUserName(data.data.firstName + " " + data.data.lastName);
+        setUserRole(data.data.role || null);
       } catch (error) {
         console.error("Error fetching user avatar:", error);
         setAvatarUrl(null);
@@ -127,11 +132,9 @@ const Navbar = () => {
   );
 
   const isLoggedIn = !!currentSession?.user;
-  const displayAvatar = avatarUrl || currentSession?.user?.image || undefined;
+  const displayAvatar = avatarUrl || undefined;
 
-
-  
-
+  console.log("user name from navbar:", userName);
   return (
     <header className="sticky top-0 h-20 bg-white z-50 shadow-sm">
       <div className="container mx-auto px-4">
@@ -139,7 +142,12 @@ const Navbar = () => {
           {/* Logo */}
           <div className="flex-shrink-0 cursor-pointer flex items-center">
             <Link href="/">
-              <Image src="/images/Logo.png" alt="logo" width={150} height={48} />
+              <Image
+                src="/images/Logo.png"
+                alt="logo"
+                width={150}
+                height={48}
+              />
             </Link>
           </div>
 
@@ -172,22 +180,22 @@ const Navbar = () => {
               <div className="hidden md:block">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="flex items-center hover:bg-destructive/0">
+                    <Button
+                      variant="ghost"
+                      className="flex items-center hover:bg-destructive/0"
+                    >
                       <Avatar className="h-10 w-10 cursor-pointer">
-                        <AvatarImage
-                          src={displayAvatar}
-                          alt={currentSession.user.name || ""}
-                        />
+                        <AvatarImage src={displayAvatar} alt={userName || ""} />
                         <AvatarFallback>
-                          {getInitials(currentSession.user.name)}
+                          {getInitials(userName || "")}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex flex-col text-left">
                         <div className="font-medium cursor-pointer">
-                          {currentSession.user.name}
+                          {userName}
                         </div>
                         <div className="text-sm text-muted-foreground cursor-pointer">
-                          {currentSession.user.role}
+                          {userRole}
                         </div>
                       </div>
                     </Button>
@@ -222,7 +230,7 @@ const Navbar = () => {
                     src={displayAvatar}
                     alt={currentSession.user.name || ""}
                   />
-                  <AvatarFallback>{getInitials(currentSession.user.name)}</AvatarFallback>
+                  <AvatarFallback>{getInitials(userName || "")}</AvatarFallback>
                 </Avatar>
               )}
               <Button
@@ -277,15 +285,16 @@ const Navbar = () => {
                   onClick={() => setLogoutModalOpen(true)}
                 >
                   <Avatar className="h-8 w-8">
-                    <AvatarImage
-                      src={displayAvatar}
-                      alt={currentSession.user.name || ""}
-                    />
-                    <AvatarFallback>{getInitials(currentSession.user.name)}</AvatarFallback>
+                    <AvatarImage src={displayAvatar} alt={userName || ""} />
+                    <AvatarFallback>
+                      {getInitials(userName || "")}
+                    </AvatarFallback>
                   </Avatar>
                   <div className="flex flex-col text-left">
-                    <div className="font-medium">{currentSession.user.name}</div>
-                    <div className="text-sm text-muted-foreground">{currentSession.user.role}</div>
+                    <div className="font-medium">{userName}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {userRole}
+                    </div>
                   </div>
                 </Button>
               ) : (

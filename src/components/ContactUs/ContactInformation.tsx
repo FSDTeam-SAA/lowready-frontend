@@ -1,61 +1,6 @@
-"use client";
-
 import { Mail, MapPin, Phone } from "lucide-react";
-import { useState } from "react";
 
 export default function ContactInformation() {
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phoneNumber: "",
-    message: "",
-  });
-  const [loading, setLoading] = useState(false);
-  const [responseMessage, setResponseMessage] = useState("");
-
-  const base_url = process.env.NEXT_PUBLIC_API_URL;
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setResponseMessage("");
-
-    try {
-      const res = await fetch(`${base_url}/contactUs/send-message`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await res.json();
-
-      if (data.success) {
-        setResponseMessage("✅ " + data.message);
-        setFormData({
-          firstName: "",
-          lastName: "",
-          email: "",
-          phoneNumber: "",
-          message: "",
-        });
-      } else {
-        setResponseMessage("❌ Something went wrong. Please try again.");
-      }
-    } catch (error) {
-      console.error(error);
-      setResponseMessage("❌ Server error. Please try later.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <div className="bg-gray-50 py-5 md:py-16">
       <div className="mx-auto container ">
