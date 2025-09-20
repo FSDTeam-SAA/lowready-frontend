@@ -94,7 +94,7 @@ const MobileFilterSheet = ({
     setFilters({
       minPrice: 0,
       maxPrice: 1000000,
-      location: "Dhaka",
+      location: "",
       availability: true,
       rating: undefined,
       careServices: [],
@@ -350,7 +350,7 @@ const DesktopFiltersSidebar = ({
     setFilters({
       minPrice: 0,
       maxPrice: 1000000,
-      location: "USA",
+      location: "",
       availability: true,
       rating: undefined,
       careServices: [],

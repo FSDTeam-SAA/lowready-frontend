@@ -187,7 +187,9 @@ export function FacilityGallery({ data, isLoading }: FacilityTourProps) {
             <p className="text-[20px] font-semibold text-[#343A40]">Pricing</p>
             <p className="text-3xl md:text-[40px] font-bold text-green-600">
               ${datas?.price || 2200}{" "}
-              <span className="text-[16px] font-medium text-[#8E938F]">/ month</span>
+              <span className="text-[16px] font-medium text-[#8E938F]">
+                / month
+              </span>
             </p>
             <div className="space-x-2 pt-[20px] md:pt-[80px] flex cursor-pointer justify-between">
               <Link
@@ -205,7 +207,7 @@ export function FacilityGallery({ data, isLoading }: FacilityTourProps) {
                 className="flex-1 cursor-pointer bg-green-600 hover:bg-green-700 h-10 text-white"
                 onClick={handleNewBooking}
               >
-                Book a Tour
+                Browse Our Featured Facilities
               </Button>
             </div>
           </div>
