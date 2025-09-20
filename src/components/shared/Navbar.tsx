@@ -50,7 +50,6 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
   const [userName, setUserName] = useState<string | null>(null);
-  const [userRole, setUserRole] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
 
   const pathname = usePathname();
@@ -77,7 +76,6 @@ const Navbar = () => {
           setAvatarUrl(null);
         }
         setUserName(data.data.firstName + " " + data.data.lastName);
-        setUserRole(data.data.role || null);
         setUserEmail(data.data.email || null);
       } catch (error) {
         console.error("Error fetching user avatar:", error);
