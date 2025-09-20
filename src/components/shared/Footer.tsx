@@ -111,13 +111,13 @@ const Footer = () => {
             <h3 className="font-semibold text-lg">Contact Us</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li className="flex gap-2 items-center">
-                <Mail size={15} /> support@albinhub.com
+                <Mail size={15} /> support@alhhub.com
               </li>
               <li className="flex gap-2 items-center">
-                <Phone size={15} /> +1 (555) 123-4567
+                <Phone size={15} /> +1 (602) 247-7559
               </li>
               <li className="flex gap-2 items-center">
-                <MapPin size={15} /> 123 Core Street, City, State, 2P
+                <MapPin size={15} /> 11263 E Unger Ave Mesa, AZ 85212
               </li>
             </ul>
           </div>

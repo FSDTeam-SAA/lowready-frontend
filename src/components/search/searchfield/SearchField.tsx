@@ -121,7 +121,6 @@ export default function SearchField() {
   // Fetch locations
   const { data: locationdata } = useQuery({
     queryKey: ["locationdata"],
-
     queryFn: facilitiesLocation,
   });
 

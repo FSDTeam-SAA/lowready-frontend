@@ -1,7 +1,7 @@
-"use client"
+"use client";
 import React from "react";
 import Navbar from "@/components/shared/Navbar";
-import TopBanner from "@/components/shared/TopBanner";
+// import TopBanner from "@/components/shared/TopBanner";
 import Footer from "@/components/shared/Footer";
 import { usePathname } from "next/navigation";
 
@@ -13,14 +13,13 @@ const HIDDEN_ROUTES = [
   "/verify",
   "/verify-otp",
   "/dashboard",
-  '/signinaspage',
-  '/forget-otp',
-  '/forget-password',
-  '/account/profile',
-  '/account/change-password',
-  '/account/booking-history',
-  '/account/tour-history'
-  
+  "/signinaspage",
+  "/forget-otp",
+  "/forget-password",
+  "/account/profile",
+  "/account/change-password",
+  "/account/booking-history",
+  "/account/tour-history",
 ];
 
 const LayoutVisibilityWrapper = ({
@@ -35,7 +34,7 @@ const LayoutVisibilityWrapper = ({
   );
   return (
     <>
-        {!shouldHideLayout && <TopBanner />}
+      {/* {!shouldHideLayout && <TopBanner />} */}
       {!shouldHideLayout && <Navbar />}
       {children}
       {!shouldHideLayout && <Footer />}

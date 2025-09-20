@@ -184,7 +184,7 @@ export default function ChangePasswordPage() {
 
   return (
     <DashboardLayout>
-      <div className="max-w-6xl mx-auto space-y-8">
+      <div className="space-y-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Profile Card */}
           <Card className="lg:w-1/3">

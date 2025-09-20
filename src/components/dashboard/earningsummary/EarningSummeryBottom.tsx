@@ -11,12 +11,11 @@ import { useQuery } from "@tanstack/react-query";
 import { MapPin } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import React, { useState } from "react";
 
 const EarningSummeryBottom = () => {
   const { data: session } = useSession();
 
-  const [currentPage, setCurrentPage] = useState(1);
+  const currentPage = 1;
   const itemsPerPage = 10;
   const { data: recentPlacement } = useQuery({
     queryKey: ["bookings", session],
