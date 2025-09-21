@@ -15,7 +15,6 @@ export default function Gallary() {
               src="/gallary/gallery1.jpg"
               alt="Gallery Image 1"
               fill
-              
               className="object-cover aspect-auto rounded-xl transform transition-transform duration-300 hover:scale-105"
             />
           </div>
