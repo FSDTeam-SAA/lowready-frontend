@@ -16,7 +16,7 @@ export function FacilityAbout() {
       </p>
 
       <h2 className="text-[20px] pt-[32px]">
-        Why Choose Sunny Hills Assisted Living?
+        Trusted, transparent, and easy to use—everything families need
       </h2>
       <ul className="list-disc pl-6 mt-4 space-y-1">
         <li>
