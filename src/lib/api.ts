@@ -694,7 +694,7 @@ export async function FacilitySearchData(
   filters: FacilityFilters
 ): Promise<FacilitySearchResponse> {
   try {
-    const res = await api.get(`/facility/all`, { params: filters });
+    const res = await api.get(`/facility/all?isFeatured=true`, { params: filters });
     return res.data as FacilitySearchResponse;
   } catch (error) {
     console.error("Error fetching facilities:", error);
@@ -703,7 +703,7 @@ export async function FacilitySearchData(
 }
 export async function getallFacilities(): Promise<FacilitySearchResponse> {
   try {
-    const res = await api.get(`/facility/all`);
+    const res = await api.get(`/facility/all?isFeatured=true`);
     return res.data as FacilitySearchResponse;
   } catch (error) {
     console.error("Error fetching facilities:", error);
