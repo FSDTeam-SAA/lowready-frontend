@@ -19,6 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { createContactUs } from "@/lib/api";
 import { toast } from "sonner";
+import Link from "next/link";
 
 const formSchema = z.object({
   firstName: z.string().min(1, "First Name is required"),
@@ -33,7 +34,6 @@ const formSchema = z.object({
 
 export default function GetInTouch() {
   const [loading, setLoading] = useState(false);
- 
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -54,7 +54,7 @@ export default function GetInTouch() {
         firstName: values.firstName,
         lastName: values.lastName,
         email: values.email,
-        phoneNumber: values.phone,  
+        phoneNumber: values.phone,
         message: values.message,
       };
 
@@ -62,7 +62,7 @@ export default function GetInTouch() {
 
       toast.success("Your message has been sent successfully!");
       form.reset();
-    } catch  {
+    } catch {
       toast.error("Failed to send message.");
     } finally {
       setLoading(false);
@@ -196,19 +196,19 @@ export default function GetInTouch() {
                     </FormControl>
                     <span className="text-sm text-gray-600">
                       You agree to our friendly{" "}
-                      <a
-                        href="#"
+                      <Link
+                        href="/terms-conditions"
                         className="text-green-600 underline cursor-pointer"
                       >
                         Terms & Conditions
-                      </a>{" "}
+                      </Link>{" "}
                       and{" "}
-                      <a
-                        href="#"
+                      <Link
+                        href="/privacy-policy"
                         className="text-green-600 underline cursor-pointer"
                       >
                         Privacy Policy
-                      </a>
+                      </Link>
                       .
                     </span>
                     <FormMessage />

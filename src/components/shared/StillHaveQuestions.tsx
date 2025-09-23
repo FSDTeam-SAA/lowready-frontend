@@ -1,10 +1,10 @@
+import Link from "next/link";
 import React from "react";
+import { Button } from "../ui/button";
 
 export default function StillHaveQuestions() {
   return (
-    <section
-      className={`bg-[#F8F9FA] py-20`}>
-
+    <section className={`bg-[#F8F9FA] py-20`}>
       <div className="container mx-auto px-4  bg-[url(/images/BG.png)] bg-no-repeat">
         {/* Inner card/container background */}
         <div className=" py-16 rounded-xl relative overflow-hidden">
@@ -21,14 +21,16 @@ export default function StillHaveQuestions() {
               reach out anytime.
             </p>
 
-            <form className="flex flex-col sm:flex-row justify-center items-center gap-2">
-              <button
-                type="submit"
-                className="bg-primary text-white px-8 py-3 rounded-md hover:bg-green-700 transition-colors duration-300 w-full sm:w-auto cursor-pointer"
-              >
-                Contact Us
-              </button>
-            </form>
+            <div className="mt-6 sm:mt-8">
+              <Link href="/contact-us">
+                <Button
+                  size="lg"
+                  className="w-full sm:w-[200px] cursor-pointer"
+                >
+                  Contact Us
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </div>

@@ -5,7 +5,7 @@ const FindCare = ({
   imageSrc = "/images/findcare.jpg", // Default background image
   heading = "Ready to find the perfect care for your loved one?", // Default heading
   subHeading = "Easily search, compare, and connect with trusted assisted living facilities, helping your loved ones find a safe, comfortable, and supportive environment while giving you peace of mind every step of the way.", // Default subheading
-  buttonText = "Book a Tour Now", // Default button text
+  buttonText = "Browse Our Featured Facilities", // Default button text
   showButton = true, // Flag to conditionally render the button
   buttonlink = "/facilities"
 }) => {
@@ -30,7 +30,7 @@ const FindCare = ({
           {showButton && (
             <div className="mt-8">
               <Link href={buttonlink} >
-              <Button size="lg" className="w-[200px] text-[16px] cursor-pointer">
+              <Button size="lg" className="text-[16px] cursor-pointer">
                 {buttonText}
               </Button>
               </Link>

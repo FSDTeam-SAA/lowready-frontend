@@ -111,6 +111,7 @@ const Footer = () => {
             <h3 className="font-semibold text-lg">Contact Us</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li className="flex gap-2 items-center">
+                <Mail size={15} /> support@alhhub.com
                 <Mail size={15} />  support@alhhub.com
               </li>
               <li className="flex gap-2 items-center">

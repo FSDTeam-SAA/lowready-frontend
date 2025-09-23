@@ -7,6 +7,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createReview, fetchReviews } from "@/lib/api";
 import { toast } from "sonner";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 // ---------------- Types ----------------
 export interface Review {
@@ -48,19 +49,16 @@ export function FacilityReviews({ facilityId, userId }: FacilityReviewsProps) {
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [reviewText, setReviewText] = useState("");
-
+  const session = useSession();
   const queryClient = useQueryClient();
 
   // ✅ Fetch reviews query
-  const {
-    data: reviewsResponse,
-    isLoading: isLoadingReviews,
-   
-  } = useQuery<ReviewResponse>({
-    queryKey: ["reviews", facilityId],
-    queryFn: () => fetchReviews(facilityId,1,10),
-    enabled: !!facilityId,
-  });
+  const { data: reviewsResponse, isLoading: isLoadingReviews } =
+    useQuery<ReviewResponse>({
+      queryKey: ["reviews", facilityId],
+      queryFn: () => fetchReviews(facilityId, 1, 10),
+      enabled: !!facilityId,
+    });
 
   // ✅ Create review mutation
   const createReviewMutation = useMutation({
@@ -69,8 +67,7 @@ export function FacilityReviews({ facilityId, userId }: FacilityReviewsProps) {
       queryClient.invalidateQueries({ queryKey: ["reviews", facilityId] });
       setRating(0);
       setReviewText("");
-      toast.success(`Review created successfully
-`);
+      toast.success(`Review created successfully`);
     },
     onError: (err) => {
       toast.error(err?.message || "Failed to create review");
@@ -79,6 +76,11 @@ export function FacilityReviews({ facilityId, userId }: FacilityReviewsProps) {
 
   const handleSubmitReview = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (session.status !== "authenticated") {
+      toast.error("You must be logged in to submit a review");
+      return;
+    }
 
     if (!rating || !reviewText.trim()) {
       toast.error("Please provide both rating and comment");
@@ -118,18 +120,6 @@ export function FacilityReviews({ facilityId, userId }: FacilityReviewsProps) {
       </section>
     );
   }
-
-  // if (reviewsError) {
-  //   return (
-  //     <section className="my-12 px-4 max-w-6xl mx-auto">
-  //       <div className="flex justify-center items-center h-64">
-  //         <div className="text-lg text-red-600">
-  //           Error loading reviews. Please try again.
-  //         </div>
-  //       </div>
-  //     </section>
-  //   );
-  // }
 
   return (
     <section className="my-12 px-4 max-w-6xl mx-auto">
@@ -177,7 +167,6 @@ export function FacilityReviews({ facilityId, userId }: FacilityReviewsProps) {
                 No reviews yet. Be the first to leave a review!
               </div>
             )}
-
           </div>
 
           {/* Form Column */}

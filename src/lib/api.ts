@@ -924,3 +924,13 @@ export async function createRenewSubscription() {
     throw error;
   }
 }
+
+// get all FAQ
+export async function getAllFaq() {
+  try {
+    const res = await api.get(`/faq/all`);
+    return res.data;
+  } catch {
+    throw new Error(`Failed to fetch All FAQ`);
+  }
+}

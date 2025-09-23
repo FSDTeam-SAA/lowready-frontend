@@ -39,7 +39,8 @@ const FacilitiesBrowse = () => {
       <div className="container mx-auto py-8 lg:py-20">
         <div className="text-center mb-12">
           <h2 className="md:text-4xl font-bold text-gray-900 mb-4">
-            Browse All<span className="text-green-600 pl-2">Facilities</span>
+            Browse Our
+            <span className="text-green-600 pl-2">Featured Facilities</span>
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto leading-relaxed">
             Find a wide range of assisted living facilities tailored to
@@ -72,15 +73,17 @@ const FacilitiesBrowse = () => {
                 Previous
               </Button>
 
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
-                <Button
-                  key={num}
-                  variant={page === num ? "default" : "outline"}
-                  onClick={() => setPage(num)}
-                >
-                  {num}
-                </Button>
-              ))}
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                (num) => (
+                  <Button
+                    key={num}
+                    variant={page === num ? "default" : "outline"}
+                    onClick={() => setPage(num)}
+                  >
+                    {num}
+                  </Button>
+                )
+              )}
 
               <Button
                 variant="outline"
