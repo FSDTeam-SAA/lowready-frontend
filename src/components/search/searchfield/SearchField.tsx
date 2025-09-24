@@ -241,7 +241,7 @@ export default function SearchField() {
               <p>Loading facilities...</p>
             ) : facilities.length > 0 ? (
               <>
-                <div className="pb-6 md:pb-[80px]">
+                <div className="pb-6 md:pb-[32px]">
                   <h2 className="text-[24px] md:text-[40px] font-bold leading-[150%] text-[#343A40] font-playfair">
                     Facilities near {filters.location} -{" "}
                     <span className="text-[#28A745]">
