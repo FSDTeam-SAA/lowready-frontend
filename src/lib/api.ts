@@ -925,10 +925,20 @@ export async function createRenewSubscription() {
   }
 }
 
+// get all FAQ Home 
+export async function getAllFaqHome() {
+  try {
+    const res = await api.get(`/faq/all?page=home`);
+    return res.data;
+  } catch {
+    throw new Error(`Failed to fetch All FAQ`);
+  }
+}
+
 // get all FAQ
 export async function getAllFaq() {
   try {
-    const res = await api.get(`/faq/all`);
+    const res = await api.get(`/faq/all?page=faq`);
     return res.data;
   } catch {
     throw new Error(`Failed to fetch All FAQ`);
