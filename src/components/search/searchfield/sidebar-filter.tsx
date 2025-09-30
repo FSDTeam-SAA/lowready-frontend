@@ -20,27 +20,29 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { SearchFilters } from "./SearchField";
+// import { number, string } from "zod";
 
 interface Location {
   _id: string;
   location: string;
 }
 
-interface FacilityFilters {
-  minPrice: number;
-  maxPrice?: number;
-  location: string;
-  availability: boolean;
-  rating?: number;
-  careServices: string[];
-  amenities: string[];
-  page: number;
-  limit: number;
-}
+// interface FacilityFilters {
+//   minPrice: number;
+//   maxPrice?: number;
+//   location: string;
+//   availability: string[];
+//   rating?: number;
+//   careServices: string[];
+//   amenities: string[];
+//   page: number;
+//   limit: number;
+// }
 
 interface FiltersSidebarProps {
-  filters: FacilityFilters;
-  setFilters: (filters: FacilityFilters) => void;
+  filters: SearchFilters;
+  setFilters: (filters: SearchFilters) => void;
   locations: Location[];
   minPriceInput: string;
   maxPriceInput: string;
@@ -95,8 +97,8 @@ const MobileFilterSheet = ({
       minPrice: 0,
       maxPrice: 1000000,
       location: "",
-      availability: true,
-      rating: undefined,
+      availability: ["available", "unavailable", "limited"],
+      rating: 0,
       careServices: [],
       amenities: [],
       page: 1,
@@ -131,7 +133,7 @@ const MobileFilterSheet = ({
       <SheetTrigger asChild>
         <Button
           variant="outline"
-          className="lg:hidden fixed bottom-4 right-4 z-50 shadow-lg border-green-500 border-1"
+          className="lg:hidden fixed bottom-4 right-4 z-[999999999999] shadow-lg border-green-500 border-1 "
           size="lg"
         >
           <Filter className="w-4 h-4 mr-2" />
@@ -145,8 +147,8 @@ const MobileFilterSheet = ({
       </SheetTrigger>
       <SheetContent side="bottom" className="h-[90vh] overflow-y-auto">
         <SheetHeader className="pb-4 border-b">
-          <SheetTitle className="flex items-center justify-between">
-            <span>Filters</span>
+          <SheetTitle className="flex items-center justify-between  mt-5">
+            <span >Filters</span>
             <Button
               variant="ghost"
               size="sm"
@@ -217,18 +219,28 @@ const MobileFilterSheet = ({
 
           {/* Availability */}
           <FilterSection title="Availability">
-            <div className="flex items-center space-x-3">
-              <Checkbox
-                id="availability"
-                checked={filters.availability ?? true}
-                onCheckedChange={(val) =>
-                  setFilters({ ...filters, availability: !!val })
-                }
-              />
-              <label htmlFor="availability" className="text-sm cursor-pointer">
-                Show only available facilities
-              </label>
-            </div>
+            {["available", "unavailable", "limited"].map((status) => (
+              <div key={status} className="flex items-center gap-2">
+                <Checkbox
+                  id={`availability-${status}`}
+                  checked={filters.availability.includes(status)}
+                  onCheckedChange={(checked) => {
+                    setFilters({
+                      ...filters,
+                      availability: checked
+                        ? [...filters.availability, status]
+                        : filters.availability.filter((s) => s !== status),
+                    });
+                  }}
+                />
+                <label
+                  htmlFor={`availability-${status}`}
+                  className="capitalize cursor-pointer"
+                >
+                  {status}
+                </label>
+              </div>
+            ))}
           </FilterSection>
 
           {/* Ratings */}
@@ -248,11 +260,17 @@ const MobileFilterSheet = ({
                   />
                   <label
                     htmlFor={`rating-${star}`}
-                    className="flex items-center cursor-pointer"
+                    className="flex items-center cursor-pointer gap-2"
                   >
-                    {star}{" "}
-                    <Star className="w-4 h-4 text-yellow-500 ml-1 fill-current" />
-                    <span className="ml-1 text-sm text-gray-600">& above</span>
+                    {star}
+                    <span className="flex items-center">
+                      {[...Array(star)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className="w-4 h-4 text-yellow-500 fill-current"
+                        />
+                      ))}
+                    </span>
                   </label>
                 </div>
               ))}
@@ -351,8 +369,8 @@ const DesktopFiltersSidebar = ({
       minPrice: 0,
       maxPrice: 1000000,
       location: "",
-      availability: true,
-      rating: undefined,
+      availability: ["available", "unavailable", "limited"],
+      rating: 0,
       careServices: [],
       amenities: [],
       page: 1,
@@ -393,16 +411,31 @@ const DesktopFiltersSidebar = ({
       {/* Availability */}
       <div>
         <h3 className="font-semibold mb-3">Availability</h3>
-        <div className="flex items-center gap-2">
-          <Checkbox
-            checked={filters.availability ?? true}
-            onCheckedChange={(val) =>
-              setFilters({ ...filters, availability: !!val })
-            }
-          />
-          <span>Available</span>
-        </div>
+        {["available", "unavailable", "limited"].map((status) => (
+          <div key={status} className="flex items-center gap-2">
+            <Checkbox
+              id={`availability-${status}`}
+              checked={filters.availability.includes(status)}
+              onCheckedChange={(checked) => {
+                setFilters({
+                  ...filters,
+                  availability: checked
+                    ? [...filters.availability, status]
+                    : filters.availability.filter((s) => s !== status),
+                });
+              }}
+            />
+            <label
+              htmlFor={`availability-${status}`}
+              className="capitalize cursor-pointer"
+            >
+              {status}
+            </label>
+          </div>
+        ))}
       </div>
+
+      {/* </div> */}
 
       {/* Locations */}
       <div>
@@ -433,8 +466,9 @@ const DesktopFiltersSidebar = ({
         <h3 className="font-semibold mb-3">Ratings</h3>
         <div className="space-y-2">
           {[5, 4, 3, 2, 1].map((star) => (
-            <div key={star} className="flex items-center space-x-2">
+            <div key={star} className="flex items-center space-x-3">
               <Checkbox
+                id={`rating-${star}`}
                 checked={filters.rating === star}
                 onCheckedChange={() =>
                   setFilters({
@@ -443,10 +477,20 @@ const DesktopFiltersSidebar = ({
                   })
                 }
               />
-              <span className="flex items-center">
-                {star}{" "}
-                <Star className="w-4 h-4 text-yellow-500 ml-1 fill-current" />
-              </span>
+              <label
+                htmlFor={`rating-${star}`}
+                className="flex items-center cursor-pointer gap-2"
+              >
+                {star}
+                <span className="flex items-center">
+                  {[...Array(star)].map((_, i) => (
+                    <Star
+                      key={i}
+                      className="w-4 h-4 text-yellow-500 fill-current"
+                    />
+                  ))}
+                </span>
+              </label>
             </div>
           ))}
         </div>
