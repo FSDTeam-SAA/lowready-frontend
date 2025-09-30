@@ -7,9 +7,10 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { CirclePlus, CircleMinus } from "lucide-react";
-import { useAllFaq } from "@/hooks/useAllFaq";
+import { useAllFaqHome } from "@/hooks/useAllFaq";
+import FaqSkeleton from "../FaqSection/FaqSkelaton";
 
-// ✅ Define a type for FAQ items
+//  Define a type for FAQ items
 interface FaqItem {
   _id: string;
   question: string;
@@ -19,18 +20,11 @@ interface FaqItem {
 }
 
 const FAQ = () => {
-  const { data: faq, isLoading, isError } = useAllFaq();
+  const { data: faq, isLoading, isError } = useAllFaqHome();
   const [openItem, setOpenItem] = useState<string | null>(null);
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center py-16">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
-        <p className="ml-4 text-gray-600 text-lg font-medium">
-          Loading FAQs...
-        </p>
-      </div>
-    );
+    return <FaqSkeleton />;
   }
 
   if (isError || !faq?.data?.length) {
