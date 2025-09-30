@@ -602,7 +602,7 @@ export interface FacilityFilters {
   rating?: number;
   minPrice?: number | string;
   maxPrice?: number | string;
-  availability?: boolean;
+  availability?:  string;
 }
 
 // ---------- Sub-types ----------
@@ -694,7 +694,7 @@ export async function FacilitySearchData(
   filters: FacilityFilters
 ): Promise<FacilitySearchResponse> {
   try {
-    const res = await api.get(`/facility/all?isFeatured=true`, { params: filters });
+    const res = await api.get(`/facility/all`, { params: filters });
     return res.data as FacilitySearchResponse;
   } catch (error) {
     console.error("Error fetching facilities:", error);

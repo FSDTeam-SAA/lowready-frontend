@@ -29,12 +29,12 @@ interface Location {
   location: string;
 }
 
-interface SearchFilters {
+export interface SearchFilters {
   minPrice: number;
   maxPrice: number;
   location: string;
-  availability: boolean;
-  rating: number;
+  availability: string[];
+  rating?: number;
   careServices: string[];
   amenities: string[];
   page: number;
@@ -48,9 +48,9 @@ export default function SearchField() {
   // Initialize with required fields for FiltersSidebar
   const [filters, setFilters] = useState<SearchFilters>({
     minPrice: 0,
-    maxPrice: 100000000000000,
+    maxPrice: 1000000,
     location: initialLocation,
-    availability: true,
+    availability: [],
     rating: 0,
     careServices: [],
     amenities: [],
@@ -65,7 +65,7 @@ export default function SearchField() {
     minPrice: localFilters.minPrice,
     maxPrice: localFilters.maxPrice,
     location: localFilters.location,
-    availability: localFilters.availability,
+    availability: localFilters.availability.join(","),
     rating: localFilters.rating,
     careServices: localFilters.careServices,
     amenities: localFilters.amenities,
@@ -74,19 +74,21 @@ export default function SearchField() {
   });
 
   // Convert API filters to our internal format
-  const convertFromApiFilters = (
-    apiFilters: FacilityFilters
-  ): SearchFilters => ({
-    minPrice: Number(apiFilters.minPrice) || 0,
-    maxPrice: Number(apiFilters.maxPrice) || 1000000,
-    location: apiFilters.location || initialLocation,
-    availability: apiFilters.availability ?? true,
-    rating: Number(apiFilters.rating) || 0,
-    careServices: apiFilters.careServices || [],
-    amenities: apiFilters.amenities || [],
-    page: apiFilters.page || 1,
-    limit: apiFilters.limit || 6,
-  });
+  // const convertFromApiFilters = (
+  //   apiFilters: FacilityFilters
+  // ): SearchFilters => ({
+  //   minPrice: Number(apiFilters.minPrice) || 0,
+  //   maxPrice: Number(apiFilters.maxPrice) || 1000000,
+  //   location: apiFilters.location || initialLocation,
+  //   availability: apiFilters.availability
+  //     ? apiFilters?.availability?.split(",")
+  //     : [],
+  //   rating: Number(apiFilters.rating) || 0,
+  //   careServices: apiFilters.careServices || [],
+  //   amenities: apiFilters.amenities || [],
+  //   page: apiFilters.page || 1,
+  //   limit: apiFilters.limit || 6,
+  // });
 
   const { data: session } = useSession();
   const userId = session?.user?.id || "";
@@ -106,14 +108,14 @@ export default function SearchField() {
 
   // handler for min price
   const handleMinPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value.replace(/^0+(?=\d)/, ""); // remove leading zeros
+    const val = e.target.value.replace(/^0+(?=\d)/, "");
     setMinPriceInput(val);
     setFilters({ ...filters, minPrice: Number(val) || 0 });
   };
 
   // handler for max price
   const handleMaxPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value.replace(/^0+(?=\d)/, ""); // remove leading zeros
+    const val = e.target.value.replace(/^0+(?=\d)/, "");
     setMaxPriceInput(val);
     setFilters({ ...filters, maxPrice: Number(val) || 0 });
   };
@@ -155,9 +157,30 @@ export default function SearchField() {
   const totalPages = facilitie?.totalPages || 1;
 
   // ---------- Handlers ----------
+  // const handleLocationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setFilters({ ...filters, location: e.target.value });
+  //   setIsSearching(e.target.value.length > 0);
+  // };
+
+  // inside handleLocationChange
   const handleLocationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFilters({ ...filters, location: e.target.value });
-    setIsSearching(e.target.value.length > 0);
+    const val = e.target.value;
+    setFilters((prev) => {
+      // Logic: adjust availability based on input
+      let availability = { available: true, unavailable: true, limited: true };
+
+      if (val.length > 0) {
+        // Example: only available and limited if input exists
+        availability = { available: true, unavailable: false, limited: true };
+      } else {
+        // Reset to all true if empty
+        availability = { available: true, unavailable: true, limited: true };
+      }
+
+      return { ...prev, location: val, ...availability };
+    });
+
+    setIsSearching(val.length > 0);
   };
 
   const handleNewBooking = (facility: Facility) => {
@@ -225,9 +248,7 @@ export default function SearchField() {
           {/* Left Sidebar Filters */}
           <FiltersSidebar
             filters={filters}
-            setFilters={(newFilters: FacilityFilters) => {
-              setFilters(convertFromApiFilters(newFilters));
-            }}
+            setFilters={setFilters}
             locations={locations}
             minPriceInput={minPriceInput}
             maxPriceInput={maxPriceInput}
