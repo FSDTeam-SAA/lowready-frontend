@@ -70,7 +70,7 @@ export default function GetInTouch() {
   }
   return (
     <div className="bg-[#F8F9FA] py-2 md:py-10">
-      <div className="container mx-auto bg-[#FFF] rounded-2xl shadow-sm grid grid-cols-1 md:grid-cols-2">
+      <div className="container mx-auto bg-[#FFF] rounded-2xl shadow-sm grid grid-cols-1 md:grid-cols-2 ">
         {/* Left side: Form */}
         <div className="p-10 order-1 md:order-1">
           <h2
@@ -229,7 +229,7 @@ export default function GetInTouch() {
         </div>
 
         {/* Right side: Image */}
-        <div className="relative h-64 md:h-auto order-2 md:order-2">
+        <div className="relative h-64 md:h-auto order-2 md:order-2 ">
           <Image
             src="/contact/contactImage2.jpg"
             alt="This is Contact Image"
