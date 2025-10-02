@@ -22,7 +22,7 @@ export default function Home() {
         imageSrc="/images/findcare.jpg"
         heading="Ready to find the perfect care for your loved one?"
         subHeading="Easily search, compare, and connect with trusted assisted living facilities, helping your loved ones find a safe, comfortable, and supportive environment while giving you peace of mind every step of the way."
-        buttonText="Browse Our Featured Facilities"
+        buttonText="Book a Tour"
         showButton={true}
       />
       <SimilarBlogs />
