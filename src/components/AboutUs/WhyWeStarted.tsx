@@ -51,7 +51,7 @@ export default function WhyWeStarted() {
             {/* Image Section */}
             <div className="rounded-lg overflow-hidden shadow-md order-1 md:order-2">
               <Image
-                src="/about/aboutImage4.png"
+                src="/about/gallery2.jpg"
                 alt="Two women talking over tea"
                 width={800}
                 height={700}
