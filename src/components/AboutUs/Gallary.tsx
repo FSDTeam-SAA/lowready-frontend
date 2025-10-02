@@ -38,7 +38,7 @@ export default function Gallary() {
           {/* Row 2 */}
           <div className="lg:col-span-3 relative h-56 sm:h-64 lg:h-72 overflow-hidden rounded-xl">
             <Image
-              src="/gallary/gallery4.jpg"
+              src="/gallary/gallery10.jpg"
               alt="Gallery Image 4"
               fill
               className="object-cover aspect-auto rounded-xl transform transition-transform duration-300 hover:scale-105"
