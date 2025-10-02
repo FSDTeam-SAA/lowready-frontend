@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -215,6 +215,10 @@ export default function SearchField() {
     setBookingData(undefined);
     // setSelectedFacility(null);
   };
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [filters]);
 
   return (
     <div className="relative container mx-auto w-full min-h-screen bg-white">
