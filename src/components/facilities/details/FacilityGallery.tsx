@@ -207,7 +207,7 @@ export function FacilityGallery({ data, isLoading }: FacilityTourProps) {
                 className="flex-1 cursor-pointer bg-green-600 hover:bg-green-700 h-10 text-white"
                 onClick={handleNewBooking}
               >
-                Browse Our Featured Facilities
+                Book a Tour
               </Button>
             </div>
           </div>
