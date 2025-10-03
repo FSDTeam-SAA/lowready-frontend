@@ -29,7 +29,7 @@ const handler = NextAuth({
           // ✅ return user object
           return {
             id: data.data._id,
-            name: data.data.name || data.data.email || "",
+            name: `${data.data.firstName} ${data.data.lastName}` || "",
             email: data.data.email,
             role: data.data.role,
             accessToken: data.data.accessToken,

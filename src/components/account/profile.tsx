@@ -23,11 +23,11 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 // ✅ Type definitions for better type safety
 interface ExtendedUser {
-  id: string;
-  firstName: string;
-  lastName: string;
+  id?: string;
+  firstName?: string;
+  lastName?: string;
   email: string;
-  gender: "male" | "female";
+  gender?: "male" | "female";
   bio?: string;
   street?: string;
   postCode?: number;
@@ -73,6 +73,7 @@ export default function ProfilePage() {
   const queryClient = useQueryClient();
   const { data: session } = useSession();
 
+
   // ✅ Properly typed session casting
   const extendedSession = session as ExtendedSession | null;
   const accessToken = extendedSession?.accessToken;
@@ -98,6 +99,8 @@ export default function ProfilePage() {
     enabled: !!userId && !!accessToken,
   });
 
+
+
   // ✅ React Hook Form Setup
   const {
     register,
@@ -114,9 +117,9 @@ export default function ProfilePage() {
   useEffect(() => {
     if (userProfile) {
       reset({
-        firstName: userProfile.firstName,
-        lastName: userProfile.lastName,
-        email: userProfile.email,
+        firstName: userProfile?.firstName,
+        lastName: userProfile?.lastName,
+        email: userProfile?.email,
         gender: userProfile.gender,
         bio: userProfile.bio || "",
         street: userProfile.street,
@@ -163,9 +166,9 @@ export default function ProfilePage() {
     const formData = new FormData();
 
     // Only append fields that have values
-    if (data.firstName) formData.append("firstName", data.firstName);
-    if (data.lastName) formData.append("lastName", data.lastName);
-    if (data.phoneNum) formData.append("phoneNum", data.phoneNum);
+    if (data?.firstName) formData.append("firstName", data?.firstName);
+    if (data?.lastName) formData.append("lastName", data?.lastName);
+    if (data?.phoneNum) formData.append("phoneNum", data.phoneNum);
     if (data.street) formData.append("street", data.street);
     if (data.gender) formData.append("gender", data.gender);
     if (data.location) formData.append("location", data.location);
