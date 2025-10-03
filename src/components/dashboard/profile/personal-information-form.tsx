@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Crown } from "lucide-react";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 
 type FormDataType = {
   gender: string;
@@ -27,14 +28,14 @@ type FormDataType = {
 
 const initialFormData: FormDataType = {
   gender: "female",
-  firstName: "Olivia",
-  lastName: "Rhye",
-  email: "bessieedwards@gmail.com",
-  phoneNum: "+1 (555) 123-4567",
-  bio: "This is  ipsum dolor sit amet, consectetur adipiscing elit.",
-  address: "1234 Oak Avenue, San Francisco, CA 94102A",
-  location: "Florida, USA",
-  postCode: "30301",
+  firstName: "",
+  lastName: "",
+  email: "",
+  phoneNum: "",
+  bio: "",
+  address: "",
+  location: "",
+  postCode: "",
   photo: null,
 };
 
@@ -82,6 +83,8 @@ export function PersonalInformationForm() {
   const [hasChanges, setHasChanges] = useState(false);
   const queryClient = useQueryClient();
   const { data: session } = useSession();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [userData, setUserData] = useState<any>({});
 
   const updateProfileMutation = useMutation({
     mutationFn: () => updateUserProfile(formData, session?.accessToken || ""),
@@ -107,10 +110,53 @@ export function PersonalInformationForm() {
 
   const handleSave = () => updateProfileMutation.mutate();
   const handleDiscard = () => {
-    setFormData(initialFormData);
+    setFormData(userDataToFormData(userData));
     setHasChanges(false);
   };
 
+  // Convert API userData to formData
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const userDataToFormData = (data: any): FormDataType => ({
+    gender: (data.gender || "female") as string,
+    firstName: (data.firstName || "N/A") as string,
+    lastName: (data.lastName || "N/A") as string,
+    email: (data.email || "N/A") as string,
+    phoneNum: (data.phoneNum || "N/A") as string,
+    bio: (data.bio || "N/A") as string,
+    address: (data.street || "N/A") as string,
+    location: (data.location || "N/A") as string,
+    postCode: (data.postCode || "N/A") as string,
+    photo: data.avatar?.url || null, // photo remains File | string | null
+  });
+  // Fetch user data
+  useEffect(() => {
+    async function fetchUserData() {
+      if (session?.user?.id) {
+        try {
+          const res = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/user/${session.user.id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${session?.accessToken}`,
+              },
+            }
+          );
+          const data = await res.json();
+          setUserData(data?.data);
+        } catch (err) {
+          console.error("Failed to fetch user data:", err);
+        }
+      }
+    }
+    fetchUserData();
+  }, [session]);
+
+  // Update formData when userData changes
+  useEffect(() => {
+    if (userData) {
+      setFormData(userDataToFormData(userData));
+    }
+  }, [userData]);
 
   return (
     <div className="overflow-hidden ">
@@ -150,7 +196,7 @@ export function PersonalInformationForm() {
             </div>
           </RadioGroup>
 
-          {/* Text Inputs - 2x2 Grid Layout */}
+          {/* Text Inputs - 2x2 Grid */}
           <div className="grid grid-cols-2 gap-4">
             {["firstName", "lastName", "email", "phoneNum"].map((field) => (
               <div key={field} className="space-y-2">
@@ -172,7 +218,7 @@ export function PersonalInformationForm() {
             ))}
           </div>
 
-          {/* Remaining inputs below */}
+          {/* Remaining inputs */}
           {["bio", "address", "location", "postCode"].map((field) => (
             <div key={field} className="space-y-2">
               <Label className="capitalize text-sm font-medium text-gray-700">
@@ -207,7 +253,7 @@ export function PersonalInformationForm() {
           ))}
 
           {/* Photo Upload */}
-          <div className="space-y-2 ">
+          <div className="space-y-2">
             <Label className="text-sm font-medium text-gray-700">
               Profile Photo
             </Label>
@@ -218,6 +264,13 @@ export function PersonalInformationForm() {
                 handleInputChange("photo", e.target.files?.[0] || null)
               }
             />
+            {formData.photo && typeof formData.photo === "string" && (
+              <Image
+                src={formData.photo}
+                alt="Profile"
+                className="w-20 h-20 object-cover rounded-full mt-2"
+              />
+            )}
             {formData.photo instanceof File && (
               <p className="text-xs text-gray-500">
                 Selected: {formData.photo.name}

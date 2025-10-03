@@ -529,25 +529,25 @@ export default function DashboardPage() {
                 </div>
               ) : reviewRating?.data && reviewRating.data.length > 0 ? (
                 // Display actual reviews
-                reviewRating.data.slice(0, 2).map((review) => (
+                reviewRating?.data?.slice(0, 2).map((review) => (
                   <div
-                    key={review._id}
+                    key={review?._id}
                     className="p-4 rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors space-y-3"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
                           <span className="text-sm font-medium text-gray-600">
-                            {review.userId.firstName.charAt(0)}
-                            {review.userId.lastName.charAt(0)}
+                            {review?.userId?.firstName?.charAt(0)}
+                            {review?.userId?.lastName.charAt(0)}
                           </span>
                         </div>
                         <div>
                           <p className="text-sm font-medium text-gray-900">
-                            {review.userId.firstName} {review.userId.lastName}
+                            {review?.userId?.firstName} {review?.userId?.lastName}
                           </p>
                           <p className="text-xs text-gray-500">
-                            {review.userId.email}
+                            {review?.userId?.email}
                           </p>
                         </div>
                       </div>

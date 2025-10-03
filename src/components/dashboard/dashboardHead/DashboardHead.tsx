@@ -91,6 +91,13 @@ const navigation = [
   },
 ];
 
+type UserData = {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  avatar?: { url?: string };
+};
+
 export function DashboardHeader() {
   const { data: session } = useSession();
   const pathname = usePathname();
@@ -98,6 +105,7 @@ export function DashboardHeader() {
   const [openNotifications, setOpenNotifications] = useState(false);
   const [openLogoutModal, setOpenLogoutModal] = useState(false);
   const [profileImage, setProfileImage] = useState();
+  const [userData, setUserData] = useState<UserData>({});
 
   // Fetch organization avatar if role is "organization"
   useEffect(() => {
@@ -113,8 +121,9 @@ export function DashboardHeader() {
             }
           );
           const data = await res.json();
-          console.log("This is data", data);
+          // console.log("This is data", data);
           const imageUrl = data?.data?.avatar?.url;
+          setUserData(data?.data);
           setProfileImage(imageUrl);
         } catch (err) {
           console.error("Failed to fetch organization avatar:", err);
@@ -162,19 +171,19 @@ export function DashboardHeader() {
                       className="object-cover w-full h-full"
                     /> */}
                   <Avatar className="h-12 w-12 border-4 border-white shadow-lg object-cover">
-                    <AvatarImage src={profileImage} alt={session.user.name} />
+                    <AvatarImage src={profileImage} alt={session?.user?.name} />
                     <AvatarFallback className="text-base font-semibold">
-                      {session.user.name[0]?.toUpperCase() || ""}
-                      {session.user.name[0]?.toUpperCase() || ""}
+                      {(userData.firstName?.[0] ?? "") +
+                        (userData.lastName?.[0] ?? "")}
                     </AvatarFallback>
                   </Avatar>
                   {/* </div> */}
                   <div className="hidden md:flex flex-col">
                     <h2 className="text-[16px] font-medium text-[#343A40] leading-[150%]">
-                      {session.user.name}
+                      {userData?.firstName} {userData?.lastName}
                     </h2>
                     <p className="text-[12px] font-normal text-[#8E938F] leading-[150%]">
-                      {session.user.email}
+                      {userData?.email}
                     </p>
                   </div>
                 </div>
