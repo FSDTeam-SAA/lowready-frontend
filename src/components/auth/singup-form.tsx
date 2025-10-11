@@ -258,12 +258,12 @@ const SingupForm = () => {
                         </FormControl>
                         <FormLabel className="text-sm text-gray-600">
                           I agree to ALH Hub&apos;s{" "}
-                          <a href="/terms" className="text-green-600 underline">
+                          <a href="/terms-conditions" className="text-green-600 underline">
                             Terms & Conditions
                           </a>{" "}
                           and{" "}
                           <a
-                            href="/privacy"
+                            href="/privacy-policy"
                             className="text-green-600 underline"
                           >
                             Privacy Policy
