@@ -21,8 +21,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { CalendarIcon, Plus, X } from "lucide-react";
+// import { Textarea } from "@/components/ui/textarea";
+import { CalendarIcon } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -31,14 +31,14 @@ import {
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import { useState, useEffect } from "react";
+import {  useEffect } from "react";
 import { BookingType } from "@/lib/api";
 
 // ✅ Validation schema
 const bookingSchema = z.object({
-  residentName: z.string().min(1, "Full Name is required"),
-  dob: z.date("Date of Birth is required"),
-  gender: z.string().min(1, "Gender is required"),
+  residentName: z.string().optional(),
+  dob: z.date().optional(),
+  gender: z.string().optional(),
   specialNeeds: z.string().optional(),
   medicalInfo: z.string().optional(),
   bookerName: z.string().min(1, "Full Name is required"),
@@ -47,8 +47,9 @@ const bookingSchema = z.object({
   email: z.string().email("Invalid email"),
   facility: z.string().min(1, "Facility is required"),
   roomType: z.string().min(1, "Room type is required"),
+  serviceType:z.string().optional(),
   admissionDate: z.date("Admission Date is required"),
-  duration: z.string().min(1, "Duration is required"),
+  duration: z.string().optional(),
 });
 
 export type BookingFormValues = z.infer<typeof bookingSchema>;
@@ -82,12 +83,13 @@ export function ConfirmBookingModal({
       email: "",
       facility: "",
       roomType: "",
+      serviceType:"",
       admissionDate: undefined,
       duration: "",
     },
   });
 
-  const [addperson, setAddPerson] = useState<number[]>([1]);
+  // const [addperson, setAddPerson] = useState<number[]>([1]);
 
   // Reset form when apiData changes or modal opens/closes
   useEffect(() => {
@@ -121,12 +123,14 @@ export function ConfirmBookingModal({
       facility: values.facility,
       userId: apiData?.userId ?? "",
       startingDate: values.admissionDate.toISOString(),
-      duration: values.duration,
+      duration: values?.duration || '',
+      roomType:values.roomType,
+      serviceType:values.serviceType || '',
       paymentStatus: isEdit ? apiData?.paymentStatus || "pending" : "pending",
       residentialInfo: [
         {
-          name: values.residentName,
-          dateOfBirth: values.dob.toISOString().split("T")[0],
+          name: values?.residentName || '',
+          dateOfBirth: values?.dob?.toISOString().split("T")[0] || '',
           gender: values.gender as "male" | "female" | "other",
           requirements: values.specialNeeds,
         },
@@ -166,8 +170,8 @@ export function ConfirmBookingModal({
             onSubmit={form.handleSubmit(onSubmit)}
             className="space-y-8 p-6"
           >
-            {/* Resident Info */}
-            <div>
+            
+            {/* <div>
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold text-[20px] text-[#434C45] mb-2">
                   Resident Information
@@ -199,7 +203,7 @@ export function ConfirmBookingModal({
                     )}
                   </div>
                   <div className="grid grid-cols-2 gap-4 relative">
-                    {/* Full Name */}
+               
                     <FormField
                       control={form.control}
                       name="residentName"
@@ -216,7 +220,7 @@ export function ConfirmBookingModal({
                       )}
                     />
 
-                    {/* Gender */}
+                 
                     <FormField
                       control={form.control}
                       name="gender"
@@ -233,7 +237,7 @@ export function ConfirmBookingModal({
                               <option value="">Select gender</option>
                               <option value="male">Male</option>
                               <option value="female">Female</option>
-                              <option value="other">Other</option>
+                             
                             </select>
                           </FormControl>
                           <FormMessage />
@@ -241,7 +245,7 @@ export function ConfirmBookingModal({
                       )}
                     />
 
-                    {/* Special Needs */}
+                  
                     <FormField
                       control={form.control}
                       name="specialNeeds"
@@ -260,32 +264,16 @@ export function ConfirmBookingModal({
                       )}
                     />
 
-                    {/* Medical Info */}
-                    {/* <FormField
-                      control={form.control}
-                      name="medicalInfo"
-                      render={({ field }) => (
-                        <FormItem className="col-span-2 relative">
-                          <FormLabel>Medical Information</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Upload or attach info"
-                              {...field}
-                            />
-                          </FormControl>
-                          <Paperclip className="absolute right-3 top-9 h-4 w-4 text-gray-400" />
-                        </FormItem>
-                      )}
-                    /> */}
+                   
                   </div>
                 </div>
               ))}
-            </div>
+            </div> */}
 
             {/* Booker Info */}
             <div>
               <h3 className="font-semibold text-[20px] text-[#434C45] mb-2">
-                Booker Information
+                Your Information
               </h3>
               <div className="grid grid-cols-2 gap-4">
                 <FormField
@@ -360,7 +348,7 @@ export function ConfirmBookingModal({
                 Booking Information
               </h3>
               <div className="grid grid-cols-2 gap-4">
-                <FormField
+                {/* <FormField
                   control={form.control}
                   name="facility"
                   render={() => (
@@ -374,21 +362,89 @@ export function ConfirmBookingModal({
                       <FormMessage />
                     </FormItem>
                   )}
-                />
+                /> */}
+                {/* <FormField
+                  control={form.control}
+                  name="gender"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm text-[#434C45] font-medium leading-[150%]">
+                        Room
+                      </FormLabel>
+                      <FormControl>
+                        <select
+                          className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          {...field}
+                        >
+                          <option value="">Select gender</option>
+                          <option value="male">Male</option>
+                          <option value="female">Female</option>
+                          <option value="other">Other</option>
+                        </select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                /> */}
+
                 <FormField
                   control={form.control}
                   name="roomType"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-sm text-[#434C45] font-medium leading-[150%]">
-                        Room / Service Type
+                        Room Type
                       </FormLabel>
+                      {/* <FormControl> */}
                       <FormControl>
-                        <Input
+                        <select
+                          className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          {...field}
+                        >
+                          {/* <option value="">Select Room</option> */}
+                          <option value="Private Room">Private Room</option>
+                          <option value="Shared Room">Shared Room</option>
+                          {/* <option value="other">Other</option> */}
+                        </select>
+                      </FormControl>
+                      {/* <Input
                           placeholder="Private / Shared room..."
                           {...field}
-                        />
+                        /> */}
+                      {/* </FormControl> */}
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="serviceType"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm text-[#434C45] font-medium leading-[150%]">
+                        Service Type
+                      </FormLabel>
+                      {/* <FormControl> */}
+                      <FormControl>
+                        <select
+                          className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          {...field}
+                        >
+                          <option value="">Select Service</option>
+                          <option value="Supervisory Care">
+                            Supervisory Care
+                          </option>
+                          <option value="Directed Care">Directed Care</option>
+                          <option value="Personal Care">Personal Care</option>
+                          <option value=" Memory Care"> Memory Care</option>
+                          <option value="Respite Care">Respite Care</option>
+                        </select>
                       </FormControl>
+                      {/* <Input
+                          placeholder="Private / Shared room..."
+                          {...field}
+                        /> */}
+                      {/* </FormControl> */}
                       <FormMessage />
                     </FormItem>
                   )}
@@ -399,7 +455,7 @@ export function ConfirmBookingModal({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-sm text-[#434C45] font-medium leading-[150%]">
-                        Admission Date
+                        Tour Date
                       </FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
@@ -431,7 +487,7 @@ export function ConfirmBookingModal({
                     </FormItem>
                   )}
                 />
-                <FormField
+                {/* <FormField
                   control={form.control}
                   name="duration"
                   render={({ field }) => (
@@ -445,7 +501,7 @@ export function ConfirmBookingModal({
                       <FormMessage />
                     </FormItem>
                   )}
-                />
+                /> */}
               </div>
             </div>
 

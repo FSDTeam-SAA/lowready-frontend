@@ -70,6 +70,8 @@ export default function FacilityCard({ facility }: FacilityCardProps) {
       startingDate: new Date().toISOString(),
       duration: "1",
       paymentStatus: "pending",
+      serviceType: '',
+      roomType:'',
       residentialInfo: [
         {
           name: "",

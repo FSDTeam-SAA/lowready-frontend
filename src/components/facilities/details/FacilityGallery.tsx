@@ -227,6 +227,8 @@ export function FacilityGallery({ data, isLoading }: FacilityTourProps) {
             startingDate: new Date().toISOString(),
             duration: "2",
             paymentStatus: "pending",
+            serviceType: "",
+            roomType: "",
             residentialInfo: [
               {
                 name: "",
