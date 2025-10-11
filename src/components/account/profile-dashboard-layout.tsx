@@ -123,7 +123,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 <span className="text-white font-bold text-xs">A</span>
               </div>
               <span className="font-semibold text-[#179649]">
-                Aln<span className="text-[#343a40]">Hub</span>
+                Alh<span className="text-[#343a40]">Hub</span>
               </span>
             </div>
           </div>

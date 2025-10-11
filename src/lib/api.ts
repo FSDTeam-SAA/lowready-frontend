@@ -729,12 +729,14 @@ export async function facilitiesLocation(): Promise<{ data: Location[] }> {
 
 //f Booking// api/booking.ts
 export interface BookingType {
-  _id?: string; // Add optional ID for updates
+  _id?: string; 
   facility: string;
   userId: string;
   startingDate: string;
   duration: string;
   paymentStatus: "paid" | "unpaid" | "pending";
+  serviceType:string;
+  roomType:string;
   residentialInfo: {
     name: string;
     dateOfBirth: string;
@@ -747,6 +749,7 @@ export interface BookingType {
 // Create booking
 export async function createBooking(userData: BookingType) {
   try {
+    console.log(userData,'dddd')
     const res = await api.post(`/bookings`, userData);
     return res.data;
   } catch (error) {
